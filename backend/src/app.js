@@ -1,9 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+require('dotenv').config();
 
-// Inicializations
 const app = express();
+const db = require('./database');
 
 // Settings
 app.set('port', process.env.PORT || 4000);
@@ -12,16 +13,13 @@ app.set('port', process.env.PORT || 4000);
 app.use(cors());
 app.use(express.json());
 
-
 // API
-app.use('/', require('./api/api'))
+app.use('/', require('./api/api'));
 
-
-// Routes
+// Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-// Starting server
+// Start server
 app.listen(app.get('port'), () => {
-    console.log('Servidor backend corriendo en http://localhost:' + app.get('port'));
+  console.log('Servidor backend corriendo en http://localhost:' + app.get('port'));
 });

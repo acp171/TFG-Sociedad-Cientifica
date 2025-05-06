@@ -9,9 +9,14 @@ const secret_key = "314637895421658";
 // ROUTES
 
 // POST login
-router.get('/hola', (req, res) => {
-    res.json({ mensaje: 'Hola desde el backend' });
+router.post('/login', (req, res) => {
+    
 });
 
+
+// POST register
+router.post('/register', (req, res) => {
+    
+});
 
 module.exports = router;

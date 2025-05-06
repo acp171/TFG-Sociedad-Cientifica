@@ -1,0 +1,101 @@
+CREATE DATABASE sociedad_cientifica;
+
+USE sociedad_cientifica;
+
+
+-- SOCIO_ROL TABLE --
+CREATE TABLE Socio_ROL(
+    id_socio_rol INT(100) NOT NULL AUTO_INCREMENT,
+    rol VARCHAR(16) NOT NULL,
+    CONSTRAINT PK_SOCIO_ROL PRIMARY KEY (id_socio_rol)
+);
+
+
+-- DIRECCION TABLE --
+CREATE TABLE Direccion(
+    id_direcion INT(100) NOT NULL AUTO_INCREMENT,
+    calle INT(100) NOT NULL AUTO_INCREMENT,
+    ciudad VARCHAR(50) NOT NULL,
+    provincia VARCHAR(50)
+    socio INT(100) NOT NULL,
+    CONSTRAINT PK_DIRECCION PRIMARY KEY (id_direccion)
+    CONSTRAINT FK_DIRECCION_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio)
+);
+
+
+-- SOCIO TABLE --
+CREATE TABLE Socio(
+    id_socio INT(100) NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(16) NOT NULL,
+    apellidos VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(60) NOT NULL,
+    telefono VARCHAR(16) NOT NULL,
+    fecha_nacimiento DATETIME NOT NULL,
+    fecha_alta DATETIME NOT NULL,
+    socio_rol INT(100) NOT NULL
+    CONSTRAINT PK_SOCIO PRIMARY KEY (id_socio),
+    CONSTRAINT UK_SOCIO UNIQUE (email),
+    CONSTRAINT FK_SOCIO_ROL_SOCIO FOREIGN KEY (socio_rol) REFERENCES Socio_Rol(id_socio_rol)
+);
+
+
+-- PUBLICACIONES TABLE --
+CREATE TABLE Publicaciones(
+    id_publicacion INT(100) NOT NULL AUTO_INCREMENT,
+    titulo VARCHAR(1000) NOT NULL,
+    contenido VARCHAR(256),
+    fecha_publicacion DATETIME NOT NULL,
+    socio INT(100) NOT NULL,
+    CONSTRAINT FK_PUBLICACION_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio),
+    CONSTRAINT PK_PUBLICACION PRIMARY KEY (id_publicacion)
+);
+
+
+-- COMENTARIO_PUBLICACION TABLE --
+CREATE TABLE Comentario_Publicacion(
+    id_comentario INT(100) NOT NULL,
+    comentario VARCHAR(256) NOT NULL,
+    socio INT(100) NOT NULL,
+    publicacion INT(100) NOT NULL,
+    fecha_comentario DATETIME NOT NULL,
+    visibilidad boolean NOT NULL,
+    CONSTRAINT PK_COMENTARIO PRIMARY KEY (id_comentario, publicacion),
+    CONSTRAINT FK_COMENTARIO_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio)
+);
+
+
+-- LIKE PUBLICACTIONS TABLE --
+CREATE TABLE likePublication(
+    user VARCHAR(16) NOT NULL,
+    publicationID INT(100) NOT NULL,
+    CONSTRAINT PK_LIKE_PUBLICATION PRIMARY KEY (user, publicationID),
+    CONSTRAINT FK_LIKE_PUBLICATION_USERS FOREIGN KEY (user) REFERENCES users(username),
+    CONSTRAINT FK_LIKE_PUBLICATION_PUBLICATIONS FOREIGN KEY (publicationID) REFERENCES publications(id)
+);
+
+
+-- CHATS TABLE --
+CREATE TABLE chats(
+    id INT(100) NOT NULL AUTO_INCREMENT,
+    user1 VARCHAR(16) NOT NULL,
+    user2 VARCHAR(16) NOT NULL,
+    CONSTRAINT PK_CHATS PRIMARY KEY (id),
+    CONSTRAINT FK_CHATS_USERS1 FOREIGN KEY (user1) REFERENCES users(username),
+    CONSTRAINT FK_CHATS_USERS2 FOREIGN KEY (user2) REFERENCES users(username)
+);
+
+
+-- MESSAGE CHATS TABLE --
+CREATE TABLE messageChats(
+    id INT(100) NOT NULL AUTO_INCREMENT,
+    chat INT(100) NOT NULL,
+    user VARCHAR(16) NOT NULL,
+    publication INT(100),
+    mensaje VARCHAR(1000),
+    fecha DATETIME NOT NULL,
+    CONSTRAINT PK_MESSAGE_CHATS PRIMARY KEY (id),
+    CONSTRAINT FK_MESSAGE_CHATS_USERS FOREIGN KEY (user) REFERENCES users(username),
+    CONSTRAINT FK_MESSAGE_CHATS_CHATS FOREIGN KEY (chat) REFERENCES chats(id),
+    CONSTRAINT FK_MESSAGE_CHATS_PUBLICATIONS FOREIGN KEY (publication) REFERENCES publications(id)
+);
