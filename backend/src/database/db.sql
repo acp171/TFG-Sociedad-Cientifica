@@ -177,3 +177,21 @@ CREATE TABLE IF NOT EXISTS Pagos (
     CONSTRAINT FK_PAGOS_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio),
     CONSTRAINT FK_PAGOS_FORMA_PAGO FOREIGN KEY (forma_pago) REFERENCES Forma_Pago(id_forma_pago)
 );
+
+-- Insertar valores en la tabla Socio_Rol
+INSERT INTO Socio_Rol (nombre) 
+VALUES 
+    ('Administrador'),
+    ('Presidente'),
+    ('Secretario'),
+    ('Tesorero'),
+    ('Vocal'),
+    ('Miembro comité'),
+    ('Socio');
+
+-- Insertar valores en la tabla Tipo_Socio
+INSERT INTO Tipo_Socio (nombre_tipo, descripcion, cuota) 
+VALUES 
+    ('Estudiante', 'Miembro que se encuentra en formación académica.', 50.0),
+    ('Profesional', 'Miembro con experiencia y/o titulación profesional.', 100.0),
+    ('Honorario', 'Miembro que contribuye de manera honorífica.', 0.0);

@@ -34,41 +34,6 @@ function verificarToken(req, res, next) {
 
 // ROUTES
 
-// GET perfil
-router.get('/perfil', verificarToken, async (req, res) => {
-    try {
-        const querySocio = 'SELECT nombre, apellidos, email, telefono, fecha_nacimiento, socio_rol, tipo_socio FROM SOCIO WHERE email = $1;';
-        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
-        const socio = resultSocio.rows[0];
-
-        const queryRol = 'SELECT * FROM Socio_Rol WHERE id_socio_rol = $1;';
-        const resultRol = await pool.query(queryRol, [socio.socio_rol]);
-
-        const queryTipo = 'SELECT * FROM Tipo_Socio WHERE id_tipo_socio = $1;';
-        const resultTipo = await pool.query(queryTipo, [socio.tipo_socio]);
-
-        const rol = resultRol.rows[0];
-        const tipo = resultTipo.rows[0];
-
-        res.status(200).json({
-            message: 'Acceso a perfil.',
-            socio: {
-                id: socio.id_socio,
-                nombre: socio.nombre,
-                apellidos: socio.apellidos,
-                email: socio.email,
-                telefono: socio.telefono,
-                fecha_nacimiento: socio.fecha_nacimiento,
-                socio_rol: rol.nombre,
-                tipo_socio: tipo.nombre_tipo
-            }
-        });
-    } catch (error) {
-        console.error("Error interno: ", error.message);
-        res.status(500).json({ message: 'Error interno del servidor.' });
-    }
-});
-
 // POST login
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -119,7 +84,7 @@ router.post('/login', async (req, res) => {
 
 // POST register
 router.post('/register', async (req, res) => {
-    const { username, apellidos, email, password, telefono, fecha_nacimiento, socio_rol, tipo_socio } = req.body;
+    const { nombre, apellidos, email, password, telefono, fecha_nacimiento, socio_rol, tipo_socio } = req.body;
 
     const isValidEmail = /\S+@\S+\.\S+/.test(email);
     if (!isValidEmail) {
@@ -127,7 +92,7 @@ router.post('/register', async (req, res) => {
     }
 
     // Validar que todos los campos necesarios no estén vacíos
-    if (!username || !apellidos || !password || !telefono || !fecha_nacimiento || !socio_rol || !tipo_socio) {
+    if (!nombre || !apellidos || !password || !telefono || !fecha_nacimiento || !socio_rol || !tipo_socio) {
         return res.status(400).json({ message: 'Todos los campos son obligatorios y no pueden estar vacíos.' });
     }
 
@@ -138,7 +103,7 @@ router.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
 
     const values = [
-        username,
+        nombre,
         apellidos,
         email,
         hashedPassword,
@@ -164,6 +129,83 @@ router.post('/register', async (req, res) => {
         console.error("Error insertando socio: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
 
+    }
+});
+
+// GET perfil
+router.get('/perfil', verificarToken, async (req, res) => {
+    try {
+        const querySocio = 'SELECT nombre, apellidos, email, telefono, fecha_nacimiento, socio_rol, tipo_socio FROM SOCIO WHERE email = $1;';
+        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
+        const socio = resultSocio.rows[0];
+
+        const queryRol = 'SELECT * FROM Socio_Rol WHERE id_socio_rol = $1;';
+        const resultRol = await pool.query(queryRol, [socio.socio_rol]);
+
+        const queryTipo = 'SELECT * FROM Tipo_Socio WHERE id_tipo_socio = $1;';
+        const resultTipo = await pool.query(queryTipo, [socio.tipo_socio]);
+
+        const rol = resultRol.rows[0];
+        const tipo = resultTipo.rows[0];
+
+        res.status(200).json({
+            message: 'Acceso a perfil.',
+            socio: {
+                id: socio.id_socio,
+                nombre: socio.nombre,
+                apellidos: socio.apellidos,
+                email: socio.email,
+                telefono: socio.telefono,
+                fecha_nacimiento: socio.fecha_nacimiento,
+                socio_rol: rol.nombre,
+                tipo_socio: tipo.nombre_tipo
+            }
+        });
+    } catch (error) {
+        console.error("Error al entrar al perfil: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// PUT editar perfil
+router.put('/perfil', verificarToken, async (req, res) => {
+    const { nombre, apellidos, telefono } = req.body;
+    
+    // Validar que todos los campos necesarios no estén vacíos
+    if (!username || !apellidos || !password || !telefono || !fecha_nacimiento || !socio_rol || !tipo_socio) {
+        return res.status(400).json({ message: 'Todos los campos son obligatorios y no pueden estar vacíos.' });
+    }
+
+    try {
+        const querySocio = 'SELECT nombre, apellidos, email, telefono, fecha_nacimiento, socio_rol, tipo_socio FROM SOCIO WHERE email = $1;';
+        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
+        const socio = resultSocio.rows[0];
+
+        const queryRol = 'SELECT * FROM Socio_Rol WHERE id_socio_rol = $1;';
+        const resultRol = await pool.query(queryRol, [socio.socio_rol]);
+
+        const queryTipo = 'SELECT * FROM Tipo_Socio WHERE id_tipo_socio = $1;';
+        const resultTipo = await pool.query(queryTipo, [socio.tipo_socio]);
+
+        const rol = resultRol.rows[0];
+        const tipo = resultTipo.rows[0];
+
+        res.status(200).json({
+            message: 'Acceso a perfil.',
+            socio: {
+                id: socio.id_socio,
+                nombre: socio.nombre,
+                apellidos: socio.apellidos,
+                email: socio.email,
+                telefono: socio.telefono,
+                fecha_nacimiento: socio.fecha_nacimiento,
+                socio_rol: rol.nombre,
+                tipo_socio: tipo.nombre_tipo
+            }
+        });
+    } catch (error) {
+        console.error("Error al actualizar perfil: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
 

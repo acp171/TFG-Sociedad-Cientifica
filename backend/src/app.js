@@ -7,9 +7,11 @@ require('dotenv').config();
 // Initializations
 const app = express();
 const pool = require('./database');
-const sqlPath = path.join(__dirname, './database/db.sql');
-//const sqlPath = path.join(__dirname, './database/dropDatabase.sql');
-const sql = fs.readFileSync(sqlPath, 'utf8');
+const sqlPathCreate = path.join(__dirname, './database/db.sql');
+const sqlPathDrop = path.join(__dirname, './database/dropDatabase.sql');
+const sqlCreate = fs.readFileSync(sqlPathCreate, 'utf8');
+const sqlDrop = fs.readFileSync(sqlPathDrop, 'utf8');
+require('dotenv').config();
 
 
 // Settings
@@ -28,28 +30,20 @@ app.use('/', require('./api/api'));
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-pool.query(sql)
-  .then(() => {
-    console.log('Tablas creadas correctamente.');
-  })
-  .catch((err) => {
-    console.error('Error al crear las tablas:', err);
-  });
-
-
-
-//Borrar base de datos
-/*pool.query(sql)
-  .then(() => {
-    console.log('Tablas eliminadas correctamente.');
-  })
-  .catch((err) => {
-    console.error('Error al eliminar las tablas:', err);
-  })
-  .finally(() => {
-    pool.end();
-  });*/
+if (process.env.NODE_ENV === 'development') {
+  // Borrar tablas base de datos development
+  pool.query(sqlDrop)
+    .then(() => {
+      console.log('Tablas eliminadas correctamente.');
+      return pool.query(sqlCreate);
+    })
+    .then(() => {
+      console.log('Tablas creadas correctamente.');
+    })
+    .catch((err) => {
+      console.error('Error al crear las tablas:', err);
+    })
+}
 
 
 // Start server
