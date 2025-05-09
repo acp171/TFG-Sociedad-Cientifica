@@ -6,8 +6,9 @@ require('dotenv').config();
 
 // Initializations
 const app = express();
-const db = require('./database');
+const pool = require('./database');
 const sqlPath = path.join(__dirname, './database/db.sql');
+//const sqlPath = path.join(__dirname, './database/dropDatabase.sql');
 const sql = fs.readFileSync(sqlPath, 'utf8');
 
 
@@ -28,13 +29,28 @@ app.use('/', require('./api/api'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-db.query(sql)
+pool.query(sql)
   .then(() => {
     console.log('Tablas creadas correctamente.');
   })
   .catch((err) => {
     console.error('Error al crear las tablas:', err);
   });
+
+
+
+//Borrar base de datos
+/*pool.query(sql)
+  .then(() => {
+    console.log('Tablas eliminadas correctamente.');
+  })
+  .catch((err) => {
+    console.error('Error al eliminar las tablas:', err);
+  })
+  .finally(() => {
+    pool.end();
+  });*/
+
 
 // Start server
 app.listen(app.get('port'), () => {

@@ -1,0 +1,20 @@
+DROP TABLE IF EXISTS
+    Pagos,
+    Transferencia,
+    Paypal,
+    Tarjeta_Credito,
+    Forma_Pago,
+    Miembros_Comite,
+    Comite,
+    Socio_Proyecto,
+    Proyectos_Investigacion,
+    Notificaciones,
+    Inscripciones,
+    Evento,
+    Comentario_Publicacion,
+    Publicaciones,
+    Direccion,
+    Socio,
+    Tipo_Socio,
+    Socio_Rol
+CASCADE;
