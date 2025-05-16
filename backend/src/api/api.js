@@ -172,26 +172,27 @@ router.put('/perfil', verificarToken, async (req, res) => {
     const { nombre, apellidos, telefono } = req.body;
     
     // Validar que todos los campos necesarios no estén vacíos
-    if (!username || !apellidos || !password || !telefono || !fecha_nacimiento || !socio_rol || !tipo_socio) {
+    if (!nombre || !apellidos || !telefono) {
         return res.status(400).json({ message: 'Todos los campos son obligatorios y no pueden estar vacíos.' });
     }
 
+    const values = [
+        nombre,
+        apellidos,
+        telefono,
+        req.usuario.email
+    ];
+
     try {
-        const querySocio = 'SELECT nombre, apellidos, email, telefono, fecha_nacimiento, socio_rol, tipo_socio FROM SOCIO WHERE email = $1;';
+        const query = 'UPDATE Socio SET nombre = $1, apellidos = $2, telefono = $3 WHERE email = $4;';
+        const result = (await pool.query(query, values));
+
+        const querySocio = 'SELECT * FROM SOCIO WHERE email = $1;';
         const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
         const socio = resultSocio.rows[0];
 
-        const queryRol = 'SELECT * FROM Socio_Rol WHERE id_socio_rol = $1;';
-        const resultRol = await pool.query(queryRol, [socio.socio_rol]);
-
-        const queryTipo = 'SELECT * FROM Tipo_Socio WHERE id_tipo_socio = $1;';
-        const resultTipo = await pool.query(queryTipo, [socio.tipo_socio]);
-
-        const rol = resultRol.rows[0];
-        const tipo = resultTipo.rows[0];
-
         res.status(200).json({
-            message: 'Acceso a perfil.',
+            message: 'Perfil actualizado.',
             socio: {
                 id: socio.id_socio,
                 nombre: socio.nombre,
@@ -199,8 +200,8 @@ router.put('/perfil', verificarToken, async (req, res) => {
                 email: socio.email,
                 telefono: socio.telefono,
                 fecha_nacimiento: socio.fecha_nacimiento,
-                socio_rol: rol.nombre,
-                tipo_socio: tipo.nombre_tipo
+                socio_rol: socio.socio_rol,
+                tipo_socio: socio.tipo_socio
             }
         });
     } catch (error) {
