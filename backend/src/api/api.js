@@ -114,6 +114,8 @@ router.post('/register', async (req, res) => {
         tipo_socio
     ];
 
+    console.log(values);
+
     try {
         const result = await pool.query(query, values);
         console.log("Socio insertado con ID: ", result.rows[0].id_socio);
@@ -206,6 +208,302 @@ router.put('/perfil', verificarToken, async (req, res) => {
         });
     } catch (error) {
         console.error("Error al actualizar perfil: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// PUT asignar rol siendo administrador general
+router.put('/asignar-rol', verificarToken, async (req, res) =>  {
+    const { id_socio, rol, proyecto, comite, funcion } = req.body;    
+
+    try {
+        const querySocio = 'SELECT socio_rol FROM SOCIO WHERE email = $1;';
+        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
+        const socio = resultSocio.rows[0];
+
+        const querySocioRol = 'SELECT nombre FROM Socio_Rol WHERE id_socio_rol = $1;';
+        const resultSocioRol = (await pool.query(querySocioRol, [socio.socio_rol]));
+        const adminRol = resultSocioRol.rows[0];
+
+        // Verifica si el usuario es administrador
+        if (!adminRol || adminRol.nombre !== 'Administrador') {
+            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+        }
+
+        var query, values;
+        switch(funcion) {
+            case 'socio':
+                values = [
+                    rol,
+                    id_socio
+                ];
+
+                query = 'UPDATE Socio SET socio_rol = $1 WHERE id_socio = $2;';
+            break;
+
+            case 'comite':
+                values = [
+                    rol,
+                    id_socio,
+                    comite
+                ];
+
+                query = 'UPDATE Miembros_Comite SET rol_comite = $1 WHERE socio = $2 AND comite = $3;';
+
+            break;
+
+            case 'proyecto':
+                values = [
+                    rol,
+                    id_socio,
+                    proyecto
+                ];
+
+                query = 'UPDATE Socio_Proyecto SET rol_proyecto = $1 WHERE socio = $2 AND proyecto = $3;';
+
+            break;
+        }
+
+        const result = (await pool.query(query, values));
+        res.status(200).json({
+            message: 'Rol asignado.',
+            socio: {
+                id: id_socio,
+                rol: rol
+            }
+        });
+
+    }
+    catch (error) {
+        console.error("Error al asignar rol siendo administrador: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// PUT asignar rol siendo presidente de comite
+router.put('/asignar-rol-comite', verificarToken, async (req, res) =>  {
+    const { id_socio, rol, comite } = req.body;    
+
+    try {
+        const querySocio = 'SELECT socio_rol FROM SOCIO WHERE email = $1;';
+        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
+        const socio = resultSocio.rows[0];
+
+        const querySocioRol = 'SELECT nombre FROM Socio_Rol WHERE id_socio_rol = $1;';
+        const resultSocioRol = (await pool.query(querySocioRol, [socio.socio_rol]));
+        const adminRol = resultSocioRol.rows[0];
+
+        // Verifica si el usuario es administrador
+        if (!adminRol || adminRol.nombre_tipo !== 'Presidente') {
+            console.log(req.usuario);
+            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+        }
+
+        const values = [
+            rol,
+            id_socio,
+            comite
+        ];
+
+        const query = 'UPDATE Miembros_Comite SET rol_comite = $1 WHERE socio = $2 AND comite = $3;';
+
+        const result = (await pool.query(query, values));
+        res.status(200).json({
+            message: 'Rol asignado.',
+            socio: {
+                id: id_socio,
+                rol: rol
+            }
+        });
+
+    }
+    catch (error) {
+        console.error("Error al asignar rol siendo presidente: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+
+// PUT asignar rol siendo presidente de comite
+router.put('/asignar-rol-proyecto', verificarToken, async (req, res) =>  {
+    const { id_socio, rol, proyecto } = req.body;    
+
+    try {
+        const querySocio = 'SELECT socio_rol FROM SOCIO WHERE email = $1;';
+        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
+        const socio = resultSocio.rows[0];
+
+        const querySocioRol = 'SELECT nombre FROM Socio_Rol WHERE id_socio_rol = $1;';
+        const resultSocioRol = (await pool.query(querySocioRol, [socio.socio_rol]));
+        const adminRol = resultSocioRol.rows[0];
+
+        // Verifica si el usuario es administrador
+        if (!adminRol || adminRol.nombre_tipo !== 'Presidente') {
+            console.log(req.usuario);
+            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+        }
+
+        const values = [
+            rol,
+            id_socio,
+            proyecto
+        ];
+
+        const  query = 'UPDATE Socio_Proyecto SET rol_proyecto = $1 WHERE socio = $2 AND proyecto = $3;';
+
+        const result = (await pool.query(query, values));
+        res.status(200).json({
+            message: 'Rol asignado.',
+            socio: {
+                id: id_socio,
+                rol: rol
+            }
+        });
+
+    }
+    catch (error) {
+        console.error("Error al asignar rol siendo presidente: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// PUT asignar rol siendo administrador general
+router.put('/eliminar-rol', verificarToken, async (req, res) =>  {
+    const { id_socio, proyecto, comite, funcion } = req.body;    
+
+    try {
+        const querySocio = 'SELECT socio_rol FROM SOCIO WHERE email = $1;';
+        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
+        const socio = resultSocio.rows[0];
+
+        const querySocioRol = 'SELECT nombre FROM Socio_Rol WHERE id_socio_rol = $1;';
+        const resultSocioRol = (await pool.query(querySocioRol, [socio.socio_rol]));
+        const adminRol = resultSocioRol.rows[0];
+
+        // Verifica si el usuario es administrador
+        if (!adminRol || adminRol.nombre !== 'Administrador') {
+            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+        }
+
+        var query, values;
+        switch(funcion) {
+            case 'socio':
+                values = [
+                    id_socio
+                ];
+
+                query = 'DELETE Socio WHERE id_socio = $1;';
+            break;
+
+            case 'comite':
+                values = [
+                    id_socio,
+                    comite
+                ];
+
+                query = 'DELETE Miembros_Comite WHERE socio = $1 AND comite = $2;';
+
+            break;
+
+            case 'proyecto':
+                values = [
+                    id_socio,
+                    proyecto
+                ];
+
+                query = 'DELETE Socio_Proyecto SET rol_proyecto = $1 WHERE socio = $1 AND proyecto = $2;';
+
+            break;
+        }
+
+        const result = (await pool.query(query, values));
+        res.status(200).json({
+            message: 'Rol asignado.',
+            socio: {
+                id: id_socio,
+                rol: rol
+            }
+        });
+
+    }
+    catch (error) {
+        console.error("Error al asignar rol siendo administrador: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// PUT asignar rol siendo presidente de comite
+router.put('/eliminar-rol-comite', verificarToken, async (req, res) =>  {
+    const { id_socio, comite } = req.body;    
+
+    try {
+        const querySocio = 'SELECT socio_rol FROM SOCIO WHERE email = $1;';
+        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
+        const socio = resultSocio.rows[0];
+
+        const querySocioRol = 'SELECT nombre FROM Socio_Rol WHERE id_socio_rol = $1;';
+        const resultSocioRol = (await pool.query(querySocioRol, [socio.socio_rol]));
+        const adminRol = resultSocioRol.rows[0];
+
+        // Verifica si el usuario es administrador
+        if (!adminRol || adminRol.nombre_tipo !== 'Presidente') {
+            console.log(req.usuario);
+            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+        }
+
+        const values = [
+            id_socio,
+            comite
+        ];
+
+        const query = 'DELETE Miembros_Comite WHERE socio = $1 AND comite = $2;';
+
+        const result = (await pool.query(query, values));
+        res.status(200).json({
+            message: 'Rol eliminardo.'
+        });
+
+    }
+    catch (error) {
+        console.error("Error al eliminar rol siendo presidente: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// PUT asignar rol siendo presidente de comite
+router.put('/eliminar-rol-proyecto', verificarToken, async (req, res) =>  {
+    const { id_socio, proyecto } = req.body;    
+
+    try {
+        const querySocio = 'SELECT socio_rol FROM SOCIO WHERE email = $1;';
+        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
+        const socio = resultSocio.rows[0];
+
+        const querySocioRol = 'SELECT nombre FROM Socio_Rol WHERE id_socio_rol = $1;';
+        const resultSocioRol = (await pool.query(querySocioRol, [socio.socio_rol]));
+        const adminRol = resultSocioRol.rows[0];
+
+        // Verifica si el usuario es administrador
+        if (!adminRol || adminRol.nombre_tipo !== 'Presidente') {
+            console.log(req.usuario);
+            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+        }
+
+        const values = [
+            id_socio,
+            proyecto
+        ];
+
+        const  query = 'DELETE Socio_Proyecto WHERE socio = $1 AND proyecto = $2;';
+
+        const result = (await pool.query(query, values));
+        res.status(200).json({
+            message: 'Rol eliminardo.'
+        });
+
+    }
+    catch (error) {
+        console.error("Error al asignar rol siendo presidente: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
