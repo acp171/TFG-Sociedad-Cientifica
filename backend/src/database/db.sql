@@ -192,7 +192,6 @@ VALUES
 -- Insertar valores en la tabla Socio
 INSERT INTO Tipo_Socio (nombre_tipo, descripcion, cuota) 
 VALUES 
-    ('Administrador', 'Miembro que administra', 0.0),
     ('Estudiante', 'Miembro que se encuentra en formación académica.', 50.0),
     ('Profesional', 'Miembro con experiencia y/o titulación profesional.', 100.0),
     ('Honorario', 'Miembro que contribuye de manera honorífica.', 0.0);
