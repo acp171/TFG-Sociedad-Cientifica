@@ -189,9 +189,15 @@ VALUES
     ('Miembro comité'),
     ('Socio');
 
--- Insertar valores en la tabla Tipo_Socio
+-- Insertar valores en la tabla Socio
 INSERT INTO Tipo_Socio (nombre_tipo, descripcion, cuota) 
 VALUES 
+    ('Administrador', 'Miembro que administra', 0.0),
     ('Estudiante', 'Miembro que se encuentra en formación académica.', 50.0),
     ('Profesional', 'Miembro con experiencia y/o titulación profesional.', 100.0),
     ('Honorario', 'Miembro que contribuye de manera honorífica.', 0.0);
+
+-- Insertar valores en la tabla Tipo_Socio
+INSERT INTO Socio (nombre, apellidos, email, password, telefono, fecha_nacimiento, fecha_alta, socio_rol, tipo_socio) 
+VALUES 
+    ('admin', 'admin', 'admin@admin.com', '$2b$10$Y1rqKelTr4mRJL/RHtL18e0hj/eAvCGsW56TwROA9L/bTcvjCkfO.', '123456789', '2001-11-03 00:00:00', '2025-05-10 15:37:21.561', 1, 1);
