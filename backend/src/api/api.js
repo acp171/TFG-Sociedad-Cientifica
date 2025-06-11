@@ -32,8 +32,21 @@ function verificarToken(req, res, next) {
   }
 
 
-// ROUTES
+// Funciones privadas
+async function obtenernRol(usuario) {
+    const querySocio = 'SELECT socio_rol FROM SOCIO WHERE email = $1;';
+    const resultSocio = (await pool.query(querySocio, [usuario.email]));
+    const socio = resultSocio.rows[0];
 
+    const querySocioRol = 'SELECT nombre FROM Socio_Rol WHERE id_socio_rol = $1;';
+    const resultSocioRol = (await pool.query(querySocioRol, [socio.socio_rol]));
+    const socioRol = resultSocioRol.rows[0];
+
+    return socioRol;
+}
+
+
+// ROUTES
 // POST login
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -98,7 +111,7 @@ router.post('/register', async (req, res) => {
 
     const query = 'INSERT INTO Socio(nombre, apellidos, email, password, telefono,' + 
                   'fecha_nacimiento, fecha_alta, socio_rol, tipo_socio)' +
-                  'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id_socio;';
+                  'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id_socio, nombre, email;';
 
     const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
 
@@ -113,8 +126,6 @@ router.post('/register', async (req, res) => {
         socio_rol,
         tipo_socio
     ];
-
-    console.log(values);
 
     try {
         const result = await pool.query(query, values);
@@ -216,20 +227,13 @@ router.put('/perfil', verificarToken, async (req, res) => {
 router.put('/asignar-rol', verificarToken, async (req, res) =>  {
     const { id_socio, rol, proyecto, comite, funcion } = req.body;    
 
+    const adminRol = await obtenernRol(req.usuario);
+    // Verifica si el usuario es administrador
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
     try {
-        const querySocio = 'SELECT socio_rol FROM SOCIO WHERE email = $1;';
-        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
-        const socio = resultSocio.rows[0];
-
-        const querySocioRol = 'SELECT nombre FROM Socio_Rol WHERE id_socio_rol = $1;';
-        const resultSocioRol = (await pool.query(querySocioRol, [socio.socio_rol]));
-        const adminRol = resultSocioRol.rows[0];
-
-        // Verifica si el usuario es administrador
-        if (!adminRol || adminRol.nombre !== 'Administrador') {
-            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-        }
-
         var query, values;
         switch(funcion) {
             case 'socio':
@@ -284,21 +288,13 @@ router.put('/asignar-rol', verificarToken, async (req, res) =>  {
 router.put('/asignar-rol-comite', verificarToken, async (req, res) =>  {
     const { id_socio, rol, comite } = req.body;    
 
+    const presidenteRol = await obtenernRol(req.usuario);
+    if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
+        console.log(req.usuario);
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
     try {
-        const querySocio = 'SELECT socio_rol FROM SOCIO WHERE email = $1;';
-        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
-        const socio = resultSocio.rows[0];
-
-        const querySocioRol = 'SELECT nombre FROM Socio_Rol WHERE id_socio_rol = $1;';
-        const resultSocioRol = (await pool.query(querySocioRol, [socio.socio_rol]));
-        const adminRol = resultSocioRol.rows[0];
-
-        // Verifica si el usuario es administrador
-        if (!adminRol || adminRol.nombre_tipo !== 'Presidente') {
-            console.log(req.usuario);
-            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-        }
-
         const values = [
             rol,
             id_socio,
@@ -318,7 +314,7 @@ router.put('/asignar-rol-comite', verificarToken, async (req, res) =>  {
 
     }
     catch (error) {
-        console.error("Error al asignar rol siendo presidente: ", error.message);
+        console.error("Error al asignar rol siendo presidente de comité: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
@@ -328,21 +324,13 @@ router.put('/asignar-rol-comite', verificarToken, async (req, res) =>  {
 router.put('/asignar-rol-proyecto', verificarToken, async (req, res) =>  {
     const { id_socio, rol, proyecto } = req.body;    
 
+    const presidenteRol = await obtenernRol(req.usuario);
+    if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
+        console.log(req.usuario);
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
     try {
-        const querySocio = 'SELECT socio_rol FROM SOCIO WHERE email = $1;';
-        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
-        const socio = resultSocio.rows[0];
-
-        const querySocioRol = 'SELECT nombre FROM Socio_Rol WHERE id_socio_rol = $1;';
-        const resultSocioRol = (await pool.query(querySocioRol, [socio.socio_rol]));
-        const adminRol = resultSocioRol.rows[0];
-
-        // Verifica si el usuario es administrador
-        if (!adminRol || adminRol.nombre_tipo !== 'Presidente') {
-            console.log(req.usuario);
-            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-        }
-
         const values = [
             rol,
             id_socio,
@@ -362,29 +350,21 @@ router.put('/asignar-rol-proyecto', verificarToken, async (req, res) =>  {
 
     }
     catch (error) {
-        console.error("Error al asignar rol siendo presidente: ", error.message);
+        console.error("Error al asignar rol siendo presidente de proyecto: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
 
-// PUT asignar rol siendo administrador general
-router.put('/eliminar-rol', verificarToken, async (req, res) =>  {
+// DELETE eliminar rol siendo administrador general
+router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
     const { id_socio, proyecto, comite, funcion } = req.body;    
 
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
     try {
-        const querySocio = 'SELECT socio_rol FROM SOCIO WHERE email = $1;';
-        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
-        const socio = resultSocio.rows[0];
-
-        const querySocioRol = 'SELECT nombre FROM Socio_Rol WHERE id_socio_rol = $1;';
-        const resultSocioRol = (await pool.query(querySocioRol, [socio.socio_rol]));
-        const adminRol = resultSocioRol.rows[0];
-
-        // Verifica si el usuario es administrador
-        if (!adminRol || adminRol.nombre !== 'Administrador') {
-            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-        }
-
         var query, values;
         switch(funcion) {
             case 'socio':
@@ -427,30 +407,22 @@ router.put('/eliminar-rol', verificarToken, async (req, res) =>  {
 
     }
     catch (error) {
-        console.error("Error al asignar rol siendo administrador: ", error.message);
+        console.error("Error al eliminar rol siendo administrador: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
 
-// PUT asignar rol siendo presidente de comite
-router.put('/eliminar-rol-comite', verificarToken, async (req, res) =>  {
+// DELETE eliminar rol del comité siendo presidente de comité
+router.delete('/eliminar-rol-comite', verificarToken, async (req, res) =>  {
     const { id_socio, comite } = req.body;    
 
+    const presidenteRol = await obtenernRol(req.usuario);
+    if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
+        console.log(req.usuario);
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
     try {
-        const querySocio = 'SELECT socio_rol FROM SOCIO WHERE email = $1;';
-        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
-        const socio = resultSocio.rows[0];
-
-        const querySocioRol = 'SELECT nombre FROM Socio_Rol WHERE id_socio_rol = $1;';
-        const resultSocioRol = (await pool.query(querySocioRol, [socio.socio_rol]));
-        const adminRol = resultSocioRol.rows[0];
-
-        // Verifica si el usuario es administrador
-        if (!adminRol || adminRol.nombre_tipo !== 'Presidente') {
-            console.log(req.usuario);
-            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-        }
-
         const values = [
             id_socio,
             comite
@@ -465,30 +437,22 @@ router.put('/eliminar-rol-comite', verificarToken, async (req, res) =>  {
 
     }
     catch (error) {
-        console.error("Error al eliminar rol siendo presidente: ", error.message);
+        console.error("Error al eliminar rol siendo presidente de comité: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
 
-// PUT asignar rol siendo presidente de comite
-router.put('/eliminar-rol-proyecto', verificarToken, async (req, res) =>  {
+// DELETE eliminar rol siendo presidente de un proyecto de investigación
+router.delete('/eliminar-rol-proyecto', verificarToken, async (req, res) =>  {
     const { id_socio, proyecto } = req.body;    
 
+    const presidenteRol = await obtenernRol(req.usuario);
+    if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
+        console.log(req.usuario);
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
     try {
-        const querySocio = 'SELECT socio_rol FROM SOCIO WHERE email = $1;';
-        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
-        const socio = resultSocio.rows[0];
-
-        const querySocioRol = 'SELECT nombre FROM Socio_Rol WHERE id_socio_rol = $1;';
-        const resultSocioRol = (await pool.query(querySocioRol, [socio.socio_rol]));
-        const adminRol = resultSocioRol.rows[0];
-
-        // Verifica si el usuario es administrador
-        if (!adminRol || adminRol.nombre_tipo !== 'Presidente') {
-            console.log(req.usuario);
-            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-        }
-
         const values = [
             id_socio,
             proyecto
@@ -503,7 +467,135 @@ router.put('/eliminar-rol-proyecto', verificarToken, async (req, res) =>  {
 
     }
     catch (error) {
-        console.error("Error al asignar rol siendo presidente: ", error.message);
+        console.error("Error al eliminar rol siendo presidente de proyecto: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// POST crear un proyecto de investigación
+router.post('/crear-proyecto-investigacion', verificarToken, async (req, res) =>  {
+    const { nombre_proyecto, descripcion, fecha_fin, estado } = req.body;    
+    const fecha_inicio = new Date();
+    const fecha_fin_Date = new Date(fecha_fin);
+
+    if (fecha_fin_Date > fecha_inicio) {
+        try {
+            const values = [
+                nombre_proyecto,
+                descripcion,
+                fecha_inicio,
+                fecha_fin_Date,
+                estado
+            ];
+
+            const query = 'INSERT INTO Proyectos_Investigacion(nombre_proyecto, descripcion, fecha_inicio,' +
+                        'fecha_fin, estado) VALUES ($1, $2, $3, $4, $5) RETURNING id_proyecto, nombre_proyecto,' +
+                        'descripcion, fecha_inicio, fecha_fin, estado;';
+            const result = (await pool.query(query, values));
+
+            const rol = obtenernRol(req.usuario);
+            if (!rol || rol.nombre !== "Administrador") {
+                const queryAsignarPresidente = "UPDATE Socio SET socio_rol = 2 WHERE email = $1;";
+                const resultAsignarPresidente = (await pool.query(queryAsignarPresidente, [req.usuario.email]));
+            }
+
+            res.status(200).json({
+                message: 'Proyecto de investigación creado.',
+                proyecto: {
+                    id_proyecto: result.rows[0].id_proyecto,
+                    nombre_proyecto: result.rows[0].nombre_proyecto,
+                    descripcion: result.rows[0].descripcion,
+                    estado: result.rows[0].estado
+                }
+            });
+        }
+        catch (error) {
+            console.error("Error al intentar crear un proyecto de investigación: ", error.message);
+            res.status(500).json({ message: 'Error interno del servidor.' });
+        }
+    }
+    else {
+        res.status(403).json({ message: 'Fecha fin inválida.'});
+    }
+});
+
+// DELETE eliminar un proyecto de investigación
+router.delete('/eliminar-proyecto-investigacion', verificarToken, async (req, res) =>  {
+    const { id_proyecto } = req.body;
+    
+    const rol = await obtenernRol(req.usuario);
+    if (!rol || (rol.nombre !== 'Presidente' && rol.nombre !== 'Administrador')) {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
+    try {
+        const query = 'DELETE FROM Proyectos_Investigacion WHERE id_proyecto = $1;';
+        const result = (await pool.query(query, [id_proyecto]));
+
+        res.status(200).json({
+            message: 'Proyecto de investigación eliminado.'
+        });
+
+    }
+    catch (error) {
+        console.error("Error al intentar eliminar un proyecto de investigación: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// GET ver proyectos de investigación
+router.get('/proyectos-investigacion', verificarToken, async (req, res) =>  {
+    try {
+        const query = 'SELECT * FROM Proyectos_Investigacion;';
+        const listaProyectos = (await pool.query(query));
+
+        res.status(200).json({
+            message: 'Lista de proyectos de investigación.',
+            proyectos: {
+                listaProyectos: listaProyectos.rows
+            }
+        });
+
+    }
+    catch (error) {
+        console.error("Error al intentar listar los proyectos de investigación: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// POST ver proyectos de investigación
+router.post('/add-miembro-proyecto-investigacion', verificarToken, async (req, res) =>  {
+    const { socio, proyecto, rol_proyecto} = req.body;
+
+    const rol = await obtenernRol(req.usuario);
+    if (!rol || (rol.nombre !== 'Presidente' && rol.nombre !== 'Administrador')) {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
+    try {
+        const values = [
+            new Date(),
+            socio,
+            proyecto,
+            rol_proyecto
+        ];
+
+        const query = 'INSERT INTO Socio_Proyecto(fecha_registro, socio, proyecto, rol_proyecto)' +
+                      'VALUES ($1, $2, $3, $4) RETURNING socio, proyecto, rol_proyecto';
+        const result = (await pool.query(query, values));
+
+        res.status(200).json({
+            message: 'Miembro añadido al proyecto de investigación.',
+            miembro: {
+                socio: result.rows[0].socio,
+                proyecto: result.rows[0].proyecto,
+                rol_proyecto: result.rows[0].rol_proyecto
+            }
+        });
+
+    }
+    catch (error) {
+        console.error("Error al intentar añadir un miembro al proyecto de investigación: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });

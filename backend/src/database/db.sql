@@ -1,7 +1,7 @@
 -- SOCIO_ROL TABLE --
 CREATE TABLE IF NOT EXISTS Socio_Rol (
     id_socio_rol SERIAL PRIMARY KEY,
-    nombre VARCHAR(16) NOT NULL
+    nombre VARCHAR(50) NOT NULL
 );
 
 -- TIPO_SOCIO TABLE --
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS Socio (
     nombre VARCHAR(16) NOT NULL,
     apellidos VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(60) NOT NULL,
+    password VARCHAR(1000) NOT NULL,
     telefono VARCHAR(16) NOT NULL,
     fecha_nacimiento TIMESTAMP NOT NULL,
     fecha_alta TIMESTAMP NOT NULL,
@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS Notificaciones (
 -- PROYECTOS_INVESTIGACION TABLE --
 CREATE TABLE IF NOT EXISTS Proyectos_Investigacion (
     id_proyecto SERIAL PRIMARY KEY,
-    nombre_proyecto INT NOT NULL,
+    nombre_proyecto  VARCHAR(100) NOT NULL,
     descripcion VARCHAR(1000) NOT NULL,
     fecha_inicio TIMESTAMP NOT NULL,
     fecha_fin TIMESTAMP NOT NULL,
@@ -187,6 +187,7 @@ VALUES
     ('Tesorero'),
     ('Vocal'),
     ('Miembro comité'),
+    ('Miembro proyecto'),
     ('Socio');
 
 -- Insertar valores en la tabla Socio
@@ -200,3 +201,7 @@ VALUES
 INSERT INTO Socio (nombre, apellidos, email, password, telefono, fecha_nacimiento, fecha_alta, socio_rol, tipo_socio) 
 VALUES 
     ('admin', 'admin', 'admin@admin.com', '$2b$10$Y1rqKelTr4mRJL/RHtL18e0hj/eAvCGsW56TwROA9L/bTcvjCkfO.', '123456789', '2001-11-03 00:00:00', '2025-05-10 15:37:21.561', 1, 1);
+
+INSERT INTO Socio (nombre, apellidos, email, password, telefono, fecha_nacimiento, fecha_alta, socio_rol, tipo_socio) 
+VALUES 
+    ('Ángel', 'Cardoso Parreño', 'acp171@cloud1.ua.es', '$2b$10$SdT5faI11yQYepzIHzD33OhkgK9oNP77OHrI3Ri/Sppgn1yW2Vesm.', '123456789', '2001-11-03 00:00:00', '2025-05-10 15:37:21.561', 8, 2);
