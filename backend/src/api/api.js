@@ -227,14 +227,13 @@ router.put('/perfil', verificarToken, async (req, res) => {
 router.put('/asignar-rol', verificarToken, async (req, res) =>  {
     const { id_socio, rol, proyecto, comite, funcion } = req.body;    
 
+    const adminRol = await obtenernRol(req.usuario);
+    // Verifica si el usuario es administrador
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
     try {
-        const adminRol = await obtenernRol(req.usuario);
-
-        // Verifica si el usuario es administrador
-        if (!adminRol || adminRol.nombre !== 'Administrador') {
-            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-        }
-
         var query, values;
         switch(funcion) {
             case 'socio':
@@ -289,15 +288,13 @@ router.put('/asignar-rol', verificarToken, async (req, res) =>  {
 router.put('/asignar-rol-comite', verificarToken, async (req, res) =>  {
     const { id_socio, rol, comite } = req.body;    
 
+    const presidenteRol = await obtenernRol(req.usuario);
+    if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
+        console.log(req.usuario);
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
     try {
-        const presidenteRol = await obtenernRol(req.usuario);
-
-        // Verifica si el usuario es administrador
-        if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
-            console.log(req.usuario);
-            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-        }
-
         const values = [
             rol,
             id_socio,
@@ -327,15 +324,13 @@ router.put('/asignar-rol-comite', verificarToken, async (req, res) =>  {
 router.put('/asignar-rol-proyecto', verificarToken, async (req, res) =>  {
     const { id_socio, rol, proyecto } = req.body;    
 
+    const presidenteRol = await obtenernRol(req.usuario);
+    if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
+        console.log(req.usuario);
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
     try {
-        const presidenteRol = await obtenernRol(req.usuario);
-
-        // Verifica si el usuario es administrador
-        if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
-            console.log(req.usuario);
-            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-        }
-
         const values = [
             rol,
             id_socio,
@@ -364,14 +359,12 @@ router.put('/asignar-rol-proyecto', verificarToken, async (req, res) =>  {
 router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
     const { id_socio, proyecto, comite, funcion } = req.body;    
 
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
     try {
-        const adminRol = await obtenernRol(req.usuario);
-
-        // Verifica si el usuario es administrador
-        if (!adminRol || adminRol.nombre !== 'Administrador') {
-            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-        }
-
         var query, values;
         switch(funcion) {
             case 'socio':
@@ -423,15 +416,13 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
 router.delete('/eliminar-rol-comite', verificarToken, async (req, res) =>  {
     const { id_socio, comite } = req.body;    
 
+    const presidenteRol = await obtenernRol(req.usuario);
+    if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
+        console.log(req.usuario);
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
     try {
-        const presidenteRol = await obtenernRol(req.usuario);
-
-        // Verifica si el usuario es administrador
-        if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
-            console.log(req.usuario);
-            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-        }
-
         const values = [
             id_socio,
             comite
@@ -455,15 +446,13 @@ router.delete('/eliminar-rol-comite', verificarToken, async (req, res) =>  {
 router.delete('/eliminar-rol-proyecto', verificarToken, async (req, res) =>  {
     const { id_socio, proyecto } = req.body;    
 
+    const presidenteRol = await obtenernRol(req.usuario);
+    if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
+        console.log(req.usuario);
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
     try {
-        const presidenteRol = await obtenernRol(req.usuario);
-
-        // Verifica si el usuario es administrador
-        if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
-            console.log(req.usuario);
-            return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-        }
-
         const values = [
             id_socio,
             proyecto
@@ -535,10 +524,7 @@ router.delete('/eliminar-proyecto-investigacion', verificarToken, async (req, re
     const { id_proyecto } = req.body;
     
     const rol = await obtenernRol(req.usuario);
-
-    // Verifica si el usuario es administrador
     if (!rol || (rol.nombre !== 'Presidente' && rol.nombre !== 'Administrador')) {
-        console.log(rol.nombre);
         return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
     }
 
@@ -573,6 +559,43 @@ router.get('/proyectos-investigacion', verificarToken, async (req, res) =>  {
     }
     catch (error) {
         console.error("Error al intentar listar los proyectos de investigación: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// POST ver proyectos de investigación
+router.post('/add-miembro-proyecto-investigacion', verificarToken, async (req, res) =>  {
+    const { socio, proyecto, rol_proyecto} = req.body;
+
+    const rol = await obtenernRol(req.usuario);
+    if (!rol || (rol.nombre !== 'Presidente' && rol.nombre !== 'Administrador')) {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
+    try {
+        const values = [
+            new Date(),
+            socio,
+            proyecto,
+            rol_proyecto
+        ];
+
+        const query = 'INSERT INTO Socio_Proyecto(fecha_registro, socio, proyecto, rol_proyecto)' +
+                      'VALUES ($1, $2, $3, $4) RETURNING socio, proyecto, rol_proyecto';
+        const result = (await pool.query(query, values));
+
+        res.status(200).json({
+            message: 'Miembro añadido al proyecto de investigación.',
+            miembro: {
+                socio: result.rows[0].socio,
+                proyecto: result.rows[0].proyecto,
+                rol_proyecto: result.rows[0].rol_proyecto
+            }
+        });
+
+    }
+    catch (error) {
+        console.error("Error al intentar añadir un miembro al proyecto de investigación: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
