@@ -372,7 +372,7 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
                     id_socio
                 ];
 
-                query = 'DELETE Socio WHERE id_socio = $1;';
+                query = 'DELETE FROM Socio WHERE id_socio = $1;';
             break;
 
             case 'comite':
@@ -381,7 +381,7 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
                     comite
                 ];
 
-                query = 'DELETE Miembros_Comite WHERE socio = $1 AND comite = $2;';
+                query = 'DELETE FROM Miembros_Comite WHERE socio = $1 AND comite = $2;';
 
             break;
 
@@ -391,7 +391,7 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
                     proyecto
                 ];
 
-                query = 'DELETE Socio_Proyecto SET rol_proyecto = $1 WHERE socio = $1 AND proyecto = $2;';
+                query = 'DELETE FROM Socio_Proyecto SET rol_proyecto = $1 WHERE socio = $1 AND proyecto = $2;';
 
             break;
         }
@@ -428,7 +428,7 @@ router.delete('/eliminar-rol-comite', verificarToken, async (req, res) =>  {
             comite
         ];
 
-        const query = 'DELETE Miembros_Comite WHERE socio = $1 AND comite = $2;';
+        const query = 'DELETE FROM Miembros_Comite WHERE socio = $1 AND comite = $2;';
 
         const result = (await pool.query(query, values));
         res.status(200).json({
@@ -458,7 +458,7 @@ router.delete('/eliminar-rol-proyecto', verificarToken, async (req, res) =>  {
             proyecto
         ];
 
-        const  query = 'DELETE Socio_Proyecto WHERE socio = $1 AND proyecto = $2;';
+        const  query = 'DELETE FROM Socio_Proyecto WHERE socio = $1 AND proyecto = $2;';
 
         const result = (await pool.query(query, values));
         res.status(200).json({
