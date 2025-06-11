@@ -600,4 +600,84 @@ router.post('/add-miembro-proyecto-investigacion', verificarToken, async (req, r
     }
 });
 
+// POST crear un proyecto de investigación
+router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
+    const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
+    
+    if (fecha_evento_fin > fecha_evento_inicio) {
+        try {
+            const values = [
+                nombre_evento,
+                fecha_evento_inicio,
+                fecha_evento_fin,
+                descripcion_evento,
+                direccion
+            ];
+
+            const query = 'INSERT INTO Evento(nombre_evento, fecha_evento_inicio, fecha_evento_fin,' +
+                          'descripcion_evento, direccion) VALUES ($1, $2, $3, $4, $5) RETURNING id_evento,' +
+                          'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento;';
+            const result = (await pool.query(query, values));
+
+            res.status(200).json({
+                message: 'Evento cientifíco creado.',
+                proyecto: {
+                    id_evento: result.rows[0].id_evento,
+                    nombre_evento: result.rows[0].nombre_evento,
+                    fecha: fecha_evento_inicio + ' hasta ' + fecha_evento_fin,
+                    descripcion_evento: result.rows[0].descripcion_evento,
+                }
+            });
+        }
+        catch (error) {
+            console.error("Error al intentar crear un evento cientifíco: ", error.message);
+            res.status(500).json({ message: 'Error interno del servidor.' });
+        }
+    }
+    else {
+        res.status(403).json({ message: 'Fecha inválida.'});
+    }
+});
+
+// PUT modificar un proyecto de investigación
+router.put('/editar-evento-cientifico', verificarToken, async (req, res) =>  {
+    const { id_evento, nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
+    
+    if (fecha_evento_fin > fecha_evento_inicio) {
+        try {
+            const values = [
+                nombre_evento,
+                fecha_evento_inicio,
+                fecha_evento_fin,
+                descripcion_evento,
+                direccion,
+                id_evento
+            ];
+
+            const query = 'UPDATE Evento SET nombre_evento = $1, fecha_evento_inicio = $2, fecha_evento_fin = $3,' +
+                          'descripcion_evento = $4, direccion = $5 WHERE id_evento = $6 RETURNING id_evento,' +
+                          'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento;';
+            const result = (await pool.query(query, values));
+
+            res.status(200).json({
+                message: 'Evento cientifíco editado.',
+                proyecto: {
+                    id_evento: result.rows[0].id_evento,
+                    nombre_evento: result.rows[0].nombre_evento,
+                    fecha: fecha_evento_inicio + ' hasta ' + fecha_evento_fin,
+                    descripcion_evento: result.rows[0].descripcion_evento,
+                }
+            });
+        }
+        catch (error) {
+            console.error("Error al intentar editar un evento cientifíco: ", error.message);
+            res.status(500).json({ message: 'Error interno del servidor.' });
+        }
+    }
+    else {
+        res.status(403).json({ message: 'Fecha inválida.'});
+    }
+});
+
+
 module.exports = router;
