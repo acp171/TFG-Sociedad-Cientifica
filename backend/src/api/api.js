@@ -557,4 +557,24 @@ router.delete('/eliminar-proyecto-investigacion', verificarToken, async (req, re
     }
 });
 
+// GET ver proyectos de investigación
+router.get('/proyectos-investigacion', verificarToken, async (req, res) =>  {
+    try {
+        const query = 'SELECT * FROM Proyectos_Investigacion;';
+        const listaProyectos = (await pool.query(query));
+
+        res.status(200).json({
+            message: 'Lista de proyectos de investigación.',
+            proyectos: {
+                listaProyectos: listaProyectos.rows
+            }
+        });
+
+    }
+    catch (error) {
+        console.error("Error al intentar listar los proyectos de investigación: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
 module.exports = router;
