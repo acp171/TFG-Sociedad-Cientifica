@@ -544,7 +544,7 @@ router.delete('/eliminar-proyecto-investigacion', verificarToken, async (req, re
 });
 
 // GET ver proyectos de investigación
-router.get('/proyectos-investigacion', verificarToken, async (req, res) =>  {
+router.get('/listado-proyectos-investigacion', verificarToken, async (req, res) =>  {
     try {
         const query = 'SELECT * FROM Proyectos_Investigacion;';
         const listaProyectos = (await pool.query(query));
@@ -600,7 +600,7 @@ router.post('/add-miembro-proyecto-investigacion', verificarToken, async (req, r
     }
 });
 
-// POST crear un proyecto de investigación
+// POST crear un evento cientifíco
 router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
     const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
 
@@ -644,7 +644,7 @@ router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
     }
 });
 
-// PUT editar un proyecto de investigación
+// PUT editar un evento cientifíco
 router.put('/editar-evento-cientifico', verificarToken, async (req, res) =>  {
     const { id_evento, nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
 
@@ -689,7 +689,7 @@ router.put('/editar-evento-cientifico', verificarToken, async (req, res) =>  {
     }
 });
 
-// DELETE eliminar un proyecto de investigación
+// DELETE eliminar un evento cientifíco
 router.delete('/eliminar-evento-cientifico', verificarToken, async (req, res) =>  {
     const { id_evento } = req.body;
 
@@ -699,7 +699,7 @@ router.delete('/eliminar-evento-cientifico', verificarToken, async (req, res) =>
     }
     
     try {
-        const query = 'DELETE FROM Evento WHERE id_evento = $1';
+        const query = 'DELETE FROM Evento WHERE id_evento = $1;';
         const result = (await pool.query(query, [id_evento]));
 
         res.status(200).json({
@@ -708,6 +708,25 @@ router.delete('/eliminar-evento-cientifico', verificarToken, async (req, res) =>
     }
     catch (error) {
         console.error("Error al intentar eliminar un evento cientifíco: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// GET listado de eventos cientifícos
+router.get('/listado-eventos-cientificos', verificarToken, async (req, res) =>  {
+    try {
+        const query = 'SELECT * FROM Evento;';
+        const result = (await pool.query(query));
+
+        res.status(200).json({
+            message: 'Evento cientifíco eliminado.',
+            eventos: {
+                listaoEventos: result.rows
+            }
+        });
+    }
+    catch (error) {
+        console.error("Error al intentar listar los eventos cientifícos: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
