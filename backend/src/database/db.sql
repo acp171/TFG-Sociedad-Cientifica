@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS Notificaciones (
 -- PROYECTOS_INVESTIGACION TABLE --
 CREATE TABLE IF NOT EXISTS Proyectos_Investigacion (
     id_proyecto SERIAL PRIMARY KEY,
-    nombre_proyecto INT NOT NULL,
+    nombre_proyecto  VARCHAR(100) NOT NULL,
     descripcion VARCHAR(1000) NOT NULL,
     fecha_inicio TIMESTAMP NOT NULL,
     fecha_fin TIMESTAMP NOT NULL,
