@@ -639,7 +639,7 @@ router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
     }
 });
 
-// PUT modificar un proyecto de investigación
+// PUT editar un proyecto de investigación
 router.put('/editar-evento-cientifico', verificarToken, async (req, res) =>  {
     const { id_evento, nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
     
