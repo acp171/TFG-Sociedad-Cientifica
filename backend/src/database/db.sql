@@ -33,8 +33,9 @@ CREATE TABLE IF NOT EXISTS Direccion (
     id_direccion SERIAL PRIMARY KEY,
     calle VARCHAR(100) NOT NULL,
     ciudad VARCHAR(50) NOT NULL,
-    provincia VARCHAR(50),
-    socio INT NOT NULL,
+    codigo_postal VARCHAR(10) NOT NULL,
+    provincia VARCHAR(50) NOT NULL,
+    socio INT,
     CONSTRAINT FK_DIRECCION_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio)
 );
 
@@ -190,18 +191,20 @@ VALUES
     ('Miembro proyecto'),
     ('Socio');
 
--- Insertar valores en la tabla Socio
+-- Insertar valores en la tabla Tipo_Socio
 INSERT INTO Tipo_Socio (nombre_tipo, descripcion, cuota) 
 VALUES 
     ('Estudiante', 'Miembro que se encuentra en formación académica.', 50.0),
     ('Profesional', 'Miembro con experiencia y/o titulación profesional.', 100.0),
     ('Honorario', 'Miembro que contribuye de manera honorífica.', 0.0);
 
--- Insertar valores en la tabla Tipo_Socio
+-- Insertar valores en la tabla Socio
 INSERT INTO Socio (nombre, apellidos, email, password, telefono, fecha_nacimiento, fecha_alta, socio_rol, tipo_socio) 
 VALUES 
-    ('admin', 'admin', 'admin@admin.com', '$2b$10$Y1rqKelTr4mRJL/RHtL18e0hj/eAvCGsW56TwROA9L/bTcvjCkfO.', '123456789', '2001-11-03 00:00:00', '2025-05-10 15:37:21.561', 1, 1);
-
-INSERT INTO Socio (nombre, apellidos, email, password, telefono, fecha_nacimiento, fecha_alta, socio_rol, tipo_socio) 
-VALUES 
+    ('admin', 'admin', 'admin@admin.com', '$2b$10$Y1rqKelTr4mRJL/RHtL18e0hj/eAvCGsW56TwROA9L/bTcvjCkfO.', '123456789', '2001-11-03 00:00:00', '2025-05-10 15:37:21.561', 1, 1),
     ('Ángel', 'Cardoso Parreño', 'acp171@cloud1.ua.es', '$2b$10$SdT5faI11yQYepzIHzD33OhkgK9oNP77OHrI3Ri/Sppgn1yW2Vesm.', '123456789', '2001-11-03 00:00:00', '2025-05-10 15:37:21.561', 8, 2);
+
+-- Insertar valores en la tabla Direccion
+INSERT INTO Direccion(calle, ciudad, codigo_postal, provincia) 
+VALUES 
+    ('Carrer del Filet de Fora, 1', 'Elche', '03201', 'Alicante');

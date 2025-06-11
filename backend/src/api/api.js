@@ -544,7 +544,7 @@ router.delete('/eliminar-proyecto-investigacion', verificarToken, async (req, re
 });
 
 // GET ver proyectos de investigación
-router.get('/proyectos-investigacion', verificarToken, async (req, res) =>  {
+router.get('/listado-proyectos-investigacion', verificarToken, async (req, res) =>  {
     try {
         const query = 'SELECT * FROM Proyectos_Investigacion;';
         const listaProyectos = (await pool.query(query));
@@ -599,5 +599,137 @@ router.post('/add-miembro-proyecto-investigacion', verificarToken, async (req, r
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
+
+// POST crear un evento cientifíco
+router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
+    const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
+
+    const rol = await obtenernRol(req.usuario);
+    if (!rol || (rol.nombre !== 'Presidente' && rol.nombre !== 'Administrador')) {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+    
+    if (fecha_evento_fin > fecha_evento_inicio) {
+        try {
+            const values = [
+                nombre_evento,
+                fecha_evento_inicio,
+                fecha_evento_fin,
+                descripcion_evento,
+                direccion
+            ];
+
+            const query = 'INSERT INTO Evento(nombre_evento, fecha_evento_inicio, fecha_evento_fin,' +
+                          'descripcion_evento, direccion) VALUES ($1, $2, $3, $4, $5) RETURNING id_evento,' +
+                          'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento;';
+            const result = (await pool.query(query, values));
+
+            res.status(200).json({
+                message: 'Evento cientifíco creado.',
+                proyecto: {
+                    id_evento: result.rows[0].id_evento,
+                    nombre_evento: result.rows[0].nombre_evento,
+                    fecha: fecha_evento_inicio + ' hasta ' + fecha_evento_fin,
+                    descripcion_evento: result.rows[0].descripcion_evento,
+                }
+            });
+        }
+        catch (error) {
+            console.error("Error al intentar crear un evento cientifíco: ", error.message);
+            res.status(500).json({ message: 'Error interno del servidor.' });
+        }
+    }
+    else {
+        res.status(403).json({ message: 'Fecha inválida.'});
+    }
+});
+
+// PUT editar un evento cientifíco
+router.put('/editar-evento-cientifico', verificarToken, async (req, res) =>  {
+    const { id_evento, nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
+
+    const rol = await obtenernRol(req.usuario);
+    if (!rol || rol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+    
+    if (fecha_evento_fin > fecha_evento_inicio) {
+        try {
+            const values = [
+                nombre_evento,
+                fecha_evento_inicio,
+                fecha_evento_fin,
+                descripcion_evento,
+                direccion,
+                id_evento
+            ];
+
+            const query = 'UPDATE Evento SET nombre_evento = $1, fecha_evento_inicio = $2, fecha_evento_fin = $3,' +
+                          'descripcion_evento = $4, direccion = $5 WHERE id_evento = $6 RETURNING id_evento,' +
+                          'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento;';
+            const result = (await pool.query(query, values));
+
+            res.status(200).json({
+                message: 'Evento cientifíco editado.',
+                proyecto: {
+                    id_evento: result.rows[0].id_evento,
+                    nombre_evento: result.rows[0].nombre_evento,
+                    fecha: fecha_evento_inicio + ' hasta ' + fecha_evento_fin,
+                    descripcion_evento: result.rows[0].descripcion_evento,
+                }
+            });
+        }
+        catch (error) {
+            console.error("Error al intentar editar un evento cientifíco: ", error.message);
+            res.status(500).json({ message: 'Error interno del servidor.' });
+        }
+    }
+    else {
+        res.status(403).json({ message: 'Fecha inválida.'});
+    }
+});
+
+// DELETE eliminar un evento cientifíco
+router.delete('/eliminar-evento-cientifico', verificarToken, async (req, res) =>  {
+    const { id_evento } = req.body;
+
+    const rol = await obtenernRol(req.usuario);
+    if (!rol || rol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+    
+    try {
+        const query = 'DELETE FROM Evento WHERE id_evento = $1;';
+        const result = (await pool.query(query, [id_evento]));
+
+        res.status(200).json({
+            message: 'Evento cientifíco eliminado.',
+        });
+    }
+    catch (error) {
+        console.error("Error al intentar eliminar un evento cientifíco: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// GET listado de eventos cientifícos
+router.get('/listado-eventos-cientificos', verificarToken, async (req, res) =>  {
+    try {
+        const query = 'SELECT * FROM Evento;';
+        const result = (await pool.query(query));
+
+        res.status(200).json({
+            message: 'Evento cientifíco eliminado.',
+            eventos: {
+                listaoEventos: result.rows
+            }
+        });
+    }
+    catch (error) {
+        console.error("Error al intentar listar los eventos cientifícos: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
 
 module.exports = router;
