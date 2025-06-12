@@ -841,4 +841,40 @@ router.delete('/eliminar-articulo-cientifico', verificarToken, async (req, res) 
     }
 });
 
+// POST hacer un comentario en articulo científico
+router.post('/comentario-articulo-cientifico', verificarToken, async (req, res) => {
+    const { comentario, publicacion } = req.body;
+
+    if (!comentario) {
+        res.status(400).json({ message: 'Falta el comentario.' });
+    }
+
+    try {
+        values = [
+            comentario,
+            req.usuario.id,
+            publicacion,
+            new Date(),
+            true
+        ];
+
+        const query = 'INSERT INTO Comentario_Publicacion(comentario, socio, publicacion, fecha_comentario, visibilidad)' +
+                      'VALUES($1, $2, $3, $4, $5) RETURNING id_comentario, socio, publicacion, comentario;';
+        const result = await pool.query(query, values);
+        res.status(200).json({
+            message: 'Comentario en artículo científico publicado.',
+            comentario: {
+                id_comentario: result.rows[0].id_comentario,
+                socio: result.rows[0].socio,
+                publicacion: result.rows[0].publicacion,
+                comentario: result.rows[0].comentario
+            }
+        });
+
+    } catch (error) {
+        console.error("Error al intentar publicar un comenatario en artículo científico: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
 module.exports = router;

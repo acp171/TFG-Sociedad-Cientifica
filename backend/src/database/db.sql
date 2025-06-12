@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS Publicaciones (
 -- COMENTARIO_PUBLICACION TABLE --
 CREATE TABLE IF NOT EXISTS Comentario_Publicacion (
     id_comentario SERIAL,
-    comentario VARCHAR(256) NOT NULL,
+    comentario TEXT NOT NULL,
     socio INT NOT NULL,
     publicacion INT NOT NULL,
     fecha_comentario TIMESTAMP NOT NULL,
