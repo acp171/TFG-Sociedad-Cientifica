@@ -8,7 +8,8 @@ const jwt = require('jsonwebtoken');
 // Inicializations
 const router = Router();
 const pool = require('../database');
-const upload = require('../utils/upload'); //
+const upload = require('../utils/upload');
+const eliminarArchivoPDF = require('../utils/deleteFile');
 const saltRounds = 10;
 const SECRET_KEY = process.env.JWT_SECRET
 
@@ -601,7 +602,7 @@ router.post('/add-miembro-proyecto-investigacion', verificarToken, async (req, r
     }
 });
 
-// POST crear un evento cientifíco
+// POST crear un evento científico
 router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
     const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
 
@@ -626,7 +627,7 @@ router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
             const result = (await pool.query(query, values));
 
             res.status(200).json({
-                message: 'Evento cientifíco creado.',
+                message: 'Evento científico creado.',
                 proyecto: {
                     id_evento: result.rows[0].id_evento,
                     nombre_evento: result.rows[0].nombre_evento,
@@ -636,7 +637,7 @@ router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
             });
         }
         catch (error) {
-            console.error("Error al intentar crear un evento cientifíco: ", error.message);
+            console.error("Error al intentar crear un evento científico: ", error.message);
             res.status(500).json({ message: 'Error interno del servidor.' });
         }
     }
@@ -645,7 +646,7 @@ router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
     }
 });
 
-// PUT editar un evento cientifíco
+// PUT editar un evento científico
 router.put('/editar-evento-cientifico', verificarToken, async (req, res) =>  {
     const { id_evento, nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
 
@@ -671,7 +672,7 @@ router.put('/editar-evento-cientifico', verificarToken, async (req, res) =>  {
             const result = (await pool.query(query, values));
 
             res.status(200).json({
-                message: 'Evento cientifíco editado.',
+                message: 'Evento científico editado.',
                 proyecto: {
                     id_evento: result.rows[0].id_evento,
                     nombre_evento: result.rows[0].nombre_evento,
@@ -681,7 +682,7 @@ router.put('/editar-evento-cientifico', verificarToken, async (req, res) =>  {
             });
         }
         catch (error) {
-            console.error("Error al intentar editar un evento cientifíco: ", error.message);
+            console.error("Error al intentar editar un evento científico: ", error.message);
             res.status(500).json({ message: 'Error interno del servidor.' });
         }
     }
@@ -690,7 +691,7 @@ router.put('/editar-evento-cientifico', verificarToken, async (req, res) =>  {
     }
 });
 
-// DELETE eliminar un evento cientifíco
+// DELETE eliminar un evento científico
 router.delete('/eliminar-evento-cientifico', verificarToken, async (req, res) =>  {
     const { id_evento } = req.body;
 
@@ -704,35 +705,35 @@ router.delete('/eliminar-evento-cientifico', verificarToken, async (req, res) =>
         const result = (await pool.query(query, [id_evento]));
 
         res.status(200).json({
-            message: 'Evento cientifíco eliminado.',
+            message: 'Evento científico eliminado.',
         });
     }
     catch (error) {
-        console.error("Error al intentar eliminar un evento cientifíco: ", error.message);
+        console.error("Error al intentar eliminar un evento científico: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
 
-// GET listado de eventos cientifícos
+// GET listado de eventos científicos
 router.get('/listado-eventos-cientificos', verificarToken, async (req, res) =>  {
     try {
         const query = 'SELECT * FROM Evento;';
         const result = (await pool.query(query));
 
         res.status(200).json({
-            message: 'Evento cientifíco eliminado.',
+            message: 'Evento científico eliminado.',
             eventos: {
                 listaoEventos: result.rows
             }
         });
     }
     catch (error) {
-        console.error("Error al intentar listar los eventos cientifícos: ", error.message);
+        console.error("Error al intentar listar los eventos científicos: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
 
-// POST /publicar-articulo-cientifico
+// POST publicar articulo científico
 router.post('/publicar-articulo-cientifico', verificarToken, upload.single('pdf'), async (req, res) => {
     const { titulo, contenido } = req.body;
     var rutaPDF;
@@ -793,7 +794,49 @@ router.post('/publicar-articulo-cientifico', verificarToken, upload.single('pdf'
         });
 
     } catch (error) {
-        console.error("Error al subir PDF:", error.message);
+        console.error("Error al intentar publicar un artículo científico: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// DELETE eliminar artículo científico
+router.delete('/eliminar-articulo-cientifico', verificarToken, async (req, res) => {
+    const { id_publicacion } = req.body;
+
+    try {
+        const querySelect = 'SELECT contenidoPDF, socio FROM Publicaciones WHERE id_publicacion = $1';
+        const result = await pool.query(querySelect, [id_publicacion]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Publicación no encontrada.' });
+        }
+
+        const publicacion = result.rows[0];
+
+        const adminRol = obtenernRol(req.usuario);
+        const esAutor = publicacion.socio === req.usuario.id;
+
+        if (!adminRol || adminRol.nombre !== 'Administrador') {
+            if (!esAutor) {
+                return res.status(403).json({ message: 'No autorizado. Se requieren permisos.' });
+            }
+        }
+
+        // Elimina el archivo si existe
+        if (publicacion.contenidopdf) {
+            console.log('Ejecutando eliminación de PDF...');
+            eliminarArchivoPDF(publicacion.contenidopdf);
+        }
+
+        const queryDelete = 'DELETE FROM Publicaciones WHERE id_publicacion = $1;';
+        await pool.query(queryDelete, [id_publicacion]);
+
+        res.status(200).json({
+            message: 'Artículo científico eliminado.',
+        });
+
+    } catch (error) {
+        console.error("Error al intentar eliminar la publicación: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
