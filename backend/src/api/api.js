@@ -47,6 +47,14 @@ async function obtenernRol(usuario) {
     return socioRol;
 }
 
+async function obtenerSocio(id) {
+    const querySocio = 'SELECT * FROM Socio WHERE id_socio = $1;';
+    const resultSoscio = (await pool.query(querySocio, [id]));
+    const socio = resultSoscio.rows[0];
+
+    return socio;
+}
+
 
 // ROUTES
 // POST login
@@ -904,6 +912,54 @@ router.put('/moderar-comentario', verificarToken, async (req, res) => {
 
     } catch (error) {
         console.error("Error al intentar moderar un comenatario en artículo científico: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// POST crear comité científico
+router.post('/crear-comite-cientifico', verificarToken, async (req, res) => {
+    const { nombre_comite, descripcion, socio } = req.body;
+
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
+    try {
+        const valuesComite = [
+            nombre_comite,
+            descripcion,
+            new Date()
+        ];
+        const queryComite = `INSERT INTO Comite(nombre_comite, descripcion, fecha_creacion) 
+                       VALUES ($1, $2, $3)
+                       RETURNING id_comite, nombre_comite, descripcion;`;
+        const resultComite = await pool.query(queryComite, valuesComite);
+
+        const valuesAsignarPresidente = [
+            new Date(),
+            socio,
+            resultComite.rows[0].id_comite,
+            "1"
+        ];
+        const queryAsignarPresidente = `INSERT INTO Miembros_Comite(fecha_registro, socio, comite, rol_comite)
+                                        VALUES ($1, $2, $3, $4)
+                                        RETURNING socio;`;
+        const resultAsignarPresidente = await pool.query(queryAsignarPresidente, valuesAsignarPresidente);
+
+        const socioPresidente = await obtenerSocio(socio);
+
+        res.status(200).json({
+            message: 'Comité científico creado.',
+            comite: {
+                id_comite: resultComite.rows[0].id_comite,
+                nombre_comite: resultComite.rows[0].nombre_comite,
+                presidente: socioPresidente.nombre + ' ' + socioPresidente.apellidos + ' es el Presidente.',
+            }
+        });
+
+    } catch (error) {
+        console.error("Error al intentar crear un comité científico: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
