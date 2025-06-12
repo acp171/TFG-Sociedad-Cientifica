@@ -56,7 +56,10 @@ async function obtenerSocio(id) {
 }
 
 async function obtenerPresidenteComite(comite) {
-    const queryPresidenteComite= 'SELECT * FROM Miembros_Comite WHERE comite = $1 AND rol_comite = 1;';
+    const queryPresidenteComite = `SELECT * FROM Miembros_Comite 
+                                   WHERE comite = $1 AND 
+                                   rol_comite = (
+                                   SELECT id_socio_rol FROM Socio_Rol WHERE nombre = 'Presidente');`;
     const resultPresidenteComite = (await pool.query(queryPresidenteComite, [comite]));
     const presidenteComite = resultPresidenteComite.rows[0];
 
@@ -939,7 +942,7 @@ router.post('/crear-comite-cientifico', verificarToken, async (req, res) => {
             new Date(),
             socio,
             resultComite.rows[0].id_comite,
-            "1"
+            "2"
         ];
         const queryAsignarPresidente = `INSERT INTO Miembros_Comite(fecha_registro, socio, comite, rol_comite)
                                         VALUES ($1, $2, $3, $4)
@@ -1031,6 +1034,48 @@ router.delete('/eliminar-miembro-comite', verificarToken, async (req, res) =>  {
     }
     catch (error) {
         console.error("Error al eliminar miembro siendo presidente de comité: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// GET listado de comités científicos y sus miembros
+router.get('/listado-comites-cientificos', verificarToken, async (req, res) =>  {
+    try {
+        const query = `SELECT C.id_comite, C.nombre_comite, C.descripcion, S.id_socio,
+                       S.nombre AS nombre_socio, S.apellidos, SR.nombre AS rol
+                       FROM Comite C
+                       JOIN Miembros_Comite MC ON C.id_comite = MC.comite
+                       JOIN Socio S ON MC.socio = S.id_socio
+                       JOIN Socio_Rol SR ON MC.rol_comite = SR.id_socio_rol
+                       ORDER BY C.id_comite;`;
+    const result = await pool.query(query);
+
+    // Reorganizar los datos en estructura por comité
+    const comites = {};
+
+    result.rows.forEach(row => {
+      if (!comites[row.id_comite]) {
+        comites[row.id_comite] = {
+          id_comite: row.id_comite,
+          nombre_comite: row.nombre_comite,
+          descripcion: row.descripcion,
+          fecha_creacion: row.fecha_creacion,
+          miembros: []
+        };
+      }
+
+      comites[row.id_comite].miembros.push({
+        id_socio: row.id_socio,
+        nombre_socio: row.nombre_socio + ' ' + row.apellidos,
+        rol: row.rol,
+        fecha_registro: row.fecha_registro
+      });
+    });
+
+    res.status(200).json(Object.values(comites));
+    }
+    catch (error) {
+        console.error("Error al listar comités científicos.", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
