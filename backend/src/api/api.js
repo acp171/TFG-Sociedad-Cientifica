@@ -47,6 +47,25 @@ async function obtenernRol(usuario) {
     return socioRol;
 }
 
+async function obtenerSocio(id) {
+    const querySocio = 'SELECT * FROM Socio WHERE id_socio = $1;';
+    const resultSoscio = (await pool.query(querySocio, [id]));
+    const socio = resultSoscio.rows[0];
+
+    return socio;
+}
+
+async function obtenerPresidenteComite(comite) {
+    const queryPresidenteComite = `SELECT * FROM Miembros_Comite 
+                                   WHERE comite = $1 AND 
+                                   rol_comite = (
+                                   SELECT id_socio_rol FROM Socio_Rol WHERE nombre = 'Presidente');`;
+    const resultPresidenteComite = (await pool.query(queryPresidenteComite, [comite]));
+    const presidenteComite = resultPresidenteComite.rows[0];
+
+    return presidenteComite;
+}
+
 
 // ROUTES
 // POST login
@@ -414,36 +433,6 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
     }
 });
 
-// DELETE eliminar rol del comité siendo presidente de comité
-router.delete('/eliminar-rol-comite', verificarToken, async (req, res) =>  {
-    const { id_socio, comite } = req.body;    
-
-    const presidenteRol = await obtenernRol(req.usuario);
-    if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
-        console.log(req.usuario);
-        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-    }
-
-    try {
-        const values = [
-            id_socio,
-            comite
-        ];
-
-        const query = 'DELETE FROM Miembros_Comite WHERE socio = $1 AND comite = $2;';
-
-        const result = (await pool.query(query, values));
-        res.status(200).json({
-            message: 'Rol eliminardo.'
-        });
-
-    }
-    catch (error) {
-        console.error("Error al eliminar rol siendo presidente de comité: ", error.message);
-        res.status(500).json({ message: 'Error interno del servidor.' });
-    }
-});
-
 // DELETE eliminar rol siendo presidente de un proyecto de investigación
 router.delete('/eliminar-rol-proyecto', verificarToken, async (req, res) =>  {
     const { id_socio, proyecto } = req.body;    
@@ -477,6 +466,11 @@ router.delete('/eliminar-rol-proyecto', verificarToken, async (req, res) =>  {
 // POST crear un proyecto de investigación
 router.post('/crear-proyecto-investigacion', verificarToken, async (req, res) =>  {
     const { nombre_proyecto, descripcion, fecha_fin, estado } = req.body;    
+    
+    if (!nombre_proyecto || !descripcion || !fecha_fin || !estado) {
+        return res.status(400).json({ message: 'Faltan datos.' });
+    }
+
     const fecha_inicio = new Date();
     const fecha_fin_Date = new Date(fecha_fin);
 
@@ -569,6 +563,10 @@ router.get('/listado-proyectos-investigacion', verificarToken, async (req, res) 
 router.post('/add-miembro-proyecto-investigacion', verificarToken, async (req, res) =>  {
     const { socio, proyecto, rol_proyecto} = req.body;
 
+    if (!socio || !proyecto || !rol_proyecto) {
+        return res.status(400).json({ message: 'Faltan datos.' });
+    }
+
     const rol = await obtenernRol(req.usuario);
     if (!rol || (rol.nombre !== 'Presidente' && rol.nombre !== 'Administrador')) {
         return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
@@ -605,6 +603,10 @@ router.post('/add-miembro-proyecto-investigacion', verificarToken, async (req, r
 // POST crear un evento científico
 router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
     const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
+
+    if (!nombre_evento || !fecha_evento_inicio || !fecha_evento_fin || !descripcion_evento || !direccion) {
+        return res.status(400).json({ message: 'Faltan datos.' });
+    }
 
     const rol = await obtenernRol(req.usuario);
     if (!rol || (rol.nombre !== 'Presidente' && rol.nombre !== 'Administrador')) {
@@ -649,6 +651,10 @@ router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
 // PUT editar un evento científico
 router.put('/editar-evento-cientifico', verificarToken, async (req, res) =>  {
     const { id_evento, nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
+
+    if (!id_evento || !nombre_evento || !fecha_evento_inicio || !fecha_evento_fin || !descripcion_evento || !direccion) {
+        return res.status(400).json({ message: 'Faltan datos.' });
+    }
 
     const rol = await obtenernRol(req.usuario);
     if (!rol || rol.nombre !== 'Administrador') {
@@ -738,7 +744,7 @@ router.post('/publicar-articulo-cientifico', verificarToken, upload.single('pdf'
     const { titulo, contenido } = req.body;
     var rutaPDF;
 
-    if (!req.file && !contenido) {
+    if (!titulo || (!req.file && !contenido)) {
         return res.status(400).json({ message: 'Faltan datos.' });
     }
     else if (req.file) {
@@ -904,6 +910,172 @@ router.put('/moderar-comentario', verificarToken, async (req, res) => {
 
     } catch (error) {
         console.error("Error al intentar moderar un comenatario en artículo científico: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// POST crear comité científico
+router.post('/crear-comite-cientifico', verificarToken, async (req, res) => {
+    const { nombre_comite, descripcion, socio } = req.body;
+
+    if (!nombre_comite || !descripcion || !socio) {
+        return res.status(400).json({ message: 'Faltan datos.' });
+    }
+
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
+    try {
+        const valuesComite = [
+            nombre_comite,
+            descripcion,
+            new Date()
+        ];
+        const queryComite = `INSERT INTO Comite(nombre_comite, descripcion, fecha_creacion) 
+                       VALUES ($1, $2, $3)
+                       RETURNING id_comite, nombre_comite, descripcion;`;
+        const resultComite = await pool.query(queryComite, valuesComite);
+
+        const valuesAsignarPresidente = [
+            new Date(),
+            socio,
+            resultComite.rows[0].id_comite,
+            "2"
+        ];
+        const queryAsignarPresidente = `INSERT INTO Miembros_Comite(fecha_registro, socio, comite, rol_comite)
+                                        VALUES ($1, $2, $3, $4)
+                                        RETURNING socio;`;
+        const resultAsignarPresidente = await pool.query(queryAsignarPresidente, valuesAsignarPresidente);
+
+        const socioPresidente = await obtenerSocio(socio);
+
+        res.status(200).json({
+            message: 'Comité científico creado.',
+            comite: {
+                id_comite: resultComite.rows[0].id_comite,
+                nombre_comite: resultComite.rows[0].nombre_comite,
+                presidente: socioPresidente.nombre + ' ' + socioPresidente.apellidos + ' es el Presidente.'
+            }
+        });
+
+    } catch (error) {
+        console.error("Error al intentar crear un comité científico: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// POST añadir miembros al comité científico
+router.post('/add-miembro-comite-cientifico', verificarToken, async (req, res) => {
+    const { socio, comite, rol_comite } = req.body;
+
+    if (!socio || !comite || !rol_comite) {
+        return res.status(400).json({ message: 'Faltan datos.' });
+    }
+
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        const presidenteComite = await obtenerPresidenteComite(comite);
+        console.log(presidenteComite);
+        if (presidenteComite.socio !== req.usuario.id) {
+            return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+        }
+    }
+
+    try {
+        const valuesAsignarPresidente = [
+            new Date(),
+            socio,
+            comite,
+            rol_comite
+        ];
+        const queryNuevoMiembro = `INSERT INTO Miembros_Comite(fecha_registro, socio, comite, rol_comite)
+                                   VALUES ($1, $2, $3, $4)
+                                   RETURNING socio, comite, rol_comite;`;
+        const resultNuevoMiembro = await pool.query(queryNuevoMiembro, valuesAsignarPresidente);
+
+        res.status(200).json({
+            message: 'Miembro añadido al comité científico.',
+            comite: {
+                comite: resultNuevoMiembro.rows[0].comite,
+                socio: resultNuevoMiembro.rows[0].socio,
+                rol_comite: resultNuevoMiembro.rows[0].rol_comite
+            }
+        });
+
+    } catch (error) {
+        console.error("Error al intentar añadir un miembro al comité científico: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// DELETE eliminar miembro del comité siendo presidente de comité
+router.delete('/eliminar-miembro-comite', verificarToken, async (req, res) =>  {
+    const { socio, comite } = req.body;    
+
+    const presidenteComite = await obtenerPresidenteComite(comite);
+    if (!presidenteComite || presidenteComite.socio !== req.usuario.id) {
+        return res.status(403).json({ message: 'No autorizado. Se requieren permisos.' });
+    }
+
+    try {
+        const values = [
+            socio,
+            comite
+        ];
+
+        const query = 'DELETE FROM Miembros_Comite WHERE socio = $1 AND comite = $2;';
+        const result = (await pool.query(query, values));
+        res.status(200).json({
+            message: 'Miembro eliminado del comité científico.'
+        });
+
+    }
+    catch (error) {
+        console.error("Error al eliminar miembro siendo presidente de comité: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// GET listado de comités científicos y sus miembros
+router.get('/listado-comites-cientificos', verificarToken, async (req, res) =>  {
+    try {
+        const query = `SELECT C.id_comite, C.nombre_comite, C.descripcion, S.id_socio,
+                       S.nombre AS nombre_socio, S.apellidos, SR.nombre AS rol
+                       FROM Comite C
+                       JOIN Miembros_Comite MC ON C.id_comite = MC.comite
+                       JOIN Socio S ON MC.socio = S.id_socio
+                       JOIN Socio_Rol SR ON MC.rol_comite = SR.id_socio_rol
+                       ORDER BY C.id_comite;`;
+    const result = await pool.query(query);
+
+    // Reorganizar los datos en estructura por comité
+    const comites = {};
+
+    result.rows.forEach(row => {
+      if (!comites[row.id_comite]) {
+        comites[row.id_comite] = {
+          id_comite: row.id_comite,
+          nombre_comite: row.nombre_comite,
+          descripcion: row.descripcion,
+          fecha_creacion: row.fecha_creacion,
+          miembros: []
+        };
+      }
+
+      comites[row.id_comite].miembros.push({
+        id_socio: row.id_socio,
+        nombre_socio: row.nombre_socio + ' ' + row.apellidos,
+        rol: row.rol,
+        fecha_registro: row.fecha_registro
+      });
+    });
+
+    res.status(200).json(Object.values(comites));
+    }
+    catch (error) {
+        console.error("Error al listar comités científicos.", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
