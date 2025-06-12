@@ -43,7 +43,8 @@ CREATE TABLE IF NOT EXISTS Direccion (
 CREATE TABLE IF NOT EXISTS Publicaciones (
     id_publicacion SERIAL PRIMARY KEY,
     titulo VARCHAR(1000) NOT NULL,
-    contenido VARCHAR(256),
+    contenido TEXT,
+    contenidopdf VARCHAR(1000),
     fecha_publicacion TIMESTAMP NOT NULL,
     socio INT NOT NULL,
     CONSTRAINT FK_PUBLICACION_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio)
