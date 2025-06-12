@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "dotenv -e .env.production -- node src/app.js",
-    "dev": "dotenv -e .env.development -- node src/app.js"  
+    "dev": "dotenv -e .env.development -- node src/app.js"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +16,7 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.1",
     "pg": "^8.15.6"
   },
   "devDependencies": {

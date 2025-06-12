@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 // Inicializations
 const router = Router();
 const pool = require('../database');
+const upload = require('../utils/upload'); //
 const saltRounds = 10;
 const SECRET_KEY = process.env.JWT_SECRET
 
@@ -731,5 +732,70 @@ router.get('/listado-eventos-cientificos', verificarToken, async (req, res) =>  
     }
 });
 
+// POST /publicar-articulo-cientifico
+router.post('/publicar-articulo-cientifico', verificarToken, upload.single('pdf'), async (req, res) => {
+    const { titulo, contenido } = req.body;
+    var rutaPDF;
+
+    if (!req.file && !contenido) {
+        return res.status(400).json({ message: 'Faltan datos.' });
+    }
+    else if (req.file) {
+        rutaPDF = `/uploads/pdfs/${req.file.filename}`;
+    }
+
+    try {
+        var query, values;
+
+        if (req.file && !contenido) {
+            values = [
+                titulo,
+                rutaPDF,
+                new Date(),
+                req.usuario.id
+            ];
+    
+            query = 'INSERT INTO Publicaciones(titulo, contenidoPDF, fecha_publicacion, socio)' +
+                          'VALUES($1, $2, $3, $4) RETURNING id_publicacion, titulo, socio;';
+        }
+        else if (!req.file && contenido) {
+            values = [
+                titulo,
+                contenido,
+                new Date(),
+                req.usuario.id
+            ];
+    
+            query = 'INSERT INTO Publicaciones(titulo, contenido, fecha_publicacion, socio)' +
+                          'VALUES($1, $2, $3, $4) RETURNING id_publicacion, titulo, socio;';
+        }
+        else {
+            values = [
+                titulo,
+                contenido,
+                rutaPDF,
+                new Date(),
+                req.usuario.id
+            ];
+    
+            query = 'INSERT INTO Publicaciones(titulo, contenido, contenidoPDF, fecha_publicacion, socio)' +
+                          'VALUES($1, $2, $3, $4, $5) RETURNING id_publicacion, titulo, socio;';
+        }
+        
+        const result = await pool.query(query, values);
+        res.status(200).json({
+            message: 'Artículo científico publicado.',
+            publicacion: {
+                id_publicacion: result.rows[0].id_publicacion,
+                titulo: result.rows[0].titulo,
+                socio: result.rows[0].socio
+            }
+        });
+
+    } catch (error) {
+        console.error("Error al subir PDF:", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
 
 module.exports = router;
