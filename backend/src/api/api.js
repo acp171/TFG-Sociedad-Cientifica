@@ -841,4 +841,71 @@ router.delete('/eliminar-articulo-cientifico', verificarToken, async (req, res) 
     }
 });
 
+// POST hacer un comentario en articulo científico
+router.post('/comentario-articulo-cientifico', verificarToken, async (req, res) => {
+    const { comentario, publicacion } = req.body;
+
+    if (!comentario) {
+        res.status(400).json({ message: 'Falta el comentario.' });
+    }
+
+    try {
+        values = [
+            comentario,
+            req.usuario.id,
+            publicacion,
+            new Date(),
+            true
+        ];
+
+        const query = 'INSERT INTO Comentario_Publicacion(comentario, socio, publicacion, fecha_comentario, visibilidad)' +
+                      'VALUES($1, $2, $3, $4, $5) RETURNING id_comentario, socio, publicacion, comentario;';
+        const result = await pool.query(query, values);
+        res.status(200).json({
+            message: 'Comentario en artículo científico publicado.',
+            comentario: {
+                id_comentario: result.rows[0].id_comentario,
+                socio: result.rows[0].socio,
+                publicacion: result.rows[0].publicacion,
+                comentario: result.rows[0].comentario
+            }
+        });
+
+    } catch (error) {
+        console.error("Error al intentar publicar un comenatario en artículo científico: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// PUT moderar comentario
+router.put('/moderar-comentario', verificarToken, async (req, res) => {
+    const { id_comentario } = req.body;
+
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
+    try {
+        const query = `UPDATE Comentario_Publicacion 
+                       SET visibilidad = NOT visibilidad 
+                       WHERE id_comentario = $1
+                       RETURNING id_comentario, socio, publicacion, visibilidad;`;
+        const result = await pool.query(query, [id_comentario]);
+        res.status(200).json({
+            message: 'Comentario moderado en artículo científico.',
+            comentario: {
+                id_comentario: result.rows[0].id_comentario,
+                socio: result.rows[0].socio,
+                publicacion: result.rows[0].publicacion,
+                visibilidad: result.rows[0].visibilidad
+            }
+        });
+
+    } catch (error) {
+        console.error("Error al intentar moderar un comenatario en artículo científico: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
 module.exports = router;
