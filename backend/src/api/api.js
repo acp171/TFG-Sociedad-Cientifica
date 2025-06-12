@@ -430,36 +430,6 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
     }
 });
 
-// DELETE eliminar rol del comité siendo presidente de comité
-router.delete('/eliminar-rol-comite', verificarToken, async (req, res) =>  {
-    const { id_socio, comite } = req.body;    
-
-    const presidenteRol = await obtenernRol(req.usuario);
-    if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
-        console.log(req.usuario);
-        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-    }
-
-    try {
-        const values = [
-            id_socio,
-            comite
-        ];
-
-        const query = 'DELETE FROM Miembros_Comite WHERE socio = $1 AND comite = $2;';
-
-        const result = (await pool.query(query, values));
-        res.status(200).json({
-            message: 'Rol eliminardo.'
-        });
-
-    }
-    catch (error) {
-        console.error("Error al eliminar rol siendo presidente de comité: ", error.message);
-        res.status(500).json({ message: 'Error interno del servidor.' });
-    }
-});
-
 // DELETE eliminar rol siendo presidente de un proyecto de investigación
 router.delete('/eliminar-rol-proyecto', verificarToken, async (req, res) =>  {
     const { id_socio, proyecto } = req.body;    
@@ -1033,6 +1003,34 @@ router.post('/add-miembro-comite-cientifico', verificarToken, async (req, res) =
 
     } catch (error) {
         console.error("Error al intentar añadir un miembro al comité científico: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// DELETE eliminar miembro del comité siendo presidente de comité
+router.delete('/eliminar-miembro-comite', verificarToken, async (req, res) =>  {
+    const { socio, comite } = req.body;    
+
+    const presidenteComite = await obtenerPresidenteComite(comite);
+    if (!presidenteComite || presidenteComite.socio !== req.usuario.id) {
+        return res.status(403).json({ message: 'No autorizado. Se requieren permisos.' });
+    }
+
+    try {
+        const values = [
+            socio,
+            comite
+        ];
+
+        const query = 'DELETE FROM Miembros_Comite WHERE socio = $1 AND comite = $2;';
+        const result = (await pool.query(query, values));
+        res.status(200).json({
+            message: 'Miembro eliminado del comité científico.'
+        });
+
+    }
+    catch (error) {
+        console.error("Error al eliminar miembro siendo presidente de comité: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
