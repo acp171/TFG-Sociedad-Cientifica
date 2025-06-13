@@ -1,7 +1,8 @@
 {
-    "build": {
-      "root": "backend"
-    },
-    "deploy": {
-      "startCommand": "npm start"
-    }
+  "build": {
+    "root": "backend"
+  },
+  "deploy": {
+    "startCommand": "npm start"
+  }
+}
