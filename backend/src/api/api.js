@@ -15,6 +15,7 @@ const SECRET_KEY = process.env.JWT_SECRET
 const upload = require('../utils/upload');
 const eliminarArchivoPDF = require('../utils/deleteFile');
 const { obtenernRol, obtenerSocio, obtenerPresidenteComite } = require('../utils/socioUtils');
+const { crearNotificacion, enviarEmail } = require('../utils/notificaciones')
 
 // Middlewares
 function verificarToken(req, res, next) {
@@ -119,6 +120,12 @@ router.post('/register', async (req, res) => {
     try {
         const result = await pool.query(query, values);
         console.log("Socio insertado con ID: ", result.rows[0].id_socio);
+
+        await crearNotificacion(
+            result.rows[0].id_socio,
+            'Bienvenido a la Sociedad Científica',
+            'Gracias por registrarte. Esperamos que disfrutes tu experiencia.');
+
         res.status(200).json({
             message: 'Registro exitoso.',
             socio: {
