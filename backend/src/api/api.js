@@ -1118,9 +1118,9 @@ router.post('/notificacion-usuario', verificarToken, async (req, res) => {
 // GET listado notificaciones por usuario
 router.get('/listado-notificacion-usuario', verificarToken, async (req, res) => {
     try {
-        const queryNotificacionesUsuario = `SELECT * 
-                                     FROM Notificaciones 
-                                     WHERE socio = $1;`;
+        const queryNotificacionesUsuario = `SELECT * FROM Notificaciones 
+                                            WHERE socio = $1 AND leida = FALSE 
+                                            ORDER BY fecha DESC;`;
         const resultNotificionesUsuario = await pool.query(queryNotificacionesUsuario, [req.usuario.id])
 
         res.status(200).json({
@@ -1161,5 +1161,19 @@ router.get('/listado-notificaciones', verificarToken, async (req, res) => {
     }
 });
 
+// PUT marcar una notificación como leída
+router.put('/notificaciones/:id/leida', async (req, res) => {
+    const idNotificacion = req.params.id;
+  
+    try {
+      const query = `UPDATE Notificaciones SET estado_lectura = TRUE WHERE id_notificacion = $1`;
+      await pool.query(query, [idNotificacion]);
+  
+      res.json({ mensaje: 'Notificación marcada como leída.' });
+    } catch (error) {
+      console.error("Error al marcar notificacion por usuario: ", error.message);
+      res.status(500).json({ error: 'Error al actualizar notificación' });
+    }
+  });
 
 module.exports = router;
