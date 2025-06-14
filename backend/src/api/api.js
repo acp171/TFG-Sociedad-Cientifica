@@ -1058,34 +1058,64 @@ router.get('/listado-comites-cientificos', verificarToken, async (req, res) =>  
                        JOIN Socio S ON MC.socio = S.id_socio
                        JOIN Socio_Rol SR ON MC.rol_comite = SR.id_socio_rol
                        ORDER BY C.id_comite;`;
-    const result = await pool.query(query);
+        const result = await pool.query(query);
 
-    // Reorganizar los datos en estructura por comité
-    const comites = {};
+        // Reorganizar los datos en estructura por comité
+        const comites = {};
 
-    result.rows.forEach(row => {
-      if (!comites[row.id_comite]) {
-        comites[row.id_comite] = {
-          id_comite: row.id_comite,
-          nombre_comite: row.nombre_comite,
-          descripcion: row.descripcion,
-          miembros: []
-        };
-      }
+        result.rows.forEach(row => {
+            if (!comites[row.id_comite]) {
+                comites[row.id_comite] = {
+                id_comite: row.id_comite,
+                nombre_comite: row.nombre_comite,
+                descripcion: row.descripcion,
+                miembros: []
+                };
+            }
 
-      comites[row.id_comite].miembros.push({
-        id_socio: row.id_socio,
-        nombre_socio: row.nombre_socio + ' ' + row.apellidos,
-        rol: row.rol,
-      });
-    });
+            comites[row.id_comite].miembros.push({
+                id_socio: row.id_socio,
+                nombre_socio: row.nombre_socio + ' ' + row.apellidos,
+                rol: row.rol,
+            });
+        });
 
-    res.status(200).json(Object.values(comites));
+        res.status(200).json(Object.values(comites));
     }
     catch (error) {
-        console.error("Error al listar comités científicos.", error.message);
+        console.error("Error al listar comités científico: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
+
+router.post('/notificacion-usuario', verificarToken, async (req, res) => {
+    const { id_socio, titulo, notificacion } = req.body;
+
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    if (!titulo || !notificacion) {
+        return res.status(400).json({ message: 'Faltan datos.' });
+    }
+
+    try {
+        await crearNotificacion(
+            id_socio,
+            titulo,
+            notificacion
+        );
+
+        res.status(200).json({
+            message: 'Notificación enviada al socio.'
+        });
+    }
+    catch (error) {
+        console.error("Error al enviar notificación al socio: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
 
 module.exports = router;
