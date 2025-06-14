@@ -288,7 +288,6 @@ router.put('/asignar-rol-comite', verificarToken, async (req, res) =>  {
 
     const presidenteRol = await obtenernRol(req.usuario);
     if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
-        console.log(req.usuario);
         return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
     }
 
@@ -324,7 +323,6 @@ router.put('/asignar-rol-proyecto', verificarToken, async (req, res) =>  {
 
     const presidenteRol = await obtenernRol(req.usuario);
     if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
-        console.log(req.usuario);
         return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
     }
 
@@ -416,7 +414,6 @@ router.delete('/eliminar-miembro-proyecto', verificarToken, async (req, res) => 
 
     const presidenteRol = await obtenernRol(req.usuario);
     if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
-        console.log(req.usuario);
         return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
     }
 
@@ -1088,6 +1085,7 @@ router.get('/listado-comites-cientificos', verificarToken, async (req, res) =>  
     }
 });
 
+// POST enviar notificacion usuario siendo administrador
 router.post('/notificacion-usuario', verificarToken, async (req, res) => {
     const { id_socio, titulo, notificacion } = req.body;
 
@@ -1113,6 +1111,52 @@ router.post('/notificacion-usuario', verificarToken, async (req, res) => {
     }
     catch (error) {
         console.error("Error al enviar notificación al socio: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// GET listado notificaciones por usuario
+router.get('/listado-notificacion-usuario', verificarToken, async (req, res) => {
+    try {
+        const queryNotificacionesUsuario = `SELECT * 
+                                     FROM Notificaciones 
+                                     WHERE socio = $1;`;
+        const resultNotificionesUsuario = await pool.query(queryNotificacionesUsuario, [req.usuario.id])
+
+        res.status(200).json({
+            message: 'Listado de notificaciones del usuario.',
+            notificaciones: {
+                listadoNotificaciones: resultNotificionesUsuario.rows
+            }
+        });
+    }
+    catch (error) {
+        console.error("Error al listar notificaciones por usuario: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// GET listado notificaciones de todos los usuario
+router.get('/listado-notificaciones', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    try {
+        const queryNotificaciones = `SELECT * 
+                                     FROM Notificaciones;`;
+        const resultNotificiones = await pool.query(queryNotificaciones, [req.usuario.id])
+
+        res.status(200).json({
+            message: 'Listado de notificaciones.',
+            notificaciones: {
+                listadoNotificaciones: resultNotificiones.rows
+            }
+        });
+    }
+    catch (error) {
+        console.error("Error al listar notificaciones: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
