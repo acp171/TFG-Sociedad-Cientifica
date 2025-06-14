@@ -15,7 +15,8 @@ const SECRET_KEY = process.env.JWT_SECRET
 const upload = require('../utils/upload');
 const eliminarArchivoPDF = require('../utils/deleteFile');
 const { obtenernRol, obtenerSocio, obtenerPresidenteComite } = require('../utils/socioUtils');
-const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones')
+const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones');
+const { obtenerNombreProyecto } = require('../utils/proyectoUtils');
 
 // Middlewares
 function verificarToken(req, res, next) {
@@ -558,6 +559,14 @@ router.post('/add-miembro-proyecto-investigacion', verificarToken, async (req, r
         const query = 'INSERT INTO Socio_Proyecto(fecha_registro, socio, proyecto, rol_proyecto)' +
                       'VALUES ($1, $2, $3, $4) RETURNING socio, proyecto, rol_proyecto';
         const result = await pool.query(query, values);
+
+        const nombreProyecto = await obtenerNombreProyecto(proyecto);
+
+        await crearNotificacion(
+            socio,
+            'Has sido añadido a un proyecto',
+            `Fuiste añadido al proyecto "${nombreProyecto}". ¡Revisa los detalles en la plataforma!`
+          );
 
         res.status(200).json({
             message: 'Miembro añadido al proyecto de investigación.',
