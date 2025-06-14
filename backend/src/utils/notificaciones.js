@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 const pool = require('../database');
-const { obtenerSocio } = require('./socioUtils');
+const { obtenerSocio, obtenerSocios } = require('./socioUtils');
 
 // Configuración
 const transporter = nodemailer.createTransport({
@@ -32,6 +32,27 @@ async function crearNotificacion(socioId, titulo, mensaje) {
     }
 }
 
+async function crearNotificacionEvento(titulo, mensaje) {
+    // Obtener todos los socios
+    const socios = await obtenerSocios();
+
+    // Enviar notificación a cada socio
+    for (const socio of socios) {
+        if (socio.socio_rol !== 'Administrador') {
+            const values = [
+                socio.id_socio,
+                titulo,
+                mensaje
+            ];
+            const query = `INSERT INTO Notificaciones(socio, titulo, mensaje)
+                        VALUES ($1, $2, $3);`;
+            await pool.query(query, values);
+
+            await enviarEmail(socio.email, titulo, mensaje);
+        }
+    }
+}
+
 async function enviarEmail(destinatario, asunto, mensaje) {
     try {
         await transporter.sendMail({
@@ -47,5 +68,5 @@ async function enviarEmail(destinatario, asunto, mensaje) {
 
 module.exports = {
     crearNotificacion,
-    enviarEmail,
+    crearNotificacionEvento,
 };
