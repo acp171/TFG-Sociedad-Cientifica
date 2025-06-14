@@ -86,12 +86,12 @@ CREATE TABLE IF NOT EXISTS Inscripciones (
 
 -- NOTIFICACIONES TABLE --
 CREATE TABLE IF NOT EXISTS Notificaciones (
-    id_notificacion SERIAL,
+    id_notificacion SERIAL PRIMARY KEY,
     socio INT NOT NULL,
-    mensaje VARCHAR(1000) NOT NULL,
-    fecha_envio TIMESTAMP NOT NULL,
-    estado_lectura VARCHAR(25) NOT NULL,
-    PRIMARY KEY (id_notificacion, socio),
+    titulo VARCHAR(100) NOT NULL,
+    mensaje TEXT NOT NULL,
+    fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    estado_lectura BOOLEAN DEFAULT FALSE,
     CONSTRAINT FK_NOTIFICACION_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio)    
 );
 

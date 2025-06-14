@@ -15,6 +15,9 @@ const SECRET_KEY = process.env.JWT_SECRET
 const upload = require('../utils/upload');
 const eliminarArchivoPDF = require('../utils/deleteFile');
 const { obtenernRol, obtenerSocio, obtenerPresidenteComite } = require('../utils/socioUtils');
+const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones');
+const { obtenerNombreProyecto } = require('../utils/proyectoUtils');
+const { obtenerNombreComite } = require('../utils/comiteUtils');
 
 // Middlewares
 function verificarToken(req, res, next) {
@@ -119,6 +122,12 @@ router.post('/register', async (req, res) => {
     try {
         const result = await pool.query(query, values);
         console.log("Socio insertado con ID: ", result.rows[0].id_socio);
+
+        await crearNotificacion(
+            result.rows[0].id_socio,
+            'Bienvenido a la Sociedad Científica',
+            'Gracias por registrarte. Esperamos que disfrutes tu experiencia.');
+
         res.status(200).json({
             message: 'Registro exitoso.',
             socio: {
@@ -138,7 +147,7 @@ router.post('/register', async (req, res) => {
 router.get('/perfil', verificarToken, async (req, res) => {
     try {
         const querySocio = 'SELECT nombre, apellidos, email, telefono, fecha_nacimiento, socio_rol, tipo_socio FROM SOCIO WHERE email = $1;';
-        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
+        const resultSocio = await pool.query(querySocio, [req.usuario.email]);
         const socio = resultSocio.rows[0];
 
         const queryRol = 'SELECT * FROM Socio_Rol WHERE id_socio_rol = $1;';
@@ -187,10 +196,10 @@ router.put('/perfil', verificarToken, async (req, res) => {
 
     try {
         const query = 'UPDATE Socio SET nombre = $1, apellidos = $2, telefono = $3 WHERE email = $4;';
-        const result = (await pool.query(query, values));
+        const result = await pool.query(query, values);
 
         const querySocio = 'SELECT * FROM SOCIO WHERE email = $1;';
-        const resultSocio = (await pool.query(querySocio, [req.usuario.email]));
+        const resultSocio = await pool.query(querySocio, [req.usuario.email]);
         const socio = resultSocio.rows[0];
 
         res.status(200).json({
@@ -257,7 +266,7 @@ router.put('/asignar-rol', verificarToken, async (req, res) =>  {
             break;
         }
 
-        const result = (await pool.query(query, values));
+        const result = await pool.query(query, values);
         res.status(200).json({
             message: 'Rol asignado.',
             socio: {
@@ -279,7 +288,6 @@ router.put('/asignar-rol-comite', verificarToken, async (req, res) =>  {
 
     const presidenteRol = await obtenernRol(req.usuario);
     if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
-        console.log(req.usuario);
         return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
     }
 
@@ -292,7 +300,7 @@ router.put('/asignar-rol-comite', verificarToken, async (req, res) =>  {
 
         const query = 'UPDATE Miembros_Comite SET rol_comite = $1 WHERE socio = $2 AND comite = $3;';
 
-        const result = (await pool.query(query, values));
+        const result = await pool.query(query, values);
         res.status(200).json({
             message: 'Rol asignado.',
             socio: {
@@ -315,7 +323,6 @@ router.put('/asignar-rol-proyecto', verificarToken, async (req, res) =>  {
 
     const presidenteRol = await obtenernRol(req.usuario);
     if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
-        console.log(req.usuario);
         return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
     }
 
@@ -328,7 +335,7 @@ router.put('/asignar-rol-proyecto', verificarToken, async (req, res) =>  {
 
         const  query = 'UPDATE Socio_Proyecto SET rol_proyecto = $1 WHERE socio = $2 AND proyecto = $3;';
 
-        const result = (await pool.query(query, values));
+        const result = await pool.query(query, values);
         res.status(200).json({
             message: 'Rol asignado.',
             socio: {
@@ -385,7 +392,7 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
             break;
         }
 
-        const result = (await pool.query(query, values));
+        const result = await pool.query(query, values);
         res.status(200).json({
             message: 'Rol asignado.',
             socio: {
@@ -402,12 +409,11 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
 });
 
 // DELETE eliminar rol siendo presidente de un proyecto de investigación
-router.delete('/eliminar-rol-proyecto', verificarToken, async (req, res) =>  {
+router.delete('/eliminar-miembro-proyecto', verificarToken, async (req, res) =>  {
     const { id_socio, proyecto } = req.body;    
 
     const presidenteRol = await obtenernRol(req.usuario);
     if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
-        console.log(req.usuario);
         return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
     }
 
@@ -419,14 +425,21 @@ router.delete('/eliminar-rol-proyecto', verificarToken, async (req, res) =>  {
 
         const  query = 'DELETE FROM Socio_Proyecto WHERE socio = $1 AND proyecto = $2;';
 
-        const result = (await pool.query(query, values));
+        const nombreProyecto = await obtenerNombreProyecto(proyecto);
+        await crearNotificacion(
+            socio,
+            'Has sido expulsado del proyecto.',
+            `Fuiste expulsado del proyecto de investigación "${nombreProyecto}". ¡Revisa los detalles en la plataforma!`
+          );
+
+        const result = await pool.query(query, values);
         res.status(200).json({
-            message: 'Rol eliminardo.'
+            message: 'Miembro expulsado.'
         });
 
     }
     catch (error) {
-        console.error("Error al eliminar rol siendo presidente de proyecto: ", error.message);
+        console.error("Error al expulsar miembro siendo presidente de proyecto: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
@@ -455,12 +468,12 @@ router.post('/crear-proyecto-investigacion', verificarToken, async (req, res) =>
             const query = 'INSERT INTO Proyectos_Investigacion(nombre_proyecto, descripcion, fecha_inicio,' +
                         'fecha_fin, estado) VALUES ($1, $2, $3, $4, $5) RETURNING id_proyecto, nombre_proyecto,' +
                         'descripcion, fecha_inicio, fecha_fin, estado;';
-            const result = (await pool.query(query, values));
+            const result = await pool.query(query, values);
 
             const rol = obtenernRol(req.usuario);
             if (!rol || rol.nombre !== "Administrador") {
                 const queryAsignarPresidente = "UPDATE Socio SET socio_rol = 2 WHERE email = $1;";
-                const resultAsignarPresidente = (await pool.query(queryAsignarPresidente, [req.usuario.email]));
+                const resultAsignarPresidente = await pool.query(queryAsignarPresidente, [req.usuario.email]);
             }
 
             res.status(200).json({
@@ -494,7 +507,7 @@ router.delete('/eliminar-proyecto-investigacion', verificarToken, async (req, re
 
     try {
         const query = 'DELETE FROM Proyectos_Investigacion WHERE id_proyecto = $1;';
-        const result = (await pool.query(query, [id_proyecto]));
+        const result = await pool.query(query, [id_proyecto]);
 
         res.status(200).json({
             message: 'Proyecto de investigación eliminado.'
@@ -511,7 +524,7 @@ router.delete('/eliminar-proyecto-investigacion', verificarToken, async (req, re
 router.get('/listado-proyectos-investigacion', verificarToken, async (req, res) =>  {
     try {
         const query = 'SELECT * FROM Proyectos_Investigacion;';
-        const listaProyectos = (await pool.query(query));
+        const listaProyectos = await pool.query(query);
 
         res.status(200).json({
             message: 'Lista de proyectos de investigación.',
@@ -550,7 +563,14 @@ router.post('/add-miembro-proyecto-investigacion', verificarToken, async (req, r
 
         const query = 'INSERT INTO Socio_Proyecto(fecha_registro, socio, proyecto, rol_proyecto)' +
                       'VALUES ($1, $2, $3, $4) RETURNING socio, proyecto, rol_proyecto';
-        const result = (await pool.query(query, values));
+        const result = await pool.query(query, values);
+
+        const nombreProyecto = await obtenerNombreProyecto(proyecto);
+        await crearNotificacion(
+            socio,
+            'Has sido añadido a un proyecto',
+            `Fuiste añadido al proyecto "${nombreProyecto}". ¡Revisa los detalles en la plataforma!`
+        );
 
         res.status(200).json({
             message: 'Miembro añadido al proyecto de investigación.',
@@ -594,7 +614,11 @@ router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
             const query = 'INSERT INTO Evento(nombre_evento, fecha_evento_inicio, fecha_evento_fin,' +
                           'descripcion_evento, direccion) VALUES ($1, $2, $3, $4, $5) RETURNING id_evento,' +
                           'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento;';
-            const result = (await pool.query(query, values));
+            const result = await pool.query(query, values);
+
+            await crearNotificacionEvento(
+                'Nuevo evento publicado',
+                `Se ha creado un nuevo evento: ${result.rows[0].nombre_evento}`);
 
             res.status(200).json({
                 message: 'Evento científico creado.',
@@ -643,7 +667,7 @@ router.put('/editar-evento-cientifico', verificarToken, async (req, res) =>  {
             const query = 'UPDATE Evento SET nombre_evento = $1, fecha_evento_inicio = $2, fecha_evento_fin = $3,' +
                           'descripcion_evento = $4, direccion = $5 WHERE id_evento = $6 RETURNING id_evento,' +
                           'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento;';
-            const result = (await pool.query(query, values));
+            const result = await pool.query(query, values);
 
             res.status(200).json({
                 message: 'Evento científico editado.',
@@ -676,7 +700,7 @@ router.delete('/eliminar-evento-cientifico', verificarToken, async (req, res) =>
     
     try {
         const query = 'DELETE FROM Evento WHERE id_evento = $1;';
-        const result = (await pool.query(query, [id_evento]));
+        const result = await pool.query(query, [id_evento]);
 
         res.status(200).json({
             message: 'Evento científico eliminado.',
@@ -692,7 +716,7 @@ router.delete('/eliminar-evento-cientifico', verificarToken, async (req, res) =>
 router.get('/listado-eventos-cientificos', verificarToken, async (req, res) =>  {
     try {
         const query = 'SELECT * FROM Evento;';
-        const result = (await pool.query(query));
+        const result = await pool.query(query);
 
         res.status(200).json({
             message: 'Evento científico eliminado.',
@@ -963,6 +987,13 @@ router.post('/add-miembro-comite-cientifico', verificarToken, async (req, res) =
                                    RETURNING socio, comite, rol_comite;`;
         const resultNuevoMiembro = await pool.query(queryNuevoMiembro, valuesAsignarPresidente);
 
+        const nombreComite = await obtenerNombreComite(comite);
+        await crearNotificacion(
+            socio,
+            'Has sido añadido a un comité científico',
+            `Fuiste añadido al comité científico "${nombreComite}". ¡Revisa los detalles en la plataforma!`
+        );
+
         res.status(200).json({
             message: 'Miembro añadido al comité científico.',
             comite: {
@@ -994,14 +1025,22 @@ router.delete('/eliminar-miembro-comite', verificarToken, async (req, res) =>  {
         ];
 
         const query = 'DELETE FROM Miembros_Comite WHERE socio = $1 AND comite = $2;';
-        const result = (await pool.query(query, values));
+        const result = await pool.query(query, values);
+
+        const nombreComite = await obtenerNombreComite(comite);
+        await crearNotificacion(
+            socio,
+            'Has sido expulsado de un comité científico',
+            `Fuiste expulsado del comité científico "${nombreComite}". ¡Revisa los detalles en la plataforma!`
+        );
+
         res.status(200).json({
-            message: 'Miembro eliminado del comité científico.'
+            message: 'Miembro expulsado del comité científico.'
         });
 
     }
     catch (error) {
-        console.error("Error al eliminar miembro siendo presidente de comité: ", error.message);
+        console.error("Error al expulsado miembro siendo presidente de comité: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
@@ -1016,34 +1055,125 @@ router.get('/listado-comites-cientificos', verificarToken, async (req, res) =>  
                        JOIN Socio S ON MC.socio = S.id_socio
                        JOIN Socio_Rol SR ON MC.rol_comite = SR.id_socio_rol
                        ORDER BY C.id_comite;`;
-    const result = await pool.query(query);
+        const result = await pool.query(query);
 
-    // Reorganizar los datos en estructura por comité
-    const comites = {};
+        // Reorganizar los datos en estructura por comité
+        const comites = {};
 
-    result.rows.forEach(row => {
-      if (!comites[row.id_comite]) {
-        comites[row.id_comite] = {
-          id_comite: row.id_comite,
-          nombre_comite: row.nombre_comite,
-          descripcion: row.descripcion,
-          miembros: []
-        };
-      }
+        result.rows.forEach(row => {
+            if (!comites[row.id_comite]) {
+                comites[row.id_comite] = {
+                id_comite: row.id_comite,
+                nombre_comite: row.nombre_comite,
+                descripcion: row.descripcion,
+                miembros: []
+                };
+            }
 
-      comites[row.id_comite].miembros.push({
-        id_socio: row.id_socio,
-        nombre_socio: row.nombre_socio + ' ' + row.apellidos,
-        rol: row.rol,
-      });
-    });
+            comites[row.id_comite].miembros.push({
+                id_socio: row.id_socio,
+                nombre_socio: row.nombre_socio + ' ' + row.apellidos,
+                rol: row.rol,
+            });
+        });
 
-    res.status(200).json(Object.values(comites));
+        res.status(200).json(Object.values(comites));
     }
     catch (error) {
-        console.error("Error al listar comités científicos.", error.message);
+        console.error("Error al listar comités científico: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
+
+// POST enviar notificacion usuario siendo administrador
+router.post('/notificacion-usuario', verificarToken, async (req, res) => {
+    const { id_socio, titulo, notificacion } = req.body;
+
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    if (!titulo || !notificacion) {
+        return res.status(400).json({ message: 'Faltan datos.' });
+    }
+
+    try {
+        await crearNotificacion(
+            id_socio,
+            titulo,
+            notificacion
+        );
+
+        res.status(200).json({
+            message: 'Notificación enviada al socio.'
+        });
+    }
+    catch (error) {
+        console.error("Error al enviar notificación al socio: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// GET listado notificaciones por usuario
+router.get('/listado-notificacion-usuario', verificarToken, async (req, res) => {
+    try {
+        const queryNotificacionesUsuario = `SELECT * FROM Notificaciones 
+                                            WHERE socio = $1 AND leida = FALSE 
+                                            ORDER BY fecha DESC;`;
+        const resultNotificionesUsuario = await pool.query(queryNotificacionesUsuario, [req.usuario.id])
+
+        res.status(200).json({
+            message: 'Listado de notificaciones del usuario.',
+            notificaciones: {
+                listadoNotificaciones: resultNotificionesUsuario.rows
+            }
+        });
+    }
+    catch (error) {
+        console.error("Error al listar notificaciones por usuario: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// GET listado notificaciones de todos los usuario
+router.get('/listado-notificaciones', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    try {
+        const queryNotificaciones = `SELECT * 
+                                     FROM Notificaciones;`;
+        const resultNotificiones = await pool.query(queryNotificaciones, [req.usuario.id])
+
+        res.status(200).json({
+            message: 'Listado de notificaciones.',
+            notificaciones: {
+                listadoNotificaciones: resultNotificiones.rows
+            }
+        });
+    }
+    catch (error) {
+        console.error("Error al listar notificaciones: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// PUT marcar una notificación como leída
+router.put('/notificaciones/:id/leida', async (req, res) => {
+    const idNotificacion = req.params.id;
+  
+    try {
+      const query = `UPDATE Notificaciones SET estado_lectura = TRUE WHERE id_notificacion = $1`;
+      await pool.query(query, [idNotificacion]);
+  
+      res.json({ mensaje: 'Notificación marcada como leída.' });
+    } catch (error) {
+      console.error("Error al marcar notificacion por usuario: ", error.message);
+      res.status(500).json({ error: 'Error al actualizar notificación' });
+    }
+  });
 
 module.exports = router;

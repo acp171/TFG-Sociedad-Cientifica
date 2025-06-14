@@ -2,11 +2,11 @@ const pool = require('../database');
 
 async function obtenernRol(usuario) {
     const querySocio = 'SELECT socio_rol FROM SOCIO WHERE email = $1;';
-    const resultSocio = (await pool.query(querySocio, [usuario.email]));
+    const resultSocio = await pool.query(querySocio, [usuario.email]);
     const socio = resultSocio.rows[0];
 
     const querySocioRol = 'SELECT nombre FROM Socio_Rol WHERE id_socio_rol = $1;';
-    const resultSocioRol = (await pool.query(querySocioRol, [socio.socio_rol]));
+    const resultSocioRol = await pool.query(querySocioRol, [socio.socio_rol]);
     const socioRol = resultSocioRol.rows[0];
 
     return socioRol;
@@ -14,10 +14,20 @@ async function obtenernRol(usuario) {
 
 async function obtenerSocio(id) {
     const querySocio = 'SELECT * FROM Socio WHERE id_socio = $1;';
-    const resultSoscio = (await pool.query(querySocio, [id]));
-    const socio = resultSoscio.rows[0];
+    const resultSocio = await pool.query(querySocio, [id]);
+    const socio = resultSocio.rows[0];
 
     return socio;
+}
+
+async function obtenerSocios() {
+    const querySocios = `SELECT s.id_socio, s.nombre, s.apellidos, s.email, s.telefono,
+                         s.fecha_nacimiento, s.fecha_alta, sr.nombre AS socio_rol
+                         FROM Socio s
+                         JOIN Socio_Rol sr ON s.socio_rol = sr.id_socio_rol;`;
+    const socios = await pool.query(querySocios);
+
+    return socios.rows;
 }
 
 async function obtenerPresidenteComite(comite) {
@@ -25,7 +35,7 @@ async function obtenerPresidenteComite(comite) {
                                    WHERE comite = $1 AND 
                                    rol_comite = (
                                    SELECT id_socio_rol FROM Socio_Rol WHERE nombre = 'Presidente');`;
-    const resultPresidenteComite = (await pool.query(queryPresidenteComite, [comite]));
+    const resultPresidenteComite = await pool.query(queryPresidenteComite, [comite]);
     const presidenteComite = resultPresidenteComite.rows[0];
 
     return presidenteComite;
@@ -35,5 +45,6 @@ async function obtenerPresidenteComite(comite) {
 module.exports = {
     obtenernRol,
     obtenerSocio,
-    obtenerPresidenteComite
+    obtenerPresidenteComite,
+    obtenerSocios
 };
