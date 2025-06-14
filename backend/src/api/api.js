@@ -17,6 +17,7 @@ const eliminarArchivoPDF = require('../utils/deleteFile');
 const { obtenernRol, obtenerSocio, obtenerPresidenteComite } = require('../utils/socioUtils');
 const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones');
 const { obtenerNombreProyecto } = require('../utils/proyectoUtils');
+const { obtenerNombreComite } = require('../utils/comiteUtils');
 
 // Middlewares
 function verificarToken(req, res, next) {
@@ -410,7 +411,7 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
 });
 
 // DELETE eliminar rol siendo presidente de un proyecto de investigación
-router.delete('/eliminar-rol-proyecto', verificarToken, async (req, res) =>  {
+router.delete('/eliminar-miembro-proyecto', verificarToken, async (req, res) =>  {
     const { id_socio, proyecto } = req.body;    
 
     const presidenteRol = await obtenernRol(req.usuario);
@@ -427,14 +428,21 @@ router.delete('/eliminar-rol-proyecto', verificarToken, async (req, res) =>  {
 
         const  query = 'DELETE FROM Socio_Proyecto WHERE socio = $1 AND proyecto = $2;';
 
+        const nombreProyecto = await obtenerNombreProyecto(proyecto);
+        await crearNotificacion(
+            socio,
+            'Has sido expulsado del proyecto.',
+            `Fuiste expulsado del proyecto de investigación "${nombreProyecto}". ¡Revisa los detalles en la plataforma!`
+          );
+
         const result = await pool.query(query, values);
         res.status(200).json({
-            message: 'Rol eliminardo.'
+            message: 'Miembro expulsado.'
         });
 
     }
     catch (error) {
-        console.error("Error al eliminar rol siendo presidente de proyecto: ", error.message);
+        console.error("Error al expulsar miembro siendo presidente de proyecto: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
@@ -561,12 +569,11 @@ router.post('/add-miembro-proyecto-investigacion', verificarToken, async (req, r
         const result = await pool.query(query, values);
 
         const nombreProyecto = await obtenerNombreProyecto(proyecto);
-
         await crearNotificacion(
             socio,
             'Has sido añadido a un proyecto',
             `Fuiste añadido al proyecto "${nombreProyecto}". ¡Revisa los detalles en la plataforma!`
-          );
+        );
 
         res.status(200).json({
             message: 'Miembro añadido al proyecto de investigación.',
@@ -983,6 +990,13 @@ router.post('/add-miembro-comite-cientifico', verificarToken, async (req, res) =
                                    RETURNING socio, comite, rol_comite;`;
         const resultNuevoMiembro = await pool.query(queryNuevoMiembro, valuesAsignarPresidente);
 
+        const nombreComite = await obtenerNombreComite(comite);
+        await crearNotificacion(
+            socio,
+            'Has sido añadido a un comité científico',
+            `Fuiste añadido al comité científico "${nombreComite}". ¡Revisa los detalles en la plataforma!`
+        );
+
         res.status(200).json({
             message: 'Miembro añadido al comité científico.',
             comite: {
@@ -1015,13 +1029,21 @@ router.delete('/eliminar-miembro-comite', verificarToken, async (req, res) =>  {
 
         const query = 'DELETE FROM Miembros_Comite WHERE socio = $1 AND comite = $2;';
         const result = await pool.query(query, values);
+
+        const nombreComite = await obtenerNombreComite(comite);
+        await crearNotificacion(
+            socio,
+            'Has sido expulsado de un comité científico',
+            `Fuiste expulsado del comité científico "${nombreComite}". ¡Revisa los detalles en la plataforma!`
+        );
+
         res.status(200).json({
-            message: 'Miembro eliminado del comité científico.'
+            message: 'Miembro expulsado del comité científico.'
         });
 
     }
     catch (error) {
-        console.error("Error al eliminar miembro siendo presidente de comité: ", error.message);
+        console.error("Error al expulsado miembro siendo presidente de comité: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
