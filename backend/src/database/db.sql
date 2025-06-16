@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS Tipo_Socio (
     id_tipo_socio SERIAL PRIMARY KEY,
     nombre_tipo VARCHAR(50) NOT NULL,
     descripcion VARCHAR(1000) NOT NULL,
-    cuota FLOAT NOT NULL
+    cuota FLOAT NOT NULL,
+    price_stripe TEXT UNIQUE NOT NULL
 );
 
 -- SOCIO TABLE --
@@ -192,11 +193,14 @@ VALUES
     ('Socio');
 
 -- Insertar valores en la tabla Tipo_Socio
-INSERT INTO Tipo_Socio (nombre_tipo, descripcion, cuota) 
+INSERT INTO Tipo_Socio (nombre_tipo, descripcion, cuota, price_stripe) 
 VALUES 
-    ('Estudiante', 'Miembro que se encuentra en formación académica.', 50.0),
-    ('Profesional', 'Miembro con experiencia y/o titulación profesional.', 100.0),
-    ('Honorario', 'Miembro que contribuye de manera honorífica.', 0.0);
+    ('Socio', 'Miembro asociado a la plataforma.', 20.0, 'price_1RaGzAPbMwKwBYLWadUDiRZT'),
+    ('Estudiante', 'Miembro que se encuentra en formación académica.', 10.0, 'price_1RaHU2PbMwKwBYLWo0AaCRmB'),
+    ('Profesional', 'Miembro con experiencia y/o titulación profesional.', 50.0, 'price_1RaaIcPbMwKwBYLW145DYXpp'),
+    ('Honorario', 'Miembro que contribuye de manera honorífica a la plataforma.', 0.0, 'price_1RaaKePbMwKwBYLWPAhqnahb'),
+    ('Internacional', 'Miembro con lenguaje extranjero.', 100.0, 'price_1RaHVqPbMwKwBYLWK7Uqmj3J'),
+    ('Corporación', 'Asociación corporativa.', 500.0, 'price_1RaHVDPbMwKwBYLWrXVYmm7F');
 
 -- Insertar valores en la tabla Socio
 INSERT INTO Socio (nombre, apellidos, email, password, telefono, fecha_nacimiento, fecha_alta, socio_rol, tipo_socio) 
