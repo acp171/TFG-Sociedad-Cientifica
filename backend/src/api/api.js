@@ -10,6 +10,7 @@ const router = Router();
 const pool = require('../database');
 const saltRounds = 10;
 const SECRET_KEY = process.env.JWT_SECRET
+const stripe = require('stripe')(process.env.STRIPE_SECRET);
 
 // Funciones privadas
 const upload = require('../utils/upload');
@@ -1166,14 +1167,49 @@ router.put('/notificaciones/:id/leida', async (req, res) => {
     const idNotificacion = req.params.id;
   
     try {
-      const query = `UPDATE Notificaciones SET estado_lectura = TRUE WHERE id_notificacion = $1`;
-      await pool.query(query, [idNotificacion]);
-  
-      res.json({ mensaje: 'Notificación marcada como leída.' });
-    } catch (error) {
-      console.error("Error al marcar notificacion por usuario: ", error.message);
-      res.status(500).json({ error: 'Error al actualizar notificación' });
+        const query = `UPDATE Notificaciones SET estado_lectura = TRUE WHERE id_notificacion = $1`;
+        await pool.query(query, [idNotificacion]);
+    
+        res.status(200).json({ message: 'Notificación marcada como leída.' });
     }
-  });
+    catch (error) {
+        console.error("Error al marcar notificacion por usuario: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+router.post('/pagar-suscripcion', async (req, res) => {
+    const { tipo_socio } = req.body; // viene del frontend, según el plan que elija
+
+    try {
+        const queryPriceStripe = `SELECT price_stripe 
+                    FROM Tipo_Socio 
+                    WHERE nombre_tipo = $1;`;
+        const resultPriceStripe = await pool.query(queryPriceStripe, [tipo_socio]);
+        
+
+        if (resultPriceStripe.rows.length === 0) {
+            return res.status(403).json({ message: 'La suscripción solicitada no existe o no está disponible en estos momentos.' });
+        }
+
+        const price_stripe = resultPriceStripe.rows[0].price_stripe;
+        const session = await stripe.checkout.sessions.create({
+            mode: 'subscription',
+            payment_method_types: ['card'],
+            line_items: [{
+                price: price_stripe,
+                quantity: 1,
+            }],
+            success_url: 'https://scdi.vercel.app/perfil/success?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url: 'https://scdi.vercel.app/register',
+        });
+
+        res.status(200).json({ id: session.id });
+    }
+    catch (error) {
+        console.error("Error al pagar suscripcion: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }  
+});
 
 module.exports = router;
