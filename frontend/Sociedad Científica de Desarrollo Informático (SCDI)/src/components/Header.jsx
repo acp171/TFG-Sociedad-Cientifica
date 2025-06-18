@@ -23,7 +23,7 @@ const Header = () => {
             <nav>
                 <ul className="flex list-none space-x-6 font-medium p-2">
                     <li>
-                        <a href="#quienes-somo" className="text-black no-underline hover:text-purple-400 transition-colors duration-200">
+                        <a href="/quienes-somos" className="text-black no-underline hover:text-purple-400 transition-colors duration-200">
                             QUIÉNES SOMOS
                         </a>
                     </li>

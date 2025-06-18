@@ -522,7 +522,7 @@ router.delete('/eliminar-proyecto-investigacion', verificarToken, async (req, re
 });
 
 // GET ver proyectos de investigación
-router.get('/listado-proyectos-investigacion', verificarToken, async (req, res) =>  {
+router.get('/listado-proyectos-investigacion', async (req, res) =>  {
     try {
         const query = 'SELECT * FROM Proyectos_Investigacion;';
         const listaProyectos = await pool.query(query);
@@ -714,15 +714,15 @@ router.delete('/eliminar-evento-cientifico', verificarToken, async (req, res) =>
 });
 
 // GET listado de eventos científicos
-router.get('/listado-eventos-cientificos', verificarToken, async (req, res) =>  {
+router.get('/listado-eventos-cientificos', async (req, res) =>  {
     try {
         const query = 'SELECT * FROM Evento;';
-        const result = await pool.query(query);
+        const listaEventos = await pool.query(query);
 
         res.status(200).json({
-            message: 'Evento científico eliminado.',
+            message: 'Lista de eventos científicos.',
             eventos: {
-                listaoEventos: result.rows
+                listaEventos: listaEventos.rows
             }
         });
     }
