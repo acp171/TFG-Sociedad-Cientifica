@@ -3,6 +3,10 @@ import Footer from './components/Footer';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import QuienesSomos from './pages/Quienes-Somos';
+import Articulos from './pages/Articulos';
+import ArticuloDetalle from './pages/ArticuloDetalle';
+import CrearArticulo from './pages/CrearArticulo';
+
 
 function App() {
   return (
@@ -13,6 +17,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/quienes-somos" element={<QuienesSomos />} />
+          <Route path="/articulos-cientificos" element={<Articulos />} />
+          <Route path="/articulos-cientificos/:id" element={<ArticuloDetalle />} />
+          <Route path="/articulos-cientificos/crear-articulo" element={<CrearArticulo />} />
         </Routes>
       </main>
 

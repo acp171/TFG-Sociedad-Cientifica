@@ -37,6 +37,11 @@ const Header = () => {
                             PROYECTOS
                         </a>
                     </li>
+                    <li>
+                        <a href="/articulos-cientificos" className="text-black no-underline hover:text-purple-400 transition-colors duration-200">
+                            ARTÍCULOS
+                        </a>
+                    </li>
                 </ul>
             </nav>
 

@@ -498,8 +498,8 @@ router.post('/crear-proyecto-investigacion', verificarToken, async (req, res) =>
 });
 
 // DELETE eliminar un proyecto de investigación
-router.delete('/eliminar-proyecto-investigacion', verificarToken, async (req, res) =>  {
-    const { id_proyecto } = req.body;
+router.delete('/eliminar-proyecto-investigacion/:id', verificarToken, async (req, res) =>  {
+    const id_proyecto = req.params.id;
     
     const rol = await obtenernRol(req.usuario);
     if (!rol || (rol.nombre !== 'Presidente' && rol.nombre !== 'Administrador')) {
@@ -799,8 +799,8 @@ router.post('/publicar-articulo-cientifico', verificarToken, upload.single('pdf'
 });
 
 // DELETE eliminar artículo científico
-router.delete('/eliminar-articulo-cientifico', verificarToken, async (req, res) => {
-    const { id_publicacion } = req.body;
+router.delete('/eliminar-articulo-cientifico/:id', verificarToken, async (req, res) => {
+    const id_publicacion = req.params.id;
 
     try {
         const querySelect = 'SELECT contenidoPDF, socio FROM Publicaciones WHERE id_publicacion = $1';
@@ -837,6 +837,91 @@ router.delete('/eliminar-articulo-cientifico', verificarToken, async (req, res) 
     } catch (error) {
         console.error("Error al intentar eliminar la publicación: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// GET listado artículos científico
+router.get('/listado-articulos-cientificos', async (req, res) => {
+    try {
+        const query = `SELECT p.id_publicacion, p.titulo, p.contenido, p.contenidopdf,
+                              p.fecha_publicacion, s.id_socio, s.nombre, s.apellidos
+                        FROM Publicaciones p
+                        JOIN Socio s ON p.socio = s.id_socio
+                        ORDER BY p.fecha_publicacion DESC;`;
+        const listadoArticulos = await pool.query(query);
+
+        res.status(200).json({
+            message: 'Listado de artículos científicos.',
+            articulos: {
+                listadoArticulos: listadoArticulos.rows
+            }
+        });
+    } catch (error) {
+        console.error("Error al intentar listar publicaciones: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// GET artículo científico
+router.get('/articulos-cientificos/:id', async (req, res) => {
+    const id_publicacion = req.params.id;
+
+    try {
+        const query = `SELECT p.id_publicacion, p.titulo, p.contenido, p.contenidopdf,
+                              p.fecha_publicacion, s.id_socio, s.nombre, s.apellidos
+                        FROM Publicaciones p
+                        JOIN Socio s ON p.socio = s.id_socio
+                        WHERE p.id_publicacion = $1;;`;
+        const resultArticulo = await pool.query(query, [id_publicacion]);
+
+        if (resultArticulo.rows.length === 0) {
+            return res.status(404).json({ message: 'Artículo científico no encontrado.' });
+        }
+
+        const articulo = resultArticulo.rows[0];
+
+        res.status(200).json({
+            message: 'Artículo científico encontrado.',
+            articulo: articulo
+        });
+    } catch (error) {
+        console.error("Error al intentar buscar publicación: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// GET PDF del artículo científico
+router.get('/articulos-cientificos/:id/pdf', async (req, res) => {
+    const id_publicacion = req.params.id;
+
+    try {
+        const query = `SELECT contenidopdf FROM Publicaciones WHERE id_publicacion = $1`;
+        const result = await pool.query(query, [id_publicacion]);
+
+        if (result.rows.length === 0 || !result.rows[0].contenidopdf) {
+            return res.status(404).json({ message: "PDF no encontrado" });
+        }
+
+        let pdfRelativePath = result.rows[0].contenidopdf;
+
+        // Eliminar "/" inicial si existe
+        if (pdfRelativePath.startsWith('/')) {
+            pdfRelativePath = pdfRelativePath.slice(1);
+        }
+
+        const pdfAbsolutePath = path.resolve(__dirname, '..', 'public', pdfRelativePath);
+
+        res.download(pdfAbsolutePath, `articulo_${id_publicacion}.pdf`, (err) => {
+            if (err) {
+                console.error("Error al enviar PDF:", err);
+                if (!res.headersSent) {
+                    res.status(500).send("Error al descargar el PDF");
+                }
+            }
+        });
+    } catch (error) {
+        console.error("Error al buscar PDF:", error);
+        res.status(500).json({ message: "Error interno del servidor" });
     }
 });
 
@@ -1078,7 +1163,10 @@ router.get('/listado-comites-cientificos', verificarToken, async (req, res) =>  
             });
         });
 
-        res.status(200).json(Object.values(comites));
+        res.status(200).json({
+            message: 'Listado de cómites científicos.',
+            listadoComites: Object.values(comites)
+        });
     }
     catch (error) {
         console.error("Error al listar comités científico: ", error.message);
