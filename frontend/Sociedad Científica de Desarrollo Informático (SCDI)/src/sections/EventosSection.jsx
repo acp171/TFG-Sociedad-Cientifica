@@ -5,7 +5,7 @@ const EventosSection = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:4000/listado-eventos-cientificos') // Reemplaza con tu endpoint real
+        fetch('https://tfg-sociedad-cientifica-production.up.railway.app/listado-eventos-cientificos')
         .then((res) => res.json())
         .then((data) => {
             setEventos(data.eventos.listaEventos || []);

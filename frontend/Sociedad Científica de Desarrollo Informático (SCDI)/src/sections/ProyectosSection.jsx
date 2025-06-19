@@ -11,7 +11,7 @@ const ProyectosSection = () => {
     ];
 
     useEffect(() => {
-        fetch('http://localhost:4000/listado-proyectos-investigacion')
+        fetch('https://tfg-sociedad-cientifica-production.up.railway.app/listado-proyectos-investigacion')
         .then(res => res.json())
         .then(data => {
             setProyectos(data.proyectos.listaProyectos || []);

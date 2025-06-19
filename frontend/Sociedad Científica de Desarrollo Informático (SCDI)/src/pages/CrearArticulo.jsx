@@ -29,7 +29,7 @@ const CrearArticulo = () => {
         }
 
         try {
-            const res = await fetch("http://localhost:4000/publicar-articulo-cientifico", {
+            const res = await fetch("https://tfg-sociedad-cientifica-production.up.railway.app/publicar-articulo-cientifico", {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`

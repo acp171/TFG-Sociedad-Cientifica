@@ -9,7 +9,7 @@ const ArticuloDetalle = () => {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
 
     useEffect(() => {
-        fetch(`http://localhost:4000/articulos-cientificos/${id}`)
+        fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${id}`)
             .then(res => res.json())
             .then(data => setArticulo(data.articulo));
     }, [id]);
@@ -17,7 +17,7 @@ const ArticuloDetalle = () => {
     const eliminar = async () => {
         if (!window.confirm("¿Seguro que deseas eliminar este artículo? Esta acción no se puede deshacer.")) return;
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:4000/eliminar-articulo-cientifico/${id}`, {
+        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eliminar-articulo-cientifico/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`
@@ -74,7 +74,7 @@ const ArticuloDetalle = () => {
 
                     {articulo.contenidopdf && (
                         <a
-                            href={`http://localhost:4000/articulos-cientificos/${id}/pdf`}
+                            href={`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${id}/pdf`}
                             target="_blank"
                             rel="noopener noreferrer"
                             download={`articulo_${id}.pdf`}
