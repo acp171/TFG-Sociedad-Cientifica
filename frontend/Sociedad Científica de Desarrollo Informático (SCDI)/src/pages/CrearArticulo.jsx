@@ -49,66 +49,85 @@ const CrearArticulo = () => {
     };
 
     return (
-        <section className="w-full bg-gradient-to-b from-blue-100 to-white py-16 px-6 lg:px-16 min-h-[80vh] flex flex-col pb-12">
-            <h2 className="text-center text-2xl font-bold mb-8">PUBLICAR ARTÍCULO CIENTÍFICO</h2>
-            <form onSubmit={handleSubmit} className="space-y-8 flex-grow flex flex-col justify-between" encType="multipart/form-data">
+        <section className="min-h-[80vh] flex flex-col justify-center items-center bg-gradient-to-b from-blue-50 to-white py-16 px-6 lg:px-20 font-sans">
+            {/* Botón Volver */}
+            <button
+                onClick={() => navigate(-1)}
+                className="self-start mb-6 text-blue-600 hover:text-blue-800 font-semibold transition"
+            >
+                ← Volver
+            </button>
+
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-12 text-center">
+                PUBLICAR ARTÍCULO CIENTÍFICO
+            </h2>
+            <form
+                onSubmit={handleSubmit}
+                className="bg-white rounded-xl shadow-lg p-8 max-w-3xl w-full space-y-8"
+                encType="multipart/form-data"
+            >
                 <div>
-                    <label className="block mb-2 font-semibold">Título</label>
-                    <input
-                        type="text"
-                        placeholder="Título"
-                        value={titulo}
-                        onChange={(e) => setTitulo(e.target.value)}
-                        required
-                        className="w-1/2 border p-2 rounded mb-6"
-                    />
-
-                    <label className="block mb-2 font-semibold">Contenido</label>
-                    <textarea
-                        placeholder="Contenido"
-                        value={contenido}
-                        onChange={(e) => setContenido(e.target.value)}
-                        required
-                        className="w-full border p-2 rounded h-40 mb-6"
-                    ></textarea>
-
-                    <div className="w-full">
-                        <label
-                        htmlFor="pdf-upload"
-                        className="cursor-pointer inline-block bg-gray-600 text-white px-4 py-2 rounded hover:bg-yellow-700"
-                        >
-                        Subir PDF
-                        </label>
-
-                        <input
-                        id="pdf-upload"
-                        type="file"
-                        accept="application/pdf"
-                        onChange={(e) => setPdfFile(e.target.files[0])}
-                        className="hidden"
-                        />
-
-                        {pdfFile ? (
-                            <div className="mt-2 flex items-center gap-2 text-sm text-black">
-                                <span>Archivo seleccionado: {pdfFile.name}</span>
-                                <HiXCircle
-                                title="Quitar archivo"
-                                onClick={() => setPdfFile(null)}
-                                className="pt-0.5 text-xl text-gray-500 hover:text-red-600 cursor-pointer transition duration-200"
-                                />
-                            </div>
-                        ) : (
-                            <div className="mt-2 flex items-center gap-2 text-sm text-black">
-                                <span>Archivo seleccionado: No hay ningún archivo seleccionado.</span>
-                            </div>
-                        )}
-                    </div>
+                <label htmlFor="titulo" className="block mb-3 font-semibold text-gray-700">
+                    Título
+                </label>
+                <input
+                    id="titulo"
+                    type="text"
+                    placeholder="Título"
+                    value={titulo}
+                    onChange={(e) => setTitulo(e.target.value)}
+                    required
+                    className="w-full border border-gray-300 rounded-md p-3 text-gray-900 text-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
+                />
                 </div>
 
-                <div className="flex justify-center mt-4">
+                <div>
+                <label htmlFor="contenido" className="block mb-3 font-semibold text-gray-700">
+                    Contenido
+                </label>
+                <textarea
+                    id="contenido"
+                    placeholder="Contenido"
+                    value={contenido}
+                    onChange={(e) => setContenido(e.target.value)}
+                    required
+                    rows={8}
+                    className="w-full border border-gray-300 rounded-md p-3 text-gray-900 text-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
+                ></textarea>
+                </div>
+
+                <div>
+                <label
+                    htmlFor="pdf-upload"
+                    className="inline-block cursor-pointer bg-gray-700 text-white px-6 py-3 rounded-md hover:bg-yellow-600 transition select-none"
+                >
+                    Subir PDF
+                </label>
+                <input
+                    id="pdf-upload"
+                    type="file"
+                    accept="application/pdf"
+                    onChange={(e) => setPdfFile(e.target.files[0])}
+                    className="hidden"
+                />
+                {pdfFile ? (
+                    <div className="mt-4 flex items-center gap-3 text-gray-900 text-base">
+                    <span>Archivo seleccionado: {pdfFile.name}</span>
+                    <HiXCircle
+                        title="Quitar archivo"
+                        onClick={() => setPdfFile(null)}
+                        className="text-2xl text-gray-500 hover:text-red-600 cursor-pointer transition duration-200"
+                    />
+                    </div>
+                ) : (
+                    <p className="mt-4 text-gray-500">No hay ningún archivo seleccionado.</p>
+                )}
+                </div>
+
+                <div className="flex justify-center">
                     <button
                         type="submit"
-                        className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition cursor-pointer"
+                        className="bg-blue-600 text-white font-semibold px-10 py-3 rounded-lg shadow-md hover:bg-blue-700 transition"
                     >
                         Publicar
                     </button>

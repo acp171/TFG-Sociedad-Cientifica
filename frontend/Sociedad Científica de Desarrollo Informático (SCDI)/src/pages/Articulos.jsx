@@ -6,11 +6,11 @@ const Articulos = () => {
     const [loading, setLoading] = useState(true);
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const articulosPorPagina = 8;
+    const articulosPorPagina = 9;
     const currentPage = parseInt(searchParams.get("page")) || 1;
 
     useEffect(() => {
-        fetch('http://localhost:4000/listado-articulos-cientificos')
+        fetch("http://localhost:4000/listado-articulos-cientificos")
         .then((res) => res.json())
         .then((data) => {
             setArticulos(data.articulos?.listadoArticulos || []);
@@ -28,53 +28,55 @@ const Articulos = () => {
 
     const cambiarPagina = (pagina) => {
         if (pagina >= 1 && pagina <= totalPaginas) {
-            setSearchParams({ page: pagina });
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        setSearchParams({ page: pagina });
+        window.scrollTo({ top: 0, behavior: "smooth" });
         }
     };
 
     return (
-        <section className="w-full bg-gradient-to-b from-blue-100 to-white py-16 px-6 lg:px-16 min-h-screen">
-            <div className="flex justify-between items-center mb-10">
-                <h2 className="text-3xl font-bold text-center lg:text-left">ARTÍCULOS CIENTÍFICOS</h2>
+        <section className="min-h-screen w-full bg-gradient-to-b from-blue-50 to-white py-16 px-6 lg:px-20 font-sans">
+            <div className="flex flex-col md:flex-row justify-between items-center mb-12">
+                <h2 className="text-4xl font-extrabold text-gray-900 mb-6 md:mb-0">
+                    ARTÍCULOS CIENTÍFICOS
+                </h2>
                 <Link
                     to="/articulos-cientificos/crear-articulo"
-                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+                    className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold"
                 >
-                    Publicar artículo
+                    Publicar Artículo
                 </Link>
             </div>
 
             {loading ? (
-                <p className="text-center text-gray-500">Cargando artículos...</p>
+                <p className="text-center text-gray-500 text-lg">Cargando artículos...</p>
             ) : articulos.length === 0 ? (
-                <p className="text-center text-gray-500">No hay artículos disponibles.</p>
+                <p className="text-center text-gray-600 text-lg">No hay artículos disponibles.</p>
             ) : (
                 <>
-                    <div className="space-y-8 mb-10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                         {articulosVisibles.map((articulo) => (
-                            <div key={articulo.id_publicacion}>
-                                <Link to={`/articulos-cientificos/${articulo.id_publicacion}`}>
-                                    <div className="border rounded-xl shadow bg-white p-6 text-center hover:shadow-lg transition duration-300">
-                                        <h3 className="text-xl font-semibold mb-2">{articulo.titulo}</h3>
-                                        <p className="text-sm text-gray-600 mb-2">
-                                            Publicado por: {articulo.nombre} {articulo.apellidos}
-                                        </p>
-                                        <p className="text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap">
-                                            {articulo.contenido}
-                                        </p>
-                                    </div>
-                                </Link>
-                            </div>
+                        <Link
+                            key={articulo.id_publicacion}
+                            to={`/articulos-cientificos/${articulo.id_publicacion}`}
+                            className="block bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6"
+                            aria-label={`Ver artículo: ${articulo.titulo}`}
+                        >
+                            <h3 className="text-2xl font-semibold text-gray-900 mb-3 truncate">{articulo.titulo}</h3>
+                            <p className="text-sm text-gray-600 mb-4">
+                            Publicado por: <span className="font-medium">{articulo.nombre} {articulo.apellidos}</span>
+                            </p>
+                            <p className="text-gray-700 line-clamp-3">{articulo.contenido}</p>
+                        </Link>
                         ))}
                     </div>
 
-                    {/* Controles de paginación */}
-                    <div className="flex justify-center items-center gap-2">
+                    {/* Paginación */}
+                    <nav className="flex justify-center items-center gap-3 select-none" aria-label="Paginación artículos">
                         <button
                             onClick={() => cambiarPagina(currentPage - 1)}
                             disabled={currentPage === 1}
-                            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+                            className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                            aria-label="Página anterior"
                         >
                             ← Anterior
                         </button>
@@ -83,11 +85,12 @@ const Articulos = () => {
                             <button
                                 key={index + 1}
                                 onClick={() => cambiarPagina(index + 1)}
-                                className={`px-3 py-1 rounded ${
-                                    currentPage === index + 1
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-200 hover:bg-gray-300"
+                                className={`px-4 py-2 rounded-md font-medium transition ${
+                                currentPage === index + 1
+                                    ? "bg-indigo-600 text-white shadow-lg"
+                                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                                 }`}
+                                aria-current={currentPage === index + 1 ? "page" : undefined}
                             >
                                 {index + 1}
                             </button>
@@ -96,11 +99,12 @@ const Articulos = () => {
                         <button
                             onClick={() => cambiarPagina(currentPage + 1)}
                             disabled={currentPage === totalPaginas}
-                            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+                            className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                            aria-label="Página siguiente"
                         >
                             Siguiente →
                         </button>
-                    </div>
+                    </nav>
                 </>
             )}
         </section>
