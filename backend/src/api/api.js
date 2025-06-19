@@ -911,7 +911,10 @@ router.get('/articulos-cientificos/:id/pdf', async (req, res) => {
 
         const pdfAbsolutePath = path.resolve(__dirname, '..', 'public', pdfRelativePath);
 
-        res.download(pdfAbsolutePath, `articulo_${id_publicacion}.pdf`, (err) => {
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="articulo_${id_publicacion}.pdf"`);
+
+        res.sendFile(pdfAbsolutePath, (err) => {
             if (err) {
                 console.error("Error al enviar PDF:", err);
                 if (!res.headersSent) {
