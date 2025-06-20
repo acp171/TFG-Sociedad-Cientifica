@@ -11,7 +11,7 @@ const ArticuloDetalle = () => {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
 
     useEffect(() => {
-        fetch(`http://localhost:4000/articulos-cientificos/${id}`)
+        fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${id}`)
             .then(res => res.json())
             .then(data => {
                 setArticulo(data.articulo);
@@ -34,11 +34,11 @@ const ArticuloDetalle = () => {
         }
     };
 
-    const enviarComentario = async () => {
+    const enviarComentario = async (idPublicacion) => {
         if (!nuevoComentario.trim()) return;
 
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/comentarios`, {
+        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${idPublicacion}/comentarios`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -56,6 +56,31 @@ const ArticuloDetalle = () => {
             setNuevoComentario("");
         } else {
             alert("No se pudo enviar el comentario.");
+        }
+    };
+
+    const cambiarVisibilidadComentario = async (idPublicacion, idComentario) => {
+        const token = localStorage.getItem("token");
+    
+        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${idPublicacion}/comentarios/${idComentario}/moderar`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            }
+        });
+    
+        if (res.ok) {
+            const actualizado = await res.json();
+            setComentarios(prev =>
+                prev.map(c =>
+                    c.id_comentario === actualizado.comentario.id_comentario
+                        ? { ...c, visibilidad: actualizado.comentario.visibilidad }
+                        : c
+                )
+            );
+        } else {
+            alert("No se pudo actualizar la visibilidad del comentario.");
         }
     };
 
@@ -155,6 +180,20 @@ const ArticuloDetalle = () => {
                                         </span>{" "}
                                         el {comentario.fechaFormateada}
                                     </p>
+
+                                    {/* Botón para admin para cambiar visibilidad */}
+                                    {usuario?.socio_rol === 1 && (
+                                        <button
+                                            onClick={() => cambiarVisibilidadComentario(articulo.id_publicacion, comentario.id_comentario)}
+                                            className={`mt-2 px-4 py-2 rounded text-sm font-semibold transition ${
+                                                comentario.visibilidad
+                                                    ? "bg-yellow-500 hover:bg-yellow-600 text-white"
+                                                    : "bg-green-600 hover:bg-green-700 text-white"
+                                            }`}
+                                        >
+                                            {comentario.visibilidad ? "Ocultar" : "Mostrar"}
+                                        </button>
+                                    )}
                                 </li>
                             ))}
                         </ul>
@@ -173,7 +212,7 @@ const ArticuloDetalle = () => {
                                 if (!usuario) {
                                     navigate("/login");
                                 } else {
-                                    enviarComentario();
+                                    enviarComentario(articulo.id_publicacion);
                                 }
                             }}
                             className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"

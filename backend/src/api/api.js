@@ -67,7 +67,8 @@ router.post('/login', async (req, res) => {
             {
               id: socio.id_socio,
               email: socio.email,
-              nombre: socio.nombre
+              nombre: socio.nombre,
+              rol: socio.socio_rol
             },
             SECRET_KEY,
             { expiresIn: '1h' } // Token expira en 1 hora
@@ -975,8 +976,8 @@ router.post('/articulos-cientificos/:id/comentarios', verificarToken, async (req
     }
 });
 
-// PUT moderar comentario
-router.put('/articulos-cientificos/:id/comentarios/:id_comentario/moderar', verificarToken, async (req, res) => {
+// PATCH moderar comentario
+router.patch('/articulos-cientificos/:id/comentarios/:id_comentario/moderar', verificarToken, async (req, res) => {
     const id_comentario = req.params.id_comentario;
 
     const adminRol = await obtenernRol(req.usuario);
@@ -988,16 +989,16 @@ router.put('/articulos-cientificos/:id/comentarios/:id_comentario/moderar', veri
         const query = `UPDATE Comentario_Publicacion 
                        SET visibilidad = NOT visibilidad 
                        WHERE id_comentario = $1
-                       RETURNING id_comentario, socio, publicacion, visibilidad;`;
+                       RETURNING *;`;
         const result = await pool.query(query, [id_comentario]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Comentario no encontrado." });
+        }
+
         res.status(200).json({
             message: 'Comentario moderado en artículo científico.',
-            comentario: {
-                id_comentario: result.rows[0].id_comentario,
-                socio: result.rows[0].socio,
-                publicacion: result.rows[0].publicacion,
-                visibilidad: result.rows[0].visibilidad
-            }
+            comentario: result.rows[0]
         });
 
     } catch (error) {
