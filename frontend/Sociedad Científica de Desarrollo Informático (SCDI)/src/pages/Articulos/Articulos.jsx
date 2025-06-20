@@ -10,7 +10,7 @@ const Articulos = () => {
     const currentPage = parseInt(searchParams.get("page")) || 1;
 
     useEffect(() => {
-        fetch("https://tfg-sociedad-cientifica-production.up.railway.app/listado-articulos-cientificos")
+        fetch("http://localhost:4000/listado-articulos-cientificos")
             .then((res) => res.json())
             .then((data) => {
                 setArticulos(data.articulos?.listadoArticulos || []);
@@ -34,7 +34,7 @@ const Articulos = () => {
     };
 
     return (
-        <section className="flex flex-col flex-grow w-full bg-gradient-to-b from-blue-50 to-white py-16 px-6 lg:px-20 font-sans">
+        <section className="flex flex-col flex-grow w-full bg-gradient-to-b from-blue-200 to-white py-16 px-6 lg:px-20 font-sans">
             <div className="flex flex-col flex-grow">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-12">
                     <h2 className="text-4xl font-extrabold text-gray-900 mb-6 md:mb-0">

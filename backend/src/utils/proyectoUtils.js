@@ -19,7 +19,20 @@ async function obtenerPresidenteProyecto(proyecto) {
     return presidenteProyecto;
 }
 
+async function obtenerMiembro(id_proyecto, id_socio) {
+    const queryMiembros = `SELECT sp.fecha_registro, s.id_socio, s.nombre, s.apellidos, sr.nombre as rol
+                           FROM Socio_Proyecto sp 
+                           JOIN Socio s ON sp.socio = s.id_socio 
+                           JOIN Socio_Rol sr ON sp.rol_proyecto = sr.id_socio_rol 
+                           WHERE sp.proyecto = $1 AND sp.socio = $2`;
+    const resultMiembros = await pool.query(queryMiembros, [id_proyecto, id_socio]);
+    const miembro = resultMiembros.rows[0];
+
+    return miembro;
+}
+
 module.exports = { 
     obtenerNombreProyecto,
-    obtenerPresidenteProyecto
+    obtenerPresidenteProyecto,
+    obtenerMiembro
 }

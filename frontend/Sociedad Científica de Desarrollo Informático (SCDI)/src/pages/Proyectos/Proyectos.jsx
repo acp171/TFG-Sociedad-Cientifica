@@ -57,7 +57,7 @@ const Proyectos = () => {
     };
 
     return (
-        <section className="flex flex-col flex-grow py-16 px-6 lg:px-20 bg-white">
+        <section className="flex flex-col flex-grow py-16 px-6 lg:px-20 bg-gradient-to-b from-blue-200 to-white">
             <div className="flex flex-col flex-grow">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-12">
                     <h1 className="text-4xl font-extrabold text-gray-900 mb-6 md:mb-0">PROYECTOS DE INVESTIGACIÓN</h1>
@@ -66,7 +66,7 @@ const Proyectos = () => {
                             className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold"
                         >
                             Nuevo proyecto
-                        </Link>
+                    </Link>
                 </div>
 
                 {/* Filtros */}

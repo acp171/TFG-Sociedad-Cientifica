@@ -9,9 +9,8 @@ const CrearArticulo = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const usuario = JSON.parse(localStorage.getItem("usuario"));
-        if (!usuario) {
-            // Si no está logueado, redirige a login
+        const token = localStorage.getItem("token");
+        if (!token) {
             navigate("/login");
         }
     }, [navigate]);
@@ -29,12 +28,12 @@ const CrearArticulo = () => {
         }
 
         try {
-            const res = await fetch("https://tfg-sociedad-cientifica-production.up.railway.app/publicar-articulo-cientifico", {
+            const res = await fetch("http://localhost:4000/articulos-cientificos/publicar-articulo-cientifico", {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
-                body: formData
+                body: formData,
             });
 
             if (res.ok) {
@@ -49,7 +48,7 @@ const CrearArticulo = () => {
     };
 
     return (
-        <section className="min-h-[80vh] flex flex-col justify-center items-center bg-gradient-to-b from-blue-50 to-white py-16 px-6 lg:px-20 font-sans">
+        <section className="min-h-[80vh] flex flex-col justify-center items-center bg-gradient-to-b from-blue-200 to-white py-16 px-6 lg:px-20 font-sans">
             {/* Botón Volver */}
             <button
                 onClick={() => navigate(-1)}
@@ -127,7 +126,7 @@ const CrearArticulo = () => {
                 <div className="flex justify-center">
                     <button
                         type="submit"
-                        className="bg-blue-600 text-white font-semibold px-10 py-3 rounded-lg shadow-md hover:bg-blue-700 transition"
+                        className="bg-blue-600 text-white font-semibold px-10 py-3 rounded-lg shadow-md hover:bg-blue-700 transition cursor-pointer"
                     >
                         Publicar
                     </button>

@@ -3,6 +3,9 @@ import Footer from './components/Footer';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import QuienesSomos from './pages/Quienes-Somos';
+import Unete from './pages/Unete';
+import Login from './pages/Autenticacion/Login';
+import Register from './pages/Autenticacion/Register';
 import Articulos from './pages/Articulos/Articulos';
 import ArticuloDetalle from './pages/Articulos/ArticuloDetalle';
 import CrearArticulo from './pages/Articulos/CrearArticulo';
@@ -18,6 +21,9 @@ function App() {
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/unete" element={<Unete />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/quienes-somos" element={<QuienesSomos />} />
           <Route path="/articulos-cientificos" element={<Articulos />} />
           <Route path="/articulos-cientificos/:id" element={<ArticuloDetalle />} />

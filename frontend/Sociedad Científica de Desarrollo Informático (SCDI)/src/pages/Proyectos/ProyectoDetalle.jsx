@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import DatosProyecto from "../../components/Proyectos/DatosProyecto";
 import MiembrosProyecto from "../../components/Proyectos/MiembrosProyecto";
 
-const ProyectoDetalle = ({ userRole, userId }) => {
+const ProyectoDetalle = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -13,25 +13,24 @@ const ProyectoDetalle = ({ userRole, userId }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [activeTab, setActiveTab] = useState("datos");
+    const usuario = JSON.parse(localStorage.getItem("socio"));
+
+    const fetchProyecto = async () => {
+        try {
+            setLoading(true);
+            const res = await fetch(`http://localhost:4000/proyectos-investigacion/${id}`);
+            if (!res.ok) throw new Error("Proyecto no encontrado");
+            const data = await res.json();
+            setProyecto(data.proyecto);
+            setMiembros(data.miembros);
+            setLoading(false);
+        } catch (err) {
+            setError(err.message);
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchProyecto = async () => {
-            try {
-                setLoading(true);
-                const res = await fetch(`http://localhost:4000/proyectos-investigacion/${id}`);
-                if (!res.ok) {
-                    throw new Error("Proyecto no encontrado");
-                }
-                const data = await res.json();
-                setProyecto(data.proyecto);
-                setMiembros(data.miembros);
-                setLoading(false);
-            } 
-            catch (err) {
-                setError(err.message);
-                setLoading(false);
-            }
-        };
         fetchProyecto();
     }, [id]);
 
@@ -42,8 +41,11 @@ const ProyectoDetalle = ({ userRole, userId }) => {
         return <p>Error: {error}</p>;
     }
 
+    const presidentes = miembros.filter((miembro) => miembro.rol === "Presidente");
+    const esPresidente = presidentes.some((presidente) => presidente.id_socio === usuario?.id);
+
     return (
-        <section className="min-h-screen w-full bg-gradient-to-b from-blue-50 to-white py-16 px-6 lg:px-20 font-sans">
+        <section className="min-h-screen w-full bg-gradient-to-b from-blue-200 to-white py-16 px-6 lg:px-20 font-sans">
             <h1 className="text-4xl font-extrabold text-gray-900 mb-8">{proyecto.nombre_proyecto}</h1>
 
             <nav className="flex gap-4 mb-12">
@@ -68,19 +70,22 @@ const ProyectoDetalle = ({ userRole, userId }) => {
             <div>
                 {activeTab === "datos" && (
                     <DatosProyecto
-                    proyecto={proyecto}
-                    setProyecto={setProyecto}
-                    userRole={userRole}
-                    navigate={navigate}
-                    proyectoId={id}
+                        proyecto={proyecto}
+                        setProyecto={setProyecto}
+                        navigate={navigate}
+                        proyectoId={id}
+                        esPresidente={esPresidente}
+                        token={localStorage.getItem("token")}
                     />
                 )}
                 {activeTab === "miembros" && (
                     <MiembrosProyecto
-                    miembros={miembros}
-                    setMiembros={setMiembros}
-                    userRole={userRole}
-                    proyectoId={id}
+                        miembros={miembros}
+                        setMiembros={setMiembros}
+                        proyectoId={id}
+                        esPresidente={esPresidente}
+                        token={localStorage.getItem("token")}
+                        refetchProyecto={fetchProyecto}
                     />
                 )}
             </div>

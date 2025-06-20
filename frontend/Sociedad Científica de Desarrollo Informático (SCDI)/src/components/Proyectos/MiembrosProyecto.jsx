@@ -1,12 +1,12 @@
 import { useState } from "react";
 
 const roles = [
-    { id: 1, nombre_rol: "Miembro" },
+    { id: 8, nombre_rol: "Miembro" },
     { id: 2, nombre_rol: "Presidente" },
     { id: 3, nombre_rol: "Administrador" },
 ];
 
-const MiembrosProyecto = ({ miembros, setMiembros, userRole, proyectoId }) => {
+const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, token, refetchProyecto }) => {
     const [nuevoSocio, setNuevoSocio] = useState("");
     const [nuevoRol, setNuevoRol] = useState("");
 
@@ -18,14 +18,18 @@ const MiembrosProyecto = ({ miembros, setMiembros, userRole, proyectoId }) => {
         try {
             const res = await fetch(`http://localhost:4000/proyectos-investigacion/${proyectoId}/miembros`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
                 body: JSON.stringify({ socio: nuevoSocio, rol_proyecto: nuevoRol }),
             });
             if (!res.ok) {
                 throw new Error("Error agregando miembro");
             }
-            const data = await res.json();
-            setMiembros(data.miembros);
+            
+            const data = await res.json(); // Supón que devuelve el nuevo miembro
+            setMiembros((prev) => [...prev, data.miembro]); // 👈 actualización local
             setNuevoSocio("");
             setNuevoRol("");
         }
@@ -39,12 +43,16 @@ const MiembrosProyecto = ({ miembros, setMiembros, userRole, proyectoId }) => {
         try {
             const res = await fetch(`http://localhost:4000/proyectos-investigacion/${proyectoId}/miembros/${id_socio}`, {
                 method: "DELETE",
+                headers: { 
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
             });
             if (!res.ok) {
                 throw new Error("Error eliminando miembro");
             }
-            const data = await res.json();
-            setMiembros(data.miembros);
+            
+            setMiembros((prev) => prev.filter((m) => m.id_socio !== id_socio));
         }
         catch (err) {
             alert(err.message);
@@ -116,23 +124,23 @@ const MiembrosProyecto = ({ miembros, setMiembros, userRole, proyectoId }) => {
                         <td className="border px-3 py-2">{m.id_socio}</td>
                         <td className="border px-3 py-2">{m.nombre} {m.apellidos}</td>
                         <td className="border px-3 py-2">
-                            {userRole === "Presidente" ? (
-                            <select
-                                className="border rounded-md px-2 py-1"
-                                value={roles.find(r => r.nombre_rol === m.rol)?.id || ""}
-                                onChange={(e) => cambiarRol(m.id_socio, e.target.value)}
-                            >
-                                {roles.map((r) => (
-                                <option key={r.id} value={r.id}>{r.nombre_rol}</option>
-                                ))}
-                            </select>
+                            {esPresidente ? (
+                                <select
+                                    className="border rounded-md px-2 py-1"
+                                    value={roles.find(r => r.nombre_rol === m.rol)?.id || ""}
+                                    onChange={(e) => cambiarRol(m.id_socio, e.target.value)}
+                                >
+                                    {roles.map((r) => (
+                                        <option key={r.id} value={r.id}>{r.nombre_rol}</option>
+                                    ))}
+                                </select>
                             ) : (
-                            m.rol
+                                m.rol
                             )}
                         </td>
                         <td className="border px-3 py-2">{new Date(m.fecha_registro).toLocaleDateString()}</td>
                         <td className="border px-3 py-2">
-                            {(userRole === "Presidente" || userRole === "Administrador") && (
+                            {esPresidente && (
                             <button
                                 className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition"
                                 onClick={() => eliminarMiembro(m.id_socio)}
