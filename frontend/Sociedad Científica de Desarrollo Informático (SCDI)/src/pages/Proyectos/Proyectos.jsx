@@ -1,114 +1,102 @@
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
 
 const Proyectos = () => {
-    const [articulos, setArticulos] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [searchParams, setSearchParams] = useSearchParams();
+  const [proyectos, setProyectos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    const articulosPorPagina = 9;
-    const currentPage = parseInt(searchParams.get("page")) || 1;
+  // Estados para filtros
+  const [filtroEstado, setFiltroEstado] = useState("");
+  const [filtroFechaFin, setFiltroFechaFin] = useState("");
 
-    useEffect(() => {
-        fetch("https://tfg-sociedad-cientifica-production.up.railway.app/listado-articulos-cientificos")
-        .then((res) => res.json())
-        .then((data) => {
-            setArticulos(data.articulos?.listadoArticulos || []);
-            setLoading(false);
-        })
-        .catch((error) => {
-            console.error("Error al cargar artículos:", error);
-            setLoading(false);
-        });
-    }, []);
+  useEffect(() => {
+    setLoading(true);
+    fetch("http://localhost:4000/listado-proyectos-investigacion")
+      .then((res) => res.json())
+      .then((data) => {
+        setProyectos(data.proyectos?.listaProyectos || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error cargando proyectos", err);
+        setLoading(false);
+      });
+  }, []);
 
-    const totalPaginas = Math.ceil(articulos.length / articulosPorPagina);
-    const inicio = (currentPage - 1) * articulosPorPagina;
-    const articulosVisibles = articulos.slice(inicio, inicio + articulosPorPagina);
+  // Aplica los filtros solo si están definidos
+  const proyectosFiltrados = proyectos.filter((proyecto) => {
+    let cumpleEstado = true;
+    let cumpleFecha = true;
 
-    const cambiarPagina = (pagina) => {
-        if (pagina >= 1 && pagina <= totalPaginas) {
-        setSearchParams({ page: pagina });
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        }
-    };
+    if (filtroEstado) {
+      cumpleEstado = proyecto.estado.toLowerCase() === filtroEstado.toLowerCase();
+    }
 
-    return (
-        <section className="min-h-screen w-full bg-gradient-to-b from-blue-50 to-white py-16 px-6 lg:px-20 font-sans">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-12">
-                <h2 className="text-4xl font-extrabold text-gray-900 mb-6 md:mb-0">
-                    ARTÍCULOS CIENTÍFICOS
-                </h2>
-                <Link
-                    to="/articulos-cientificos/crear-articulo"
-                    className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold"
-                >
-                    Publicar Artículo
-                </Link>
+    if (filtroFechaFin) {
+      const fechaFinFiltro = new Date(filtroFechaFin);
+      const fechaFinProyecto = new Date(proyecto.fecha_fin);
+      cumpleFecha = fechaFinProyecto <= fechaFinFiltro;
+    }
+
+    return cumpleEstado && cumpleFecha;
+  });
+
+  return (
+    <section className="min-h-screen bg-white py-16 px-6 lg:px-20">
+      <h1 className="text-4xl font-bold text-gray-800 mb-10 text-center">
+        Proyectos de Investigación
+      </h1>
+
+      {/* Filtros */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-4 mb-10">
+        <select
+          value={filtroEstado}
+          onChange={(e) => setFiltroEstado(e.target.value)}
+          className="border rounded p-2"
+        >
+          <option value="">Todos los estados</option>
+          <option value="Pendiente">Pendiente</option>
+          <option value="En curso">En curso</option>
+          <option value="Finalizado">Finalizado</option>
+        </select>
+
+        <input
+          type="date"
+          value={filtroFechaFin}
+          onChange={(e) => setFiltroFechaFin(e.target.value)}
+          className="border rounded p-2"
+          placeholder="Filtrar por fecha fin"
+        />
+      </div>
+
+      {loading ? (
+        <p className="text-center text-gray-500 text-lg">Cargando proyectos...</p>
+      ) : proyectosFiltrados.length === 0 ? (
+        <p className="text-gray-500 text-center">No hay proyectos disponibles.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          {proyectosFiltrados.map((proyecto) => (
+            <div
+              key={proyecto.id_proyecto}
+              className="p-6 bg-gray-50 rounded-xl shadow-md"
+            >
+              <h2 className="text-2xl font-semibold text-blue-700 mb-2">
+                {proyecto.titulo}
+              </h2>
+              <p className="text-gray-700 mb-4">{proyecto.descripcion}</p>
+              <p className="text-sm text-gray-500">
+                <strong>Inicio:</strong>{" "}
+                {new Date(proyecto.fecha_inicio).toLocaleDateString()}{" "}
+                <strong>Fin:</strong>{" "}
+                {new Date(proyecto.fecha_fin).toLocaleDateString()}
+                <br />
+                <strong>Estado:</strong> {proyecto.estado}
+              </p>
             </div>
-
-            {loading ? (
-                <p className="text-center text-gray-500 text-lg">Cargando artículos...</p>
-            ) : articulos.length === 0 ? (
-                <p className="text-center text-gray-600 text-lg">No hay artículos disponibles.</p>
-            ) : (
-                <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                        {articulosVisibles.map((articulo) => (
-                        <Link
-                            key={articulo.id_publicacion}
-                            to={`/articulos-cientificos/${articulo.id_publicacion}`}
-                            className="block bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6"
-                            aria-label={`Ver artículo: ${articulo.titulo}`}
-                        >
-                            <h3 className="text-2xl font-semibold text-gray-900 mb-3 truncate">{articulo.titulo}</h3>
-                            <p className="text-sm text-gray-600 mb-4">
-                            Publicado por: <span className="font-medium">{articulo.nombre} {articulo.apellidos}</span>
-                            </p>
-                            <p className="text-gray-700 line-clamp-3">{articulo.contenido}</p>
-                        </Link>
-                        ))}
-                    </div>
-
-                    {/* Paginación */}
-                    <nav className="flex justify-center items-center gap-3 select-none" aria-label="Paginación artículos">
-                        <button
-                            onClick={() => cambiarPagina(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
-                            aria-label="Página anterior"
-                        >
-                            ← Anterior
-                        </button>
-
-                        {[...Array(totalPaginas)].map((_, index) => (
-                            <button
-                                key={index + 1}
-                                onClick={() => cambiarPagina(index + 1)}
-                                className={`px-4 py-2 rounded-md font-medium transition ${
-                                currentPage === index + 1
-                                    ? "bg-indigo-600 text-white shadow-lg"
-                                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                                }`}
-                                aria-current={currentPage === index + 1 ? "page" : undefined}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-
-                        <button
-                            onClick={() => cambiarPagina(currentPage + 1)}
-                            disabled={currentPage === totalPaginas}
-                            className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
-                            aria-label="Página siguiente"
-                        >
-                            Siguiente →
-                        </button>
-                    </nav>
-                </>
-            )}
-        </section>
-    );
+          ))}
+        </div>
+      )}
+    </section>
+  );
 };
 
 export default Proyectos;
