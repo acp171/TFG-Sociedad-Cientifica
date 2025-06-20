@@ -880,9 +880,19 @@ router.get('/articulos-cientificos/:id', async (req, res) => {
 
         const articulo = resultArticulo.rows[0];
 
+        // Obtener comentarios del artículo
+        const queryComentarios = `SELECT c.id_comentario, c.comentario, c.fecha_comentario, 
+                                         c.visibilidad, s.nombre, s.apellidos 
+                                  FROM Comentario_Publicacion c 
+                                  JOIN Socio s ON c.socio = s.id_socio 
+                                  WHERE c.publicacion = $1 
+                                  ORDER BY c.fecha_comentario DESC;`;
+        const resultComentarios = await pool.query(queryComentarios, [id_publicacion]);
+
         res.status(200).json({
             message: 'Artículo científico encontrado.',
-            articulo: articulo
+            articulo: articulo,
+            comentarios: resultComentarios.rows
         });
     } catch (error) {
         console.error("Error al intentar buscar publicación: ", error.message);
@@ -929,8 +939,9 @@ router.get('/articulos-cientificos/:id/pdf', async (req, res) => {
 });
 
 // POST hacer un comentario en articulo científico
-router.post('/comentario-articulo-cientifico', verificarToken, async (req, res) => {
-    const { comentario, publicacion } = req.body;
+router.post('/articulos-cientificos/:id/comentarios', verificarToken, async (req, res) => {
+    const publicacion = req.params.id;
+    const { comentario } = req.body;
 
     if (!comentario) {
         res.status(400).json({ message: 'Falta el comentario.' });
