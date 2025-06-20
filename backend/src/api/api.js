@@ -17,7 +17,7 @@ const upload = require('../utils/upload');
 const eliminarArchivoPDF = require('../utils/deleteFile');
 const { obtenernRol, obtenerSocio, obtenerPresidenteComite } = require('../utils/socioUtils');
 const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones');
-const { obtenerNombreProyecto } = require('../utils/proyectoUtils');
+const { obtenerNombreProyecto, obtenerPresidenteProyecto } = require('../utils/proyectoUtils');
 const { obtenerNombreComite } = require('../utils/comiteUtils');
 
 // Middlewares
@@ -410,42 +410,6 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
     }
 });
 
-// DELETE eliminar rol siendo presidente de un proyecto de investigación
-router.delete('/eliminar-miembro-proyecto', verificarToken, async (req, res) =>  {
-    const { id_socio, proyecto } = req.body;    
-
-    const presidenteRol = await obtenernRol(req.usuario);
-    if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
-        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-    }
-
-    try {
-        const values = [
-            id_socio,
-            proyecto
-        ];
-
-        const  query = 'DELETE FROM Socio_Proyecto WHERE socio = $1 AND proyecto = $2;';
-
-        const nombreProyecto = await obtenerNombreProyecto(proyecto);
-        await crearNotificacion(
-            socio,
-            'Has sido expulsado del proyecto.',
-            `Fuiste expulsado del proyecto de investigación "${nombreProyecto}". ¡Revisa los detalles en la plataforma!`
-          );
-
-        const result = await pool.query(query, values);
-        res.status(200).json({
-            message: 'Miembro expulsado.'
-        });
-
-    }
-    catch (error) {
-        console.error("Error al expulsar miembro siendo presidente de proyecto: ", error.message);
-        res.status(500).json({ message: 'Error interno del servidor.' });
-    }
-});
-
 // POST crear un proyecto de investigación
 router.post('/crear-proyecto-investigacion', verificarToken, async (req, res) =>  {
     const { nombre_proyecto, descripcion, fecha_inicio, fecha_fin } = req.body;    
@@ -468,7 +432,7 @@ router.post('/crear-proyecto-investigacion', verificarToken, async (req, res) =>
 
     if (fecha_fin_Date > fecha_inicio_date) {
         try {
-            const values = [
+            const valuesProyecto = [
                 nombre_proyecto,
                 descripcion,
                 fecha_inicio_date,
@@ -476,24 +440,29 @@ router.post('/crear-proyecto-investigacion', verificarToken, async (req, res) =>
                 estado
             ];
 
-            const query = 'INSERT INTO Proyectos_Investigacion(nombre_proyecto, descripcion, fecha_inicio,' +
+            const queryProyecto = 'INSERT INTO Proyectos_Investigacion(nombre_proyecto, descripcion, fecha_inicio,' +
                         'fecha_fin, estado) VALUES ($1, $2, $3, $4, $5) RETURNING id_proyecto, nombre_proyecto,' +
                         'descripcion, fecha_inicio, fecha_fin, estado;';
-            const result = await pool.query(query, values);
+            const resultProyecto = await pool.query(queryProyecto, valuesProyecto);
 
-            const rol = obtenernRol(req.usuario);
-            if (!rol || rol.nombre !== "Administrador") {
-                const queryAsignarPresidente = "UPDATE Socio SET socio_rol = 2 WHERE email = $1;";
-                const resultAsignarPresidente = await pool.query(queryAsignarPresidente, [req.usuario.email]);
-            }
+            const valuesMiembro = [
+                fecha_actual,
+                req.usuario.id,
+                resultProyecto.rows[0].id_proyecto,
+                2
+            ]
+            const queryMiembro = `INSERT INTO Socio_Proyecto(fecha_registro, socio, proyecto, rol_proyecto) 
+                                  VALUES ($1, $2, $3, $4);`;
+            await pool.query(queryMiembro, valuesMiembro);
 
             res.status(200).json({
                 message: 'Proyecto de investigación creado.',
                 proyecto: {
-                    id_proyecto: result.rows[0].id_proyecto,
-                    nombre_proyecto: result.rows[0].nombre_proyecto,
-                    descripcion: result.rows[0].descripcion,
-                    estado: result.rows[0].estado
+                    id_proyecto: resultProyecto.rows[0].id_proyecto,
+                    nombre_proyecto: resultProyecto.rows[0].nombre_proyecto,
+                    descripcion: resultProyecto.rows[0].descripcion,
+                    estado: resultProyecto.rows[0].estado,
+                    presidente: req.usuario.nombre + ' es presidente.'
                 }
             });
         }
@@ -508,12 +477,15 @@ router.post('/crear-proyecto-investigacion', verificarToken, async (req, res) =>
 });
 
 // DELETE eliminar un proyecto de investigación
-router.delete('/eliminar-proyecto-investigacion/:id', verificarToken, async (req, res) =>  {
+router.delete('/proyectos-investigacion/:id', verificarToken, async (req, res) =>  {
     const id_proyecto = req.params.id;
     
-    const rol = await obtenernRol(req.usuario);
-    if (!rol || (rol.nombre !== 'Presidente' && rol.nombre !== 'Administrador')) {
-        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        const presidenteProyecto = await obtenerPresidenteProyecto(proyecto);
+        if (presidenteProyecto.socio !== req.usuario.id) {
+            return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+        }
     }
 
     try {
@@ -551,17 +523,21 @@ router.get('/listado-proyectos-investigacion', async (req, res) =>  {
     }
 });
 
-// POST ver proyectos de investigación
-router.post('/add-miembro-proyecto-investigacion', verificarToken, async (req, res) =>  {
-    const { socio, proyecto, rol_proyecto} = req.body;
+// POST añadir miembro al proyecto de investigación
+router.post('/proyectos-investigacion/:id/miembros', verificarToken, async (req, res) =>  {
+    const { socio, rol_proyecto} = req.body;
+    const proyecto = req.params.id;
 
-    if (!socio || !proyecto || !rol_proyecto) {
+    if (!socio || !rol_proyecto) {
         return res.status(400).json({ message: 'Faltan datos.' });
     }
 
-    const rol = await obtenernRol(req.usuario);
-    if (!rol || (rol.nombre !== 'Presidente' && rol.nombre !== 'Administrador')) {
-        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        const presidenteProyecto = await obtenerPresidenteProyecto(proyecto);
+        if (presidenteProyecto.socio !== req.usuario.id) {
+            return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+        }
     }
 
     try {
@@ -596,6 +572,82 @@ router.post('/add-miembro-proyecto-investigacion', verificarToken, async (req, r
     catch (error) {
         console.error("Error al intentar añadir un miembro al proyecto de investigación: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// DELETE eliminar rol siendo presidente de un proyecto de investigación
+router.delete('/proyectos-investigacion/:id/miembros/:id_socio', verificarToken, async (req, res) =>  {
+    const proyecto = req.params.id;    
+    const id_socio = req.params.id_socio
+
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        const presidenteProyecto = await obtenerPresidenteProyecto(proyecto);
+        if (presidenteProyecto.socio !== req.usuario.id) {
+            return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+        }
+    }
+
+    try {
+        const values = [
+            id_socio,
+            proyecto
+        ];
+
+        const  query = 'DELETE FROM Socio_Proyecto WHERE socio = $1 AND proyecto = $2;';
+
+        const nombreProyecto = await obtenerNombreProyecto(proyecto);
+        await crearNotificacion(
+            id_socio,
+            'Has sido expulsado del proyecto.',
+            `Fuiste expulsado del proyecto de investigación "${nombreProyecto}". ¡Revisa los detalles en la plataforma!`
+        );
+
+        await pool.query(query, values);
+        res.status(200).json({
+            message: 'Miembro expulsado.'
+        });
+
+    }
+    catch (error) {
+        console.error("Error al expulsar miembro siendo presidente de proyecto: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// GET proyecto con miembros
+router.get("/proyectos-investigacion/:id", async (req, res) => {
+    const id_proyecto = req.params.id;
+
+    try {
+        const queryProyecto = `SELECT id_proyecto, nombre_proyecto, descripcion, fecha_inicio, fecha_fin, estado
+                                FROM Proyectos_Investigacion 
+                                WHERE id_proyecto = $1;`;
+        const resultProyecto = await pool.query(queryProyecto, [id_proyecto]);
+
+        if (resultProyecto.rows.length === 0) {
+            return res.status(404).json({ message: "Proyecto no encontrado." });
+        }
+
+        const proyecto = resultProyecto.rows[0];
+
+        const queryMiembros = `SELECT sp.fecha_registro, s.id_socio, s.nombre, s.apellidos, sr.nombre as rol
+                                FROM Socio_Proyecto sp 
+                                JOIN Socio s ON sp.socio = s.id_socio 
+                                JOIN Socio_Rol sr ON sp.rol_proyecto = sr.id_socio_rol 
+                                WHERE sp.proyecto = $1 
+                                ORDER BY sp.fecha_registro;`;
+        const resultMiembros = await pool.query(queryMiembros, [id_proyecto]);
+
+        res.status(200).json({
+            message: "Proyecto encontrado.",
+            proyecto: proyecto,
+            miembros: resultMiembros.rows,
+        });
+    } 
+    catch (error) {
+        console.error("Error al obtener proyecto: ", error.message);
+        res.status(500).json({ message: "Error interno del servidor." });
     }
 });
 
@@ -1079,7 +1131,6 @@ router.post('/add-miembro-comite-cientifico', verificarToken, async (req, res) =
     const adminRol = await obtenernRol(req.usuario);
     if (!adminRol || adminRol.nombre !== 'Administrador') {
         const presidenteComite = await obtenerPresidenteComite(comite);
-        console.log(presidenteComite);
         if (presidenteComite.socio !== req.usuario.id) {
             return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
         }
