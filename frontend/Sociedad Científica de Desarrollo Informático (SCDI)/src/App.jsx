@@ -8,6 +8,7 @@ import ArticuloDetalle from './pages/Articulos/ArticuloDetalle';
 import CrearArticulo from './pages/Articulos/CrearArticulo';
 import Proyectos from './pages/Proyectos/Proyectos';
 import ProyectoDetalle from './pages/Proyectos/ProyectoDetalle';
+import CrearProyecto from './pages/Proyectos/CrearProyecto';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/articulos-cientificos/crear-articulo" element={<CrearArticulo />} />
           <Route path="/proyectos-investigacion" element={<Proyectos />} />
           <Route path="/proyectos-investigacion/:id" element={<ProyectoDetalle />} />
+          <Route path="/proyectos-investigacion/crear-proyecto" element={<CrearProyecto />} />
         </Routes>
       </main>
 

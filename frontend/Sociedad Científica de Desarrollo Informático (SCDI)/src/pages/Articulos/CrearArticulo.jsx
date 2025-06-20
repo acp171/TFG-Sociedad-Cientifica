@@ -67,61 +67,61 @@ const CrearArticulo = () => {
                 encType="multipart/form-data"
             >
                 <div>
-                <label htmlFor="titulo" className="block mb-3 font-semibold text-gray-700">
-                    Título
-                </label>
-                <input
-                    id="titulo"
-                    type="text"
-                    placeholder="Título"
-                    value={titulo}
-                    onChange={(e) => setTitulo(e.target.value)}
-                    required
-                    className="w-full border border-gray-300 rounded-md p-3 text-gray-900 text-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
-                />
-                </div>
-
-                <div>
-                <label htmlFor="contenido" className="block mb-3 font-semibold text-gray-700">
-                    Contenido
-                </label>
-                <textarea
-                    id="contenido"
-                    placeholder="Contenido"
-                    value={contenido}
-                    onChange={(e) => setContenido(e.target.value)}
-                    required
-                    rows={8}
-                    className="w-full border border-gray-300 rounded-md p-3 text-gray-900 text-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
-                ></textarea>
-                </div>
-
-                <div>
-                <label
-                    htmlFor="pdf-upload"
-                    className="inline-block cursor-pointer bg-gray-700 text-white px-6 py-3 rounded-md hover:bg-yellow-600 transition select-none"
-                >
-                    Subir PDF
-                </label>
-                <input
-                    id="pdf-upload"
-                    type="file"
-                    accept="application/pdf"
-                    onChange={(e) => setPdfFile(e.target.files[0])}
-                    className="hidden"
-                />
-                {pdfFile ? (
-                    <div className="mt-4 flex items-center gap-3 text-gray-900 text-base">
-                    <span>Archivo seleccionado: {pdfFile.name}</span>
-                    <HiXCircle
-                        title="Quitar archivo"
-                        onClick={() => setPdfFile(null)}
-                        className="text-2xl text-gray-500 hover:text-red-600 cursor-pointer transition duration-200"
+                    <label htmlFor="titulo" className="block mb-3 font-semibold text-gray-700">
+                        Título
+                    </label>
+                    <input
+                        id="titulo"
+                        type="text"
+                        placeholder="Título"
+                        value={titulo}
+                        onChange={(e) => setTitulo(e.target.value)}
+                        required
+                        className="w-full border border-gray-300 rounded-md p-3 text-gray-900 text-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
                     />
-                    </div>
-                ) : (
-                    <p className="mt-4 text-gray-500">No hay ningún archivo seleccionado.</p>
-                )}
+                </div>
+
+                <div>
+                    <label htmlFor="contenido" className="block mb-3 font-semibold text-gray-700">
+                        Contenido
+                    </label>
+                    <textarea
+                        id="contenido"
+                        placeholder="Contenido"
+                        value={contenido}
+                        onChange={(e) => setContenido(e.target.value)}
+                        required
+                        rows={8}
+                        className="w-full border border-gray-300 rounded-md p-3 text-gray-900 text-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
+                    ></textarea>
+                </div>
+
+                <div>
+                    <label
+                        htmlFor="pdf-upload"
+                        className="inline-block cursor-pointer bg-gray-700 text-white px-6 py-3 rounded-md hover:bg-yellow-600 transition select-none"
+                    >
+                        Subir PDF
+                    </label>
+                    <input
+                        id="pdf-upload"
+                        type="file"
+                        accept="application/pdf"
+                        onChange={(e) => setPdfFile(e.target.files[0])}
+                        className="hidden"
+                    />
+                    {pdfFile ? (
+                        <div className="mt-4 flex items-center gap-3 text-gray-900 text-base">
+                        <span>Archivo seleccionado: {pdfFile.name}</span>
+                        <HiXCircle
+                            title="Quitar archivo"
+                            onClick={() => setPdfFile(null)}
+                            className="text-2xl text-gray-500 hover:text-red-600 cursor-pointer transition duration-200"
+                        />
+                        </div>
+                    ) : (
+                        <p className="mt-4 text-gray-500">No hay ningún archivo seleccionado.</p>
+                    )}
                 </div>
 
                 <div className="flex justify-center">
