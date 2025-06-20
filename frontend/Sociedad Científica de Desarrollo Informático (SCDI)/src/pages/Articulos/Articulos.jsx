@@ -44,7 +44,7 @@ const Articulos = () => {
                         to="/articulos-cientificos/crear-articulo"
                         className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold"
                     >
-                        Publicar Artículo
+                        Publicar artículo
                     </Link>
                 </div>
 

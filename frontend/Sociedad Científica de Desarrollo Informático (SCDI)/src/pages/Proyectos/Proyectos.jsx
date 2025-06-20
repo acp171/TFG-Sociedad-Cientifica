@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 const Proyectos = () => {
     const [proyectos, setProyectos] = useState([]);
@@ -59,7 +59,15 @@ const Proyectos = () => {
     return (
         <section className="flex flex-col flex-grow py-16 px-6 lg:px-20 bg-white">
             <div className="flex flex-col flex-grow">
-                <h1 className="text-4xl font-bold text-gray-800 mb-10 text-center">Proyectos de Investigación</h1>
+                <div className="flex flex-col md:flex-row justify-between items-center mb-12">
+                    <h1 className="text-4xl font-bold text-gray-800 mb-10 text-center">Proyectos de Investigación</h1>
+                    <Link
+                            to="/proyectos-investigacion/crear-proyecto"
+                            className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold"
+                        >
+                            Nuevo proyecto
+                        </Link>
+                </div>
 
                 {/* Filtros */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-4 mb-10">
@@ -97,15 +105,20 @@ const Proyectos = () => {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                             {proyectosVisibles.map((proyecto) => (
-                                <div key={proyecto.id_proyecto} className="p-6 bg-gray-50 rounded-xl shadow-md">
-                                    <h2 className="text-2xl font-semibold text-blue-700 mb-2">{proyecto.titulo}</h2>
+                                <Link 
+                                    key={proyecto.id_proyecto} 
+                                    to={`/proyectos-investigacion/${proyecto.id_proyecto}`}
+                                    className="p-6 bg-gray-50 rounded-xl shadow-md"
+                                    aria-label={`Ver proyecto: ${proyecto.nombre_proyecto}`}
+                                >
+                                    <h2 className="text-2xl font-semibold text-blue-700 mb-2">{proyecto.nombre_proyecto}</h2>
                                     <p className="text-gray-700 mb-4">{proyecto.descripcion}</p>
                                     <p className="text-sm text-gray-500">
                                         <strong>Inicio:</strong> {new Date(proyecto.fecha_inicio).toLocaleDateString()}{" "}
                                         <strong>Fin:</strong> {new Date(proyecto.fecha_fin).toLocaleDateString()}<br />
                                         <strong>Estado:</strong> {proyecto.estado}
                                     </p>
-                                </div>
+                                </Link>
                             ))}
                         </div>
                     )}
