@@ -1,102 +1,153 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const Proyectos = () => {
-  const [proyectos, setProyectos] = useState([]);
-  const [loading, setLoading] = useState(true);
+    const [proyectos, setProyectos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchParams, setSearchParams] = useSearchParams();
 
-  // Estados para filtros
-  const [filtroEstado, setFiltroEstado] = useState("");
-  const [filtroFechaFin, setFiltroFechaFin] = useState("");
+    // Filtros
+    const [filtroEstado, setFiltroEstado] = useState("");
+    const [filtroFechaFin, setFiltroFechaFin] = useState("");
 
-  useEffect(() => {
-    setLoading(true);
-    fetch("http://localhost:4000/listado-proyectos-investigacion")
-      .then((res) => res.json())
-      .then((data) => {
-        setProyectos(data.proyectos?.listaProyectos || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error cargando proyectos", err);
-        setLoading(false);
-      });
-  }, []);
+    const proyectosPorPagina = 6;
+    const currentPage = parseInt(searchParams.get("page")) || 1;
 
-  // Aplica los filtros solo si están definidos
-  const proyectosFiltrados = proyectos.filter((proyecto) => {
-    let cumpleEstado = true;
-    let cumpleFecha = true;
+    useEffect(() => {
+        setLoading(true);
+        fetch("http://localhost:4000/listado-proyectos-investigacion")
+            .then((res) => res.json())
+            .then((data) => {
+                setProyectos(data.proyectos?.listaProyectos || []);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error("Error cargando proyectos", err);
+                setLoading(false);
+            });
+    }, []);
 
-    if (filtroEstado) {
-      cumpleEstado = proyecto.estado.toLowerCase() === filtroEstado.toLowerCase();
-    }
+    // Filtrado de proyectos
+    const proyectosFiltrados = proyectos.filter((proyecto) => {
+        let cumpleEstado = true;
+        let cumpleFecha = true;
 
-    if (filtroFechaFin) {
-      const fechaFinFiltro = new Date(filtroFechaFin);
-      const fechaFinProyecto = new Date(proyecto.fecha_fin);
-      cumpleFecha = fechaFinProyecto <= fechaFinFiltro;
-    }
+        if (filtroEstado) {
+            cumpleEstado = proyecto.estado.toLowerCase() === filtroEstado.toLowerCase();
+        }
 
-    return cumpleEstado && cumpleFecha;
-  });
+        if (filtroFechaFin) {
+            const fechaFinFiltro = new Date(filtroFechaFin);
+            const fechaFinProyecto = new Date(proyecto.fecha_fin);
+            cumpleFecha = fechaFinProyecto <= fechaFinFiltro;
+        }
 
-  return (
-    <section className="min-h-screen bg-white py-16 px-6 lg:px-20">
-      <h1 className="text-4xl font-bold text-gray-800 mb-10 text-center">
-        Proyectos de Investigación
-      </h1>
+        return cumpleEstado && cumpleFecha;
+    });
 
-      {/* Filtros */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-4 mb-10">
-        <select
-          value={filtroEstado}
-          onChange={(e) => setFiltroEstado(e.target.value)}
-          className="border rounded p-2"
-        >
-          <option value="">Todos los estados</option>
-          <option value="Pendiente">Pendiente</option>
-          <option value="En curso">En curso</option>
-          <option value="Finalizado">Finalizado</option>
-        </select>
+    const totalPaginas = Math.ceil(proyectosFiltrados.length / proyectosPorPagina);
+    const inicio = (currentPage - 1) * proyectosPorPagina;
+    const proyectosVisibles = proyectosFiltrados.slice(inicio, inicio + proyectosPorPagina);
 
-        <input
-          type="date"
-          value={filtroFechaFin}
-          onChange={(e) => setFiltroFechaFin(e.target.value)}
-          className="border rounded p-2"
-          placeholder="Filtrar por fecha fin"
-        />
-      </div>
+    const cambiarPagina = (pagina) => {
+        if (pagina >= 1 && pagina <= totalPaginas) {
+            setSearchParams({ page: pagina });
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    };
 
-      {loading ? (
-        <p className="text-center text-gray-500 text-lg">Cargando proyectos...</p>
-      ) : proyectosFiltrados.length === 0 ? (
-        <p className="text-gray-500 text-center">No hay proyectos disponibles.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {proyectosFiltrados.map((proyecto) => (
-            <div
-              key={proyecto.id_proyecto}
-              className="p-6 bg-gray-50 rounded-xl shadow-md"
-            >
-              <h2 className="text-2xl font-semibold text-blue-700 mb-2">
-                {proyecto.titulo}
-              </h2>
-              <p className="text-gray-700 mb-4">{proyecto.descripcion}</p>
-              <p className="text-sm text-gray-500">
-                <strong>Inicio:</strong>{" "}
-                {new Date(proyecto.fecha_inicio).toLocaleDateString()}{" "}
-                <strong>Fin:</strong>{" "}
-                {new Date(proyecto.fecha_fin).toLocaleDateString()}
-                <br />
-                <strong>Estado:</strong> {proyecto.estado}
-              </p>
+    return (
+        <section className="flex flex-col flex-grow py-16 px-6 lg:px-20 bg-white">
+            <div className="flex flex-col flex-grow">
+                <h1 className="text-4xl font-bold text-gray-800 mb-10 text-center">Proyectos de Investigación</h1>
+
+                {/* Filtros */}
+                <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-4 mb-10">
+                    <select
+                        value={filtroEstado}
+                        onChange={(e) => {
+                            setFiltroEstado(e.target.value);
+                            setSearchParams({ page: 1 });
+                        }}
+                        className="border rounded p-2"
+                    >
+                        <option value="">Todos los estados</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="En curso">En curso</option>
+                        <option value="Finalizado">Finalizado</option>
+                    </select>
+
+                    <input
+                        type="date"
+                        value={filtroFechaFin}
+                        onChange={(e) => {
+                            setFiltroFechaFin(e.target.value);
+                            setSearchParams({ page: 1 });
+                        }}
+                        className="border rounded p-2"
+                    />
+                </div>
+
+                {/* Contenido principal */}
+                <div className="flex-grow">
+                    {loading ? (
+                        <p className="text-center text-gray-500 text-lg">Cargando proyectos...</p>
+                    ) : proyectosVisibles.length === 0 ? (
+                        <p className="text-gray-500 text-center">No hay proyectos disponibles.</p>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            {proyectosVisibles.map((proyecto) => (
+                                <div key={proyecto.id_proyecto} className="p-6 bg-gray-50 rounded-xl shadow-md">
+                                    <h2 className="text-2xl font-semibold text-blue-700 mb-2">{proyecto.titulo}</h2>
+                                    <p className="text-gray-700 mb-4">{proyecto.descripcion}</p>
+                                    <p className="text-sm text-gray-500">
+                                        <strong>Inicio:</strong> {new Date(proyecto.fecha_inicio).toLocaleDateString()}{" "}
+                                        <strong>Fin:</strong> {new Date(proyecto.fecha_fin).toLocaleDateString()}<br />
+                                        <strong>Estado:</strong> {proyecto.estado}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Paginación */}
+                {proyectosFiltrados.length > 0 && (
+                    <nav className="flex justify-center items-center gap-3 mt-10 select-none" aria-label="Paginación proyectos">
+                        <button
+                            onClick={() => cambiarPagina(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                        >
+                            ← Anterior
+                        </button>
+
+                        {[...Array(totalPaginas)].map((_, index) => (
+                            <button
+                                key={index + 1}
+                                onClick={() => cambiarPagina(index + 1)}
+                                className={`px-4 py-2 rounded-md font-medium transition ${
+                                    currentPage === index + 1
+                                        ? "bg-indigo-600 text-white shadow-lg"
+                                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                }`}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+
+                        <button
+                            onClick={() => cambiarPagina(currentPage + 1)}
+                            disabled={currentPage === totalPaginas}
+                            className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                        >
+                            Siguiente →
+                        </button>
+                    </nav>
+                )}
             </div>
-          ))}
-        </div>
-      )}
-    </section>
-  );
+        </section>
+    );
 };
 
 export default Proyectos;
