@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const DatosProyecto = ({ proyecto, setProyecto, userRole, navigate, proyectoId }) => {
+const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresidente, token }) => {
     const [editMode, setEditMode] = useState(false);
     const [formData, setFormData] = useState({
         nombre_proyecto: proyecto.nombre_proyecto,
@@ -10,8 +10,6 @@ const DatosProyecto = ({ proyecto, setProyecto, userRole, navigate, proyectoId }
         estado: proyecto.estado,
     });
 
-    const isAdminOrPresidente = userRole === "Administrador" || userRole === "Presidente";
-
     const handleChange = (e) => {
         setFormData((f) => ({ ...f, [e.target.name]: e.target.value }));
     };
@@ -20,7 +18,10 @@ const DatosProyecto = ({ proyecto, setProyecto, userRole, navigate, proyectoId }
         try {
             const res = await fetch(`http://localhost:4000/proyectos-investigacion/${proyectoId}`, {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
                 body: JSON.stringify(formData),
             });
             if (!res.ok) {
@@ -41,6 +42,10 @@ const DatosProyecto = ({ proyecto, setProyecto, userRole, navigate, proyectoId }
         try {
             const res = await fetch(`http://localhost:4000/proyectos-investigacion/${proyectoId}`, {
                 method: "DELETE",
+                headers: { 
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                }
             });
             if (!res.ok) {
                 throw new Error("Error eliminando proyecto");
@@ -58,11 +63,11 @@ const DatosProyecto = ({ proyecto, setProyecto, userRole, navigate, proyectoId }
             {!editMode ? (
                 <>
                 <p className="mb-3"><strong>Descripción:</strong> {proyecto.descripcion}</p>
-                <p className="mb-1"><strong>Fecha Inicio:</strong> {new Date(proyecto.fecha_inicio).toLocaleDateString()}</p>
-                <p className="mb-1"><strong>Fecha Fin:</strong> {new Date(proyecto.fecha_fin).toLocaleDateString()}</p>
+                <p className="mb-1"><strong>Fecha inicio:</strong> {new Date(proyecto.fecha_inicio).toLocaleDateString()}</p>
+                <p className="mb-1"><strong>Fecha fin:</strong> {new Date(proyecto.fecha_fin).toLocaleDateString()}</p>
                 <p className="mb-4"><strong>Estado:</strong> {proyecto.estado}</p>
         
-                {isAdminOrPresidente && (
+                {esPresidente && (
                     <div className="flex gap-4">
                     <button
                         className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
@@ -110,16 +115,6 @@ const DatosProyecto = ({ proyecto, setProyecto, userRole, navigate, proyectoId }
                         value={formData.fecha_fin}
                         onChange={handleChange}
                     />
-                    <select
-                        className="border rounded-md px-3 py-2"
-                        name="estado"
-                        value={formData.estado}
-                        onChange={handleChange}
-                    >
-                        <option value="Pendiente">Pendiente</option>
-                        <option value="En curso">En curso</option>
-                        <option value="Finalizado">Finalizado</option>
-                    </select>
             
                     <div className="flex gap-4">
                         <button

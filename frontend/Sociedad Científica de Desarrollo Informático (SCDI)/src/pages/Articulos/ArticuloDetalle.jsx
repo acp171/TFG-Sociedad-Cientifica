@@ -8,10 +8,10 @@ const ArticuloDetalle = () => {
     const [comentarios, setComentarios] = useState([]);
     const [nuevoComentario, setNuevoComentario] = useState("");
     const navigate = useNavigate();
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const usuario = JSON.parse(localStorage.getItem("socio"));
 
     useEffect(() => {
-        fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${id}`)
+        fetch(`http://localhost:4000/articulos-cientificos/${id}`)
             .then(res => res.json())
             .then(data => {
                 setArticulo(data.articulo);
@@ -22,7 +22,7 @@ const ArticuloDetalle = () => {
     const eliminar = async () => {
         if (!window.confirm("¿Seguro que deseas eliminar este artículo? Esta acción no se puede deshacer.")) return;
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eliminar-articulo-cientifico/${id}`, {
+        const res = await fetch(`http://localhost:4000/articulos-cientificos/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`
@@ -38,14 +38,13 @@ const ArticuloDetalle = () => {
         if (!nuevoComentario.trim()) return;
 
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${idPublicacion}/comentarios`, {
+        const res = await fetch(`http://localhost:4000/articulos-cientificos/${idPublicacion}/comentarios`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
-                id_publicacion: id,
                 comentario: nuevoComentario
             })
         });
@@ -119,7 +118,7 @@ const ArticuloDetalle = () => {
                 <HiArrowLeft className="mr-2 text-xl" /> Volver
             </button>
 
-            <article className="bg-white shadow-xl rounded-xl p-10 max-w-4xl w-full">
+            <article className="bg-gradient-to-b from-blue-200 to-white shadow-xl rounded-xl p-10 max-w-4xl w-full">
                 <h1 className="text-center text-5xl font-extrabold mb-8 text-gray-900 tracking-wide drop-shadow-sm">
                     {articulo.titulo}
                 </h1>

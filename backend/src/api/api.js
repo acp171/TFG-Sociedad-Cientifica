@@ -17,7 +17,7 @@ const upload = require('../utils/upload');
 const eliminarArchivoPDF = require('../utils/deleteFile');
 const { obtenernRol, obtenerSocio, obtenerPresidenteComite } = require('../utils/socioUtils');
 const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones');
-const { obtenerNombreProyecto, obtenerPresidenteProyecto } = require('../utils/proyectoUtils');
+const { obtenerNombreProyecto, obtenerPresidenteProyecto, obtenerMiembro } = require('../utils/proyectoUtils');
 const { obtenerNombreComite } = require('../utils/comiteUtils');
 
 // Middlewares
@@ -411,7 +411,7 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
 });
 
 // POST crear un proyecto de investigación
-router.post('/crear-proyecto-investigacion', verificarToken, async (req, res) =>  {
+router.post('/proyectos-investigacion/crear-proyecto-investigacion', verificarToken, async (req, res) =>  {
     const { nombre_proyecto, descripcion, fecha_inicio, fecha_fin } = req.body;    
     
     if (!nombre_proyecto || !descripcion || !fecha_fin) {
@@ -423,7 +423,11 @@ router.post('/crear-proyecto-investigacion', verificarToken, async (req, res) =>
     
     var estado;
     const fecha_actual = new Date();
-    if (fecha_actual < fecha_inicio_date) {
+
+    if (fecha_actual > fecha_inicio_date) {
+        return res.status(400).json({ message: 'No es posible seleccionar esa fecha de inicio.' });
+    }
+    else if (fecha_actual < fecha_inicio_date) {
         estado = "Pendiente";
     } 
     else if (fecha_actual >= fecha_inicio_date && fecha_actual <= fecha_fin_Date) {
@@ -482,7 +486,7 @@ router.delete('/proyectos-investigacion/:id', verificarToken, async (req, res) =
     
     const adminRol = await obtenernRol(req.usuario);
     if (!adminRol || adminRol.nombre !== 'Administrador') {
-        const presidenteProyecto = await obtenerPresidenteProyecto(proyecto);
+        const presidenteProyecto = await obtenerPresidenteProyecto(id_proyecto);
         if (presidenteProyecto.socio !== req.usuario.id) {
             return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
         }
@@ -525,7 +529,7 @@ router.get('/listado-proyectos-investigacion', async (req, res) =>  {
 
 // POST añadir miembro al proyecto de investigación
 router.post('/proyectos-investigacion/:id/miembros', verificarToken, async (req, res) =>  {
-    const { socio, rol_proyecto} = req.body;
+    const { socio, rol_proyecto } = req.body;
     const proyecto = req.params.id;
 
     if (!socio || !rol_proyecto) {
@@ -559,13 +563,11 @@ router.post('/proyectos-investigacion/:id/miembros', verificarToken, async (req,
             `Fuiste añadido al proyecto "${nombreProyecto}". ¡Revisa los detalles en la plataforma!`
         );
 
+        const nuevoMiembro = await obtenerMiembro(proyecto, socio)
+
         res.status(200).json({
             message: 'Miembro añadido al proyecto de investigación.',
-            miembro: {
-                socio: result.rows[0].socio,
-                proyecto: result.rows[0].proyecto,
-                rol_proyecto: result.rows[0].rol_proyecto
-            }
+            miembro: nuevoMiembro
         });
 
     }
@@ -795,11 +797,12 @@ router.get('/listado-eventos-cientificos', async (req, res) =>  {
 });
 
 // POST publicar articulo científico
-router.post('/publicar-articulo-cientifico', verificarToken, upload.single('pdf'), async (req, res) => {
+router.post('/articulos-cientificos/publicar-articulo-cientifico', verificarToken, upload.single('pdf'), async (req, res) => {
     const { titulo, contenido } = req.body;
     var rutaPDF;
 
     if (!titulo || (!req.file && !contenido)) {
+        console.log("hola")
         return res.status(400).json({ message: 'Faltan datos.' });
     }
     else if (req.file) {
@@ -861,7 +864,7 @@ router.post('/publicar-articulo-cientifico', verificarToken, upload.single('pdf'
 });
 
 // DELETE eliminar artículo científico
-router.delete('/eliminar-articulo-cientifico/:id', verificarToken, async (req, res) => {
+router.delete('/articulos-cientificos/:id', verificarToken, async (req, res) => {
     const id_publicacion = req.params.id;
 
     try {
@@ -1021,13 +1024,23 @@ router.post('/articulos-cientificos/:id/comentarios', verificarToken, async (req
         const query = 'INSERT INTO Comentario_Publicacion(comentario, socio, publicacion, fecha_comentario, visibilidad)' +
                       'VALUES($1, $2, $3, $4, $5) RETURNING id_comentario, socio, publicacion, comentario;';
         const result = await pool.query(query, values);
+
+        const queryComentario = `SELECT c.id_comentario, c.comentario, c.fecha_comentario, 
+                                         c.visibilidad, s.nombre, s.apellidos 
+                                  FROM Comentario_Publicacion c 
+                                  JOIN Socio s ON c.socio = s.id_socio 
+                                  WHERE c.publicacion = $1 AND c.id_comentario = $2
+                                  ORDER BY c.fecha_comentario DESC;`;
+        const resultComentario = await pool.query(queryComentario, [publicacion, result.rows[0].id_comentario]);
+
         res.status(200).json({
             message: 'Comentario en artículo científico publicado.',
             comentario: {
-                id_comentario: result.rows[0].id_comentario,
-                socio: result.rows[0].socio,
-                publicacion: result.rows[0].publicacion,
-                comentario: result.rows[0].comentario
+                id_comentario: resultComentario.rows[0].id_comentario,
+                nombre: resultComentario.rows[0].nombre,
+                apellidos: resultComentario.rows[0].apellidos,
+                comentario: resultComentario.rows[0].comentario,
+                fecha_comentario: resultComentario.rows[0].fecha_comentario
             }
         });
 

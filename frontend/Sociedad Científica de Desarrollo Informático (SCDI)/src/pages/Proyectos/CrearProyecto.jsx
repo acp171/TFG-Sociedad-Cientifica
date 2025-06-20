@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; 
 
 const CrearProyecto = () => {
@@ -40,6 +40,13 @@ const CrearProyecto = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            navigate("/login");
+        }
+    }, [navigate]);
+
     const handleChange = (e) => {
         setFormData(f => ({ ...f, [e.target.name]: e.target.value }));
     };
@@ -49,10 +56,15 @@ const CrearProyecto = () => {
         setLoading(true);
         setError(null);
 
+        const token = localStorage.getItem("token");
+
         try {
-            const res = await fetch('http://localhost:4000/proyectos-investigacion', {
+            const res = await fetch('http://localhost:4000/proyectos-investigacion/crear-proyecto-investigacion', {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
                 body: JSON.stringify(formData),
             });
 
