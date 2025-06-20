@@ -5,13 +5,18 @@ import { HiArrowLeft, HiDownload, HiTrash } from "react-icons/hi";
 const ArticuloDetalle = () => {
     const { id } = useParams();
     const [articulo, setArticulo] = useState(null);
+    const [comentarios, setComentarios] = useState([]);
+    const [nuevoComentario, setNuevoComentario] = useState("");
     const navigate = useNavigate();
     const usuario = JSON.parse(localStorage.getItem("usuario"));
 
     useEffect(() => {
-        fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${id}`)
+        fetch(`http://localhost:4000/articulos-cientificos/${id}`)
             .then(res => res.json())
-            .then(data => setArticulo(data.articulo));
+            .then(data => {
+                setArticulo(data.articulo);
+                setComentarios((data.comentarios || []).filter(c => c.visibilidad !== false));
+            });
     }, [id]);
 
     const eliminar = async () => {
@@ -29,7 +34,32 @@ const ArticuloDetalle = () => {
         }
     };
 
-    if (!articulo) { 
+    const enviarComentario = async () => {
+        if (!nuevoComentario.trim()) return;
+
+        const token = localStorage.getItem("token");
+        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/comentarios`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                id_publicacion: id,
+                comentario: nuevoComentario
+            })
+        });
+
+        if (res.ok) {
+            const nuevo = await res.json();
+            setComentarios([...comentarios, nuevo.comentario]);
+            setNuevoComentario("");
+        } else {
+            alert("No se pudo enviar el comentario.");
+        }
+    };
+
+    if (!articulo) {
         return (
             <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-blue-50 to-white">
                 <p className="text-gray-500 text-lg">Cargando artículo...</p>
@@ -37,15 +67,25 @@ const ArticuloDetalle = () => {
         );
     }
 
-    const fechaFormateada = new Date(articulo.fecha_publicacion).toLocaleDateString("es-ES", {
+    const fechaFormateadaArticulo = new Date(articulo.fecha_publicacion).toLocaleDateString("es-ES", {
         year: "numeric",
         month: "long",
         day: "numeric"
     });
 
+    const comentariosConFecha = comentarios.map((comentario) => ({
+        ...comentario,
+        fechaFormateada: new Date(comentario.fecha_comentario).toLocaleString("es-ES", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        })
+    }));    
+
     return (
         <section className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-16 px-6 lg:px-20 flex flex-col items-center">
-            {/* Botón volver */}
             <button
                 onClick={() => navigate(-1)}
                 className="self-start mb-8 flex items-center text-blue-600 hover:text-blue-800 font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 rounded"
@@ -69,7 +109,7 @@ const ArticuloDetalle = () => {
                         <span className="font-semibold text-gray-700">
                             {articulo.nombre} {articulo.apellidos}
                         </span>{" "}
-                        el {fechaFormateada}
+                        el {fechaFormateadaArticulo}
                     </p>
 
                     {articulo.contenidopdf && (
@@ -96,6 +136,52 @@ const ArticuloDetalle = () => {
                         </button>
                     </div>
                 )}
+
+                {/* Sección de comentarios */}
+                <div className="border-t pt-8 mt-12">
+                    <h2 className="text-2xl font-bold mb-6 text-gray-800">Comentarios</h2>
+
+                    {comentariosConFecha.length === 0 ? (
+                        <p className="text-gray-500 mb-4">Aún no hay comentarios.</p>
+                    ) : (
+                        <ul className="space-y-4 mb-6">
+                            {comentariosConFecha.map((comentario, i) => (
+                                <li key={i} className="bg-gray-50 p-4 rounded-lg border">
+                                    <p className="text-gray-700">{comentario.comentario}</p>
+                                    <p className="text-sm text-gray-500 italic">
+                                        Publicado por:{" "}
+                                        <span className="font-semibold text-gray-700">
+                                            {comentario.nombre} {comentario.apellidos}
+                                        </span>{" "}
+                                        el {comentario.fechaFormateada}
+                                    </p>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+
+                    <div className="mt-6">
+                        <textarea
+                            value={nuevoComentario}
+                            onChange={(e) => setNuevoComentario(e.target.value)}
+                            rows={4}
+                            className="w-full border border-gray-300 rounded-md p-3 mb-4"
+                            placeholder="Escribe tu comentario..."
+                        ></textarea>
+                        <button
+                            onClick={() => {
+                                if (!usuario) {
+                                    navigate("/login");
+                                } else {
+                                    enviarComentario();
+                                }
+                            }}
+                            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+                        >
+                            Enviar comentario
+                        </button>
+                    </div>
+                </div>
             </article>
         </section>
     );

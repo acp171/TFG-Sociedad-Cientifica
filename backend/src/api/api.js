@@ -976,8 +976,8 @@ router.post('/articulos-cientificos/:id/comentarios', verificarToken, async (req
 });
 
 // PUT moderar comentario
-router.put('/moderar-comentario', verificarToken, async (req, res) => {
-    const { id_comentario } = req.body;
+router.put('/articulos-cientificos/:id/comentarios/:id_comentario/moderar', verificarToken, async (req, res) => {
+    const id_comentario = req.params.id_comentario;
 
     const adminRol = await obtenernRol(req.usuario);
     if (!adminRol || adminRol.nombre !== 'Administrador') {
