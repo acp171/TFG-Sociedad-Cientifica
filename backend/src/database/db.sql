@@ -60,7 +60,8 @@ CREATE TABLE IF NOT EXISTS Comentario_Publicacion (
     fecha_comentario TIMESTAMP NOT NULL,
     visibilidad BOOLEAN NOT NULL,
     PRIMARY KEY (id_comentario, publicacion),
-    CONSTRAINT FK_COMENTARIO_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio)
+    CONSTRAINT FK_COMENTARIO_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio),
+    CONSTRAINT FK_COMENTARIO_PUBLICACION FOREIGN KEY (publicacion) REFERENCES Publicaciones(id_publicacion)
 );
 
 -- EVENTO TABLE --

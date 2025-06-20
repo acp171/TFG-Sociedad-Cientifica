@@ -67,7 +67,8 @@ router.post('/login', async (req, res) => {
             {
               id: socio.id_socio,
               email: socio.email,
-              nombre: socio.nombre
+              nombre: socio.nombre,
+              rol: socio.socio_rol
             },
             SECRET_KEY,
             { expiresIn: '1h' } // Token expira en 1 hora
@@ -880,9 +881,19 @@ router.get('/articulos-cientificos/:id', async (req, res) => {
 
         const articulo = resultArticulo.rows[0];
 
+        // Obtener comentarios del artículo
+        const queryComentarios = `SELECT c.id_comentario, c.comentario, c.fecha_comentario, 
+                                         c.visibilidad, s.nombre, s.apellidos 
+                                  FROM Comentario_Publicacion c 
+                                  JOIN Socio s ON c.socio = s.id_socio 
+                                  WHERE c.publicacion = $1 
+                                  ORDER BY c.fecha_comentario DESC;`;
+        const resultComentarios = await pool.query(queryComentarios, [id_publicacion]);
+
         res.status(200).json({
             message: 'Artículo científico encontrado.',
-            articulo: articulo
+            articulo: articulo,
+            comentarios: resultComentarios.rows
         });
     } catch (error) {
         console.error("Error al intentar buscar publicación: ", error.message);
@@ -929,8 +940,9 @@ router.get('/articulos-cientificos/:id/pdf', async (req, res) => {
 });
 
 // POST hacer un comentario en articulo científico
-router.post('/comentario-articulo-cientifico', verificarToken, async (req, res) => {
-    const { comentario, publicacion } = req.body;
+router.post('/articulos-cientificos/:id/comentarios', verificarToken, async (req, res) => {
+    const publicacion = req.params.id;
+    const { comentario } = req.body;
 
     if (!comentario) {
         res.status(400).json({ message: 'Falta el comentario.' });
@@ -964,9 +976,9 @@ router.post('/comentario-articulo-cientifico', verificarToken, async (req, res) 
     }
 });
 
-// PUT moderar comentario
-router.put('/moderar-comentario', verificarToken, async (req, res) => {
-    const { id_comentario } = req.body;
+// PATCH moderar comentario
+router.patch('/articulos-cientificos/:id/comentarios/:id_comentario/moderar', verificarToken, async (req, res) => {
+    const id_comentario = req.params.id_comentario;
 
     const adminRol = await obtenernRol(req.usuario);
     if (!adminRol || adminRol.nombre !== 'Administrador') {
@@ -977,16 +989,16 @@ router.put('/moderar-comentario', verificarToken, async (req, res) => {
         const query = `UPDATE Comentario_Publicacion 
                        SET visibilidad = NOT visibilidad 
                        WHERE id_comentario = $1
-                       RETURNING id_comentario, socio, publicacion, visibilidad;`;
+                       RETURNING *;`;
         const result = await pool.query(query, [id_comentario]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Comentario no encontrado." });
+        }
+
         res.status(200).json({
             message: 'Comentario moderado en artículo científico.',
-            comentario: {
-                id_comentario: result.rows[0].id_comentario,
-                socio: result.rows[0].socio,
-                publicacion: result.rows[0].publicacion,
-                visibilidad: result.rows[0].visibilidad
-            }
+            comentario: result.rows[0]
         });
 
     } catch (error) {
