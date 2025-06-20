@@ -448,21 +448,30 @@ router.delete('/eliminar-miembro-proyecto', verificarToken, async (req, res) => 
 
 // POST crear un proyecto de investigación
 router.post('/crear-proyecto-investigacion', verificarToken, async (req, res) =>  {
-    const { nombre_proyecto, descripcion, fecha_fin, estado } = req.body;    
+    const { nombre_proyecto, descripcion, fecha_inicio, fecha_fin } = req.body;    
     
-    if (!nombre_proyecto || !descripcion || !fecha_fin || !estado) {
+    if (!nombre_proyecto || !descripcion || !fecha_fin) {
         return res.status(400).json({ message: 'Faltan datos.' });
     }
 
-    const fecha_inicio = new Date();
+    const fecha_inicio_date = fecha_inicio ? new Date(fecha_inicio) : new Date();
     const fecha_fin_Date = new Date(fecha_fin);
+    
+    var estado;
+    const fecha_actual = new Date();
+    if (fecha_actual < fecha_inicio_date) {
+        estado = "Pendiente";
+    } 
+    else if (fecha_actual >= fecha_inicio_date && fecha_actual <= fecha_fin_Date) {
+        estado = "En curso";
+    }
 
-    if (fecha_fin_Date > fecha_inicio) {
+    if (fecha_fin_Date > fecha_inicio_date) {
         try {
             const values = [
                 nombre_proyecto,
                 descripcion,
-                fecha_inicio,
+                fecha_inicio_date,
                 fecha_fin_Date,
                 estado
             ];
