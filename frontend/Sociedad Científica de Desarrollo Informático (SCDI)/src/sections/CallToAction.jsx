@@ -6,7 +6,7 @@ const CallToAction = () => (
         <p className="mb-6 text-lg">Conéctate con una red vibrante de mentes científicas y tecnológicas.</p>
         <Link
             to="/unete"
-            className="bg-white text-blue-600 font-semibold px-6 py-3 rounded-full hover:bg-gray-200 hover:text-purple-400 transition"
+            className="bg-white text-blue-600 font-semibold px-6 py-3 rounded-full hover:bg-gray-200 hover:text-blue-800 transition"
         >
             Unirme Ahora
         </Link>
