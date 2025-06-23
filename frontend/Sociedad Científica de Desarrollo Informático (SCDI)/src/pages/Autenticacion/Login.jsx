@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/AuthContext";
 
 const Login = () => {
     const navigate = useNavigate();
+    const { login } = useAuth(); // usa el método login del contexto
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -27,16 +29,12 @@ const Login = () => {
                 throw new Error(data.message || "Error al iniciar sesión");
             }
 
-            // Guarda el token y datos del socio en localStorage
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("socio", JSON.stringify(data.socio));
-            
+            login(data.token, data.socio); // aquí se actualiza el contexto
+
             navigate("/");
-        }
-        catch (err) {
+        } catch (err) {
             setError(err.message);
-        }
-        finally {
+        } finally {
             setLoading(false);
         }
     };
