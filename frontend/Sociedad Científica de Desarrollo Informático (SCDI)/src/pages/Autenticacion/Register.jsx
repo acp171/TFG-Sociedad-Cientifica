@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -62,6 +62,14 @@ const Register = () => {
                 <input type="password" name="password" placeholder="Contraseña" value={formData.password} onChange={handleChange} required className="w-full border p-3 rounded" />
                 <input type="tel" name="telefono" placeholder="Teléfono" value={formData.telefono} onChange={handleChange} required className="w-full border p-3 rounded" />
                 <input type="date" name="fecha_nacimiento" value={formData.fecha_nacimiento} onChange={handleChange} required className="w-full border p-3 rounded" />
+
+                <Link
+                    to="/login"
+                    title="Iniciar sesión"
+                    className="w-full mb-10 text-blue-600 hover:text-blue-700"
+                    >
+                    ¿Ya tienes una cuenta?
+                </Link>
 
                 <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition">
                     Registrarse
