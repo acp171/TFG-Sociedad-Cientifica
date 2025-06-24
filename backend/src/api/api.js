@@ -654,7 +654,7 @@ router.get("/proyectos-investigacion/:id", async (req, res) => {
 });
 
 // POST crear un evento científico
-router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
+router.post('/eventos-cientificos/crear-evento-cientifico', verificarToken, async (req, res) =>  {
     const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
 
     if (!nombre_evento || !fecha_evento_inicio || !fecha_evento_fin || !descripcion_evento || !direccion) {
@@ -711,8 +711,9 @@ router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
 });
 
 // PUT editar un evento científico
-router.put('/editar-evento-cientifico', verificarToken, async (req, res) =>  {
-    const { id_evento, nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
+router.put('/eventos-cientificos/:id', verificarToken, async (req, res) =>  {
+    const id_evento = req.params.id;
+    const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
 
     if (!id_evento || !nombre_evento || !fecha_evento_inicio || !fecha_evento_fin || !descripcion_evento || !direccion) {
         return res.status(400).json({ message: 'Faltan datos.' });
@@ -764,8 +765,8 @@ router.put('/editar-evento-cientifico', verificarToken, async (req, res) =>  {
 });
 
 // DELETE eliminar un evento científico
-router.delete('/eliminar-evento-cientifico', verificarToken, async (req, res) =>  {
-    const { id_evento } = req.body;
+router.delete('/eventos-cientificos/:id', verificarToken, async (req, res) =>  {
+    const id_evento = req.params.id;
 
     const adminRol = await obtenernRol(req.usuario);
     if (!adminRol || adminRol.nombre !== 'Administrador') {
