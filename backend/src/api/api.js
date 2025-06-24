@@ -15,10 +15,10 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET);
 // Funciones privadas
 const upload = require('../utils/upload');
 const eliminarArchivoPDF = require('../utils/deleteFile');
-const { obtenernRol, obtenerSocio, obtenerPresidenteComite } = require('../utils/socioUtils');
+const { obtenernRol, obtenerSocio } = require('../utils/socioUtils');
 const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones');
 const { obtenerNombreProyecto, obtenerPresidenteProyecto, obtenerMiembro } = require('../utils/proyectoUtils');
-const { obtenerNombreComite } = require('../utils/comiteUtils');
+const { obtenerNombreComite, obtenerPresidenteComite, obtenerComiteEvento, obtenerComitePorSocio } = require('../utils/comiteUtils');
 
 // Middlewares
 function verificarToken(req, res, next) {
@@ -661,9 +661,13 @@ router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
         return res.status(400).json({ message: 'Faltan datos.' });
     }
 
-    const rol = await obtenernRol(req.usuario);
-    if (!rol || (rol.nombre !== 'Presidente' && rol.nombre !== 'Administrador')) {
-        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    const id_comite = await obtenerComitePorSocio(req.usuario.id);
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        const presidenteComite = await obtenerPresidenteComite(id_comite);
+        if (presidenteComite.socio !== req.usuario.id) {
+            return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+        }
     }
     
     if (fecha_evento_fin > fecha_evento_inicio) {
@@ -673,11 +677,12 @@ router.post('/crear-evento-cientifico', verificarToken, async (req, res) =>  {
                 fecha_evento_inicio,
                 fecha_evento_fin,
                 descripcion_evento,
-                direccion
+                direccion,
+                id_comite
             ];
 
             const query = 'INSERT INTO Evento(nombre_evento, fecha_evento_inicio, fecha_evento_fin,' +
-                          'descripcion_evento, direccion) VALUES ($1, $2, $3, $4, $5) RETURNING id_evento,' +
+                          'descripcion_evento, direccion, comite) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_evento,' +
                           'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento;';
             const result = await pool.query(query, values);
 
@@ -713,9 +718,13 @@ router.put('/editar-evento-cientifico', verificarToken, async (req, res) =>  {
         return res.status(400).json({ message: 'Faltan datos.' });
     }
 
-    const rol = await obtenernRol(req.usuario);
-    if (!rol || rol.nombre !== 'Administrador') {
-        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        const id_comite = await obtenerComiteEvento(id_evento);
+        const presidenteComite = await obtenerPresidenteComite(id_comite);
+        if (presidenteComite.socio !== req.usuario.id) {
+            return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+        }
     }
     
     if (fecha_evento_fin > fecha_evento_inicio) {
@@ -758,9 +767,13 @@ router.put('/editar-evento-cientifico', verificarToken, async (req, res) =>  {
 router.delete('/eliminar-evento-cientifico', verificarToken, async (req, res) =>  {
     const { id_evento } = req.body;
 
-    const rol = await obtenernRol(req.usuario);
-    if (!rol || rol.nombre !== 'Administrador') {
-        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        const id_comite = await obtenerComiteEvento(id_evento);
+        const presidenteComite = await obtenerPresidenteComite(id_comite);
+        if (presidenteComite.socio !== req.usuario.id) {
+            return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+        }
     }
     
     try {
@@ -802,7 +815,6 @@ router.post('/articulos-cientificos/publicar-articulo-cientifico', verificarToke
     var rutaPDF;
 
     if (!titulo || (!req.file && !contenido)) {
-        console.log("hola")
         return res.status(400).json({ message: 'Faltan datos.' });
     }
     else if (req.file) {

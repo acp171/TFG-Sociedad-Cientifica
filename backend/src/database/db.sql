@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS Socio (
     socio_rol INT NOT NULL,
     tipo_socio INT NOT NULL,
     CONSTRAINT FK_SOCIO_ROL_SOCIO FOREIGN KEY (socio_rol) REFERENCES Socio_Rol(id_socio_rol) ON DELETE CASCADE,
-CONSTRAINT FK_SOCIO_TIPO_SOCIO FOREIGN KEY (tipo_socio) REFERENCES Tipo_Socio(id_tipo_socio) ON DELETE CASCADE
+    CONSTRAINT FK_SOCIO_TIPO_SOCIO FOREIGN KEY (tipo_socio) REFERENCES Tipo_Socio(id_tipo_socio) ON DELETE CASCADE
 );
 
 -- DIRECCION TABLE --
@@ -62,28 +62,6 @@ CREATE TABLE IF NOT EXISTS Comentario_Publicacion (
     PRIMARY KEY (id_comentario, publicacion),
     CONSTRAINT FK_COMENTARIO_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio) ON DELETE CASCADE,
     CONSTRAINT FK_COMENTARIO_PUBLICACION FOREIGN KEY (publicacion) REFERENCES Publicaciones(id_publicacion) ON DELETE CASCADE
-);
-
--- EVENTO TABLE --
-CREATE TABLE IF NOT EXISTS Evento (
-    id_evento SERIAL PRIMARY KEY,
-    nombre_evento VARCHAR(256) NOT NULL,
-    fecha_evento_inicio TIMESTAMP NOT NULL,
-    fecha_evento_fin TIMESTAMP NOT NULL,
-    descripcion_evento VARCHAR(1000) NOT NULL,
-    direccion INT NOT NULL,
-    CONSTRAINT FK_EVENTO_DIRECCION FOREIGN KEY (direccion) REFERENCES Direccion(id_direccion) ON DELETE CASCADE
-);
-
-
--- INSCRIPCIONES TABLE --
-CREATE TABLE IF NOT EXISTS Inscripciones (
-    estado_inscripcion VARCHAR(256) NOT NULL,
-    evento INT NOT NULL,
-    socio INT NOT NULL,
-    PRIMARY KEY (socio, evento),
-    CONSTRAINT FK_INSCRIPCION_EVENTO FOREIGN KEY (evento) REFERENCES Evento(id_evento) ON DELETE CASCADE,
-    CONSTRAINT FK_INSCRIPCION_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio) ON DELETE CASCADE  
 );
 
 -- NOTIFICACIONES TABLE --
@@ -139,6 +117,30 @@ CREATE TABLE IF NOT EXISTS Miembros_Comite (
     CONSTRAINT FK_MIEMBROS_COMITE_SOCIO_ROL FOREIGN KEY (rol_comite) REFERENCES Socio_Rol(id_socio_rol) ON DELETE CASCADE
 );
 
+-- EVENTO TABLE --
+CREATE TABLE IF NOT EXISTS Evento (
+    id_evento SERIAL PRIMARY KEY,
+    nombre_evento VARCHAR(256) NOT NULL,
+    fecha_evento_inicio TIMESTAMP NOT NULL,
+    fecha_evento_fin TIMESTAMP NOT NULL,
+    descripcion_evento VARCHAR(1000) NOT NULL,
+    direccion INT NOT NULL,
+    comite INT,
+    CONSTRAINT FK_EVENTO_DIRECCION FOREIGN KEY (direccion) REFERENCES Direccion(id_direccion) ON DELETE CASCADE,
+    CONSTRAINT FK_EVENTO_COMITE FOREIGN KEY (comite) REFERENCES Comite(id_comite) ON DELETE CASCADE
+);
+
+
+-- INSCRIPCIONES TABLE --
+CREATE TABLE IF NOT EXISTS Inscripciones (
+    estado_inscripcion VARCHAR(256) NOT NULL,
+    evento INT NOT NULL,
+    socio INT NOT NULL,
+    PRIMARY KEY (socio, evento),
+    CONSTRAINT FK_INSCRIPCION_EVENTO FOREIGN KEY (evento) REFERENCES Evento(id_evento) ON DELETE CASCADE,
+    CONSTRAINT FK_INSCRIPCION_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio) ON DELETE CASCADE  
+);
+
 -- FORMA_PAGO TABLE --
 CREATE TABLE IF NOT EXISTS Forma_Pago (
     id_forma_pago SERIAL PRIMARY KEY,
@@ -148,24 +150,24 @@ CREATE TABLE IF NOT EXISTS Forma_Pago (
 );
 
 CREATE TABLE IF NOT EXISTS Tarjeta_Credito (
-  forma_pago INT PRIMARY KEY,
-  numero_tarjeta VARCHAR(20),
-  fecha_expiracion DATE,
-  codigo_expiracion VARCHAR(3),
-  CONSTRAINT FK_TARJETA_CREDITO_FORMA_PAGO FOREIGN KEY (forma_pago) REFERENCES Forma_Pago(id_forma_pago) ON DELETE CASCADE
+    forma_pago INT PRIMARY KEY,
+    numero_tarjeta VARCHAR(20),
+    fecha_expiracion DATE,
+    codigo_expiracion VARCHAR(3),
+    CONSTRAINT FK_TARJETA_CREDITO_FORMA_PAGO FOREIGN KEY (forma_pago) REFERENCES Forma_Pago(id_forma_pago) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Paypal (
-  forma_pago INT PRIMARY KEY,
-  email_paypal VARCHAR(100),
-  CONSTRAINT FK_TARJETA_CREDITO_FORMA_PAGO FOREIGN KEY (forma_pago) REFERENCES Forma_Pago(id_forma_pago) ON DELETE CASCADE
+    forma_pago INT PRIMARY KEY,
+    email_paypal VARCHAR(100),
+    CONSTRAINT FK_TARJETA_CREDITO_FORMA_PAGO FOREIGN KEY (forma_pago) REFERENCES Forma_Pago(id_forma_pago) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Transferencia (
-  forma_pago INT PRIMARY KEY,
-  banco VARCHAR(100),
-  numero_cuenta VARCHAR(16),
-  CONSTRAINT FK_TARJETA_CREDITO_FORMA_PAGO FOREIGN KEY (forma_pago) REFERENCES Forma_Pago(id_forma_pago) ON DELETE CASCADE
+    forma_pago INT PRIMARY KEY,
+    banco VARCHAR(100),
+    numero_cuenta VARCHAR(16),
+    CONSTRAINT FK_TARJETA_CREDITO_FORMA_PAGO FOREIGN KEY (forma_pago) REFERENCES Forma_Pago(id_forma_pago) ON DELETE CASCADE
 );
 
 -- PAGOS TABLE --

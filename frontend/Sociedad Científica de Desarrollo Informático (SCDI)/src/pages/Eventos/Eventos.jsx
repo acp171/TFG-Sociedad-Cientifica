@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-const Articulos = () => {
-    const [articulos, setArticulos] = useState([]);
+const Eventos = () => {
+    const [eventos, setEventos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const articulosPorPagina = 6;
+    const eventosPorPagina = 6;
     const currentPage = parseInt(searchParams.get("page")) || 1;
 
     useEffect(() => {
-        fetch("http://localhost:4000/listado-articulos-cientificos")
+        fetch("http://localhost:4000/listado-eventos-cientificos")
             .then((res) => res.json())
             .then((data) => {
-                setArticulos(data.articulos?.listadoArticulos || []);
+                console.log("Respuesta del servidor:", data);
+                setEventos(data.eventos?.listaEventos || []);
                 setLoading(false);
             })
             .catch((error) => {
@@ -22,9 +23,9 @@ const Articulos = () => {
             });
     }, []);
 
-    const totalPaginas = Math.ceil(articulos.length / articulosPorPagina);
-    const inicio = (currentPage - 1) * articulosPorPagina;
-    const articulosVisibles = articulos.slice(inicio, inicio + articulosPorPagina);
+    const totalPaginas = Math.ceil(eventos.length / eventosPorPagina);
+    const inicio = (currentPage - 1) * eventosPorPagina;
+    const eventosVisibles = eventos.slice(inicio, inicio + eventosPorPagina);
 
     const cambiarPagina = (pagina) => {
         if (pagina >= 1 && pagina <= totalPaginas) {
@@ -38,38 +39,32 @@ const Articulos = () => {
             <div className="flex flex-col flex-grow">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-12">
                     <h2 className="text-4xl font-extrabold text-gray-900 mb-6 md:mb-0">
-                        ARTÍCULOS CIENTÍFICOS
+                        EVENTOS CIENTÍFICOS
                     </h2>
                     <Link
-                        to="/articulos-cientificos/crear-articulo"
+                        to="/eventos-cientificos/crear-evento-cientifico"
                         className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold"
                     >
-                        Publicar artículo
+                        Crear evento
                     </Link>
                 </div>
 
                 <div className="flex-grow">
                     {loading ? (
-                        <p className="text-center text-gray-500 text-lg">Cargando artículos...</p>
-                    ) : articulos.length === 0 ? (
-                        <p className="text-center text-gray-600 text-lg">No hay artículos disponibles.</p>
+                        <p className="text-center text-gray-500 text-lg">Cargando eventos...</p>
+                    ) : eventos.length === 0 ? (
+                        <p className="text-center text-gray-600 text-lg">No hay eventos disponibles.</p>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                            {articulosVisibles.map((articulo) => (
+                            {eventosVisibles.map((evento) => (
                                 <Link
-                                    key={articulo.id_publicacion}
-                                    to={`/articulos-cientificos/${articulo.id_publicacion}`}
+                                    key={evento.id_evento}
+                                    to={`/eventos-cientificos/${evento.id_evento}`}
                                     className="block bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6"
-                                    aria-label={`Ver artículo: ${articulo.titulo}`}
+                                    aria-label={`Ver artículo: ${evento.nombre_evento}`}
                                 >
-                                    <h3 className="text-2xl font-semibold text-gray-900 mb-3 truncate">{articulo.titulo}</h3>
-                                    <p className="text-sm text-gray-600 mb-4">
-                                        Publicado por:{" "}
-                                        <span className="font-medium">
-                                            {articulo.nombre} {articulo.apellidos}
-                                        </span>
-                                    </p>
-                                    <p className="text-gray-700 line-clamp-3">{articulo.contenido}</p>
+                                    <h3 className="text-2xl font-semibold text-gray-900 mb-3 truncate">{evento.nombre_evento}</h3>
+                                    <p className="text-gray-700 line-clamp-3">{evento.descripcion_evento}</p>
                                 </Link>
                             ))}
                         </div>
@@ -77,7 +72,7 @@ const Articulos = () => {
                 </div>
 
                 {/* Paginación */}
-                {articulos.length > 0 && (
+                {eventos.length > 0 && (
                     <nav className="flex justify-center items-center gap-3 select-none mt-auto" aria-label="Paginación artículos">
                         <button
                             onClick={() => cambiarPagina(currentPage - 1)}
@@ -118,4 +113,4 @@ const Articulos = () => {
     );
 };
 
-export default Articulos;
+export default Eventos;

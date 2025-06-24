@@ -30,21 +30,9 @@ async function obtenerSocios() {
     return socios.rows;
 }
 
-async function obtenerPresidenteComite(comite) {
-    const queryPresidenteComite = `SELECT * FROM Miembros_Comite 
-                                   WHERE comite = $1 AND 
-                                   rol_comite = (
-                                   SELECT id_socio_rol FROM Socio_Rol WHERE nombre = 'Presidente');`;
-    const resultPresidenteComite = await pool.query(queryPresidenteComite, [comite]);
-    const presidenteComite = resultPresidenteComite.rows[0];
-
-    return presidenteComite;
-}
-
 
 module.exports = {
     obtenernRol,
     obtenerSocio,
-    obtenerPresidenteComite,
     obtenerSocios
 };

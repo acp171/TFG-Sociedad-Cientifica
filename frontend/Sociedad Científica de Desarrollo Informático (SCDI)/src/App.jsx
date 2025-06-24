@@ -12,6 +12,7 @@ import CrearArticulo from './pages/Articulos/CrearArticulo';
 import Proyectos from './pages/Proyectos/Proyectos';
 import ProyectoDetalle from './pages/Proyectos/ProyectoDetalle';
 import CrearProyecto from './pages/Proyectos/CrearProyecto';
+import Eventos from './pages/Eventos/Eventos';
 import AvisoLegal from './pages/Aviso-Legal';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
           <Route path="/proyectos-investigacion" element={<Proyectos />} />
           <Route path="/proyectos-investigacion/:id" element={<ProyectoDetalle />} />
           <Route path="/proyectos-investigacion/crear-proyecto" element={<CrearProyecto />} />
+          <Route path="/eventos-cientificos" element={<Eventos />} />
           <Route path="/politica-privacidad" element={<AvisoLegal />} />
         </Routes>
       </main>
