@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { HiArrowLeft, HiDownload, HiTrash } from "react-icons/hi";
 
-const ArticuloDetalle = () => {
+const ArticuloDetalles = () => {
     const { id } = useParams();
     const [articulo, setArticulo] = useState(null);
     const [comentarios, setComentarios] = useState([]);
@@ -225,4 +225,4 @@ const ArticuloDetalle = () => {
     );
 };
 
-export default ArticuloDetalle;
+export default ArticuloDetalles;

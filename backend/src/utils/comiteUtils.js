@@ -23,7 +23,7 @@ async function obtenerComiteEvento(id_evento) {
     const queryComiteEvento = `SELECT comite FROM Eventos
                                WHERE id_evento = $1;`;
     const resultComiteEvento = await pool.query(queryComiteEvento, [id_evento]);
-    const comiteEvento = resultComiteEvento.rows[0];
+    const comiteEvento = resultComiteEvento.rows[0].comite;
 
     return comiteEvento;
 }
@@ -32,7 +32,7 @@ async function obtenerComitePorSocio(id_socio) {
     const queryComitePorSocio = `SELECT comite FROM Miembros_Comite
                                  WHERE socio = $1;`;
     const resultComitePorSocio = await pool.query(queryComitePorSocio, [id_socio]);
-    const comitePorSocio = resultComitePorSocio.rows[0];
+    const comitePorSocio = resultComitePorSocio.rows[0].comite;
 
     return comitePorSocio;
 }

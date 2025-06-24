@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import DatosProyecto from "../../components/Proyectos/DatosProyecto";
 import MiembrosProyecto from "../../components/Proyectos/MiembrosProyecto";
 
-const ProyectoDetalle = () => {
+const ProyectoDetalles = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -19,7 +19,11 @@ const ProyectoDetalle = () => {
         try {
             setLoading(true);
             const res = await fetch(`http://localhost:4000/proyectos-investigacion/${id}`);
-            if (!res.ok) throw new Error("Proyecto no encontrado");
+
+            if (!res.ok) {
+                throw new Error("Proyecto no encontrado")
+            };
+            
             const data = await res.json();
             setProyecto(data.proyecto);
             setMiembros(data.miembros);
@@ -93,4 +97,4 @@ const ProyectoDetalle = () => {
     );
 };
 
-export default ProyectoDetalle;
+export default ProyectoDetalles;

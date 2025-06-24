@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS Evento (
     nombre_evento VARCHAR(256) NOT NULL,
     fecha_evento_inicio TIMESTAMP NOT NULL,
     fecha_evento_fin TIMESTAMP NOT NULL,
-    descripcion_evento VARCHAR(1000) NOT NULL,
+    descripcion_evento TEXT NOT NULL,
     direccion INT NOT NULL,
     comite INT,
     CONSTRAINT FK_EVENTO_DIRECCION FOREIGN KEY (direccion) REFERENCES Direccion(id_direccion) ON DELETE CASCADE,

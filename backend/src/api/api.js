@@ -844,7 +844,7 @@ router.get('/eventos-cientificos/:id', async (req, res) =>  {
 
         res.status(200).json({
             message: 'Detalles del evento científico.',
-            eventos: evento,
+            evento: evento,
             miembrosComite: miembrosComite
         });
     }

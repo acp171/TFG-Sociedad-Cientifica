@@ -7,12 +7,13 @@ import Unete from './pages/Unete';
 import Login from './pages/Autenticacion/Login';
 import Register from './pages/Autenticacion/Register';
 import Articulos from './pages/Articulos/Articulos';
-import ArticuloDetalle from './pages/Articulos/ArticuloDetalle';
+import ArticuloDetalles from './pages/Articulos/ArticuloDetalles';
 import CrearArticulo from './pages/Articulos/CrearArticulo';
 import Proyectos from './pages/Proyectos/Proyectos';
-import ProyectoDetalle from './pages/Proyectos/ProyectoDetalle';
+import ProyectoDetalles from './pages/Proyectos/ProyectoDetalles';
 import CrearProyecto from './pages/Proyectos/CrearProyecto';
 import Eventos from './pages/Eventos/Eventos';
+import EventoDetalles from './pages/Eventos/EventoDetalles';
 import AvisoLegal from './pages/Aviso-Legal';
 
 function App() {
@@ -28,12 +29,13 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/quienes-somos" element={<QuienesSomos />} />
           <Route path="/articulos-cientificos" element={<Articulos />} />
-          <Route path="/articulos-cientificos/:id" element={<ArticuloDetalle />} />
+          <Route path="/articulos-cientificos/:id" element={<ArticuloDetalles />} />
           <Route path="/articulos-cientificos/crear-articulo" element={<CrearArticulo />} />
           <Route path="/proyectos-investigacion" element={<Proyectos />} />
-          <Route path="/proyectos-investigacion/:id" element={<ProyectoDetalle />} />
+          <Route path="/proyectos-investigacion/:id" element={<ProyectoDetalles />} />
           <Route path="/proyectos-investigacion/crear-proyecto" element={<CrearProyecto />} />
           <Route path="/eventos-cientificos" element={<Eventos />} />
+          <Route path="/eventos-cientificos/:id" element={<EventoDetalles />} />
           <Route path="/politica-privacidad" element={<AvisoLegal />} />
         </Routes>
       </main>
