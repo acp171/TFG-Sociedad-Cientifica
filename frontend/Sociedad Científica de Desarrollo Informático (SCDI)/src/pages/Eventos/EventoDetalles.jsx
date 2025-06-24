@@ -54,6 +54,9 @@ const EventoDetalles = () => {
         minute: "2-digit"
     });
 
+    const presidentes = miembrosComite.filter((miembro) => miembro.rol === "Presidente");
+    const esPresidente = presidentes.some((presidente) => presidente.id_socio === usuario?.id);
+
     return (
         <section className="min-h-screen bg-gradient-to-b from-blue-200 to-white py-16 px-6 lg:px-20 flex flex-col items-center">
             <button
@@ -98,7 +101,7 @@ const EventoDetalles = () => {
                     </section>
                 )}
 
-                {usuario?.rol === 1 && (
+                {esPresidente && (
                     <div className="flex justify-end">
                         <button
                             onClick={eliminar}

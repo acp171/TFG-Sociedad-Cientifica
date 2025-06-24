@@ -13,7 +13,6 @@ const Eventos = () => {
         fetch("http://localhost:4000/listado-eventos-cientificos")
             .then((res) => res.json())
             .then((data) => {
-                console.log("Respuesta del servidor:", data);
                 setEventos(data.eventos?.listaEventos || []);
                 setLoading(false);
             })

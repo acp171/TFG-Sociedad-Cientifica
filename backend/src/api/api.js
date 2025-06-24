@@ -662,8 +662,13 @@ router.post('/eventos-cientificos/crear-evento-cientifico', verificarToken, asyn
     }
 
     const id_comite = await obtenerComitePorSocio(req.usuario.id);
+
     const adminRol = await obtenernRol(req.usuario);
     if (!adminRol || adminRol.nombre !== 'Administrador') {
+        if (!id_comite) {
+            return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+        }
+
         const presidenteComite = await obtenerPresidenteComite(id_comite);
         if (presidenteComite.socio !== req.usuario.id) {
             return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
@@ -830,6 +835,7 @@ router.get('/eventos-cientificos/:id', async (req, res) =>  {
         if (evento.comite) {
             const queryMiembros = `
                 SELECT 
+                    s.id_socio,
                     s.nombre,
                     s.apellidos,
                     sr.nombre AS rol
