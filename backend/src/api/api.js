@@ -810,6 +810,50 @@ router.get('/listado-eventos-cientificos', async (req, res) =>  {
     }
 });
 
+// GET detalles del evento científico
+router.get('/eventos-cientificos/:id', async (req, res) =>  {
+    const id_evento = req.params.id;
+
+    try {
+        const queryEvento = `SELECT * 
+                       FROM Evento
+                       WHERE id_evento = $1;`;
+        const resultEvento = await pool.query(queryEvento, [id_evento]);
+
+        if (resultEvento.rows.length === 0) {
+            return res.status(404).json({ message: 'Evento no encontrado.' });
+        }
+
+        const evento = resultEvento.rows[0];
+        let miembrosComite = [];
+
+        if (evento.comite) {
+            const queryMiembros = `
+                SELECT 
+                    s.nombre,
+                    s.apellidos,
+                    sr.nombre AS rol
+                FROM Miembros_Comite mc
+                JOIN Socio s ON mc.socio = s.id_socio
+                JOIN Socio_Rol sr ON mc.rol_comite = sr.id_socio_rol
+                WHERE mc.comite = $1;
+            `;
+            const resultMiembros = await pool.query(queryMiembros, [evento.comite]);
+            miembrosComite = resultMiembros.rows;
+        }
+
+        res.status(200).json({
+            message: 'Detalles del evento científico.',
+            eventos: evento,
+            miembrosComite: miembrosComite
+        });
+    }
+    catch (error) {
+        console.error("Error al intentar obtener detalles del evento científico: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
 // POST publicar articulo científico
 router.post('/articulos-cientificos/publicar-articulo-cientifico', verificarToken, upload.single('pdf'), async (req, res) => {
     const { titulo, contenido } = req.body;
