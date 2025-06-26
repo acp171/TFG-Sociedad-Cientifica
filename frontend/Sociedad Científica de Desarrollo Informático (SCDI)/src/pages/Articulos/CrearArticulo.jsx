@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { HiXCircle } from 'react-icons/hi';
+import { HiXCircle, HiArrowLeft } from 'react-icons/hi';
 
 const CrearArticulo = () => {
     const [titulo, setTitulo] = useState("");
@@ -52,9 +52,10 @@ const CrearArticulo = () => {
             {/* Botón Volver */}
             <button
                 onClick={() => navigate(-1)}
-                className="self-start mb-6 text-blue-600 hover:text-blue-800 font-semibold transition"
+                className="self-start mb-6 flex items-center text-blue-600 hover:text-blue-800 font-semibold transition"
             >
-                ← Volver
+                <HiArrowLeft className="mr-2 text-xl" />
+                Volver
             </button>
 
             <h2 className="text-3xl font-extrabold text-gray-900 mb-12 text-center">

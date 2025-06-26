@@ -36,7 +36,7 @@ const Header = () => {
             <nav>
                 <ul className="flex space-x-6 font-medium">
                     <li><a href="/quienes-somos" className="hover:text-purple-400">QUIÉNES SOMOS</a></li>
-                    <li><a href="#actividades" className="hover:text-purple-400">ACTIVIDADES</a></li>
+                    <li><a href="/eventos-cientificos" className="hover:text-purple-400">ACTIVIDADES</a></li>
                     <li><a href="/proyectos-investigacion" className="hover:text-purple-400">PROYECTOS</a></li>
                     <li><a href="/articulos-cientificos" className="hover:text-purple-400">ARTÍCULOS</a></li>
                 </ul>
