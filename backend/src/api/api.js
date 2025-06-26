@@ -914,8 +914,8 @@ router.post('/eventos-cientificos/:id/inscribirse', verificarToken, async (req, 
                 id_evento,
                 socio_id,
             },
-            success_url: `http://localhost:5173/eventos-cientificos/${id_evento}/inscribirse/evento-exito?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `http://localhost:5173/eventos-cientificos/${id_evento}`,
+            success_url: `https://scdi.vercel.app/eventos-cientificos/${id_evento}/inscribirse/evento-exito?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `https://scdi.vercel.app/eventos-cientificos/${id_evento}`,
         });
 
         pool.query("INSERT INTO Inscripciones (estado_inscripcion, evento, socio) VALUES ($1, $2, $3)", ["pendiente", id_evento, socio_id])
