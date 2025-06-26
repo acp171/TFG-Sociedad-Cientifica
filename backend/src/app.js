@@ -1,4 +1,5 @@
 const express = require('express');
+const app = express();
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
@@ -26,8 +27,8 @@ app.use(express.json());
 
 
 // API
-
-const app = express(express.json());
+app.use('/webhook', require('./api/webhook'));
+app.use(express.json());
 app.use('/', require('./api/api'));
 
 
