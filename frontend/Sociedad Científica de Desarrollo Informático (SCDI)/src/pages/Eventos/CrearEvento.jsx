@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { HiArrowLeft } from "react-icons/hi";
 
 const CrearEvento = () => {
@@ -14,6 +14,16 @@ const CrearEvento = () => {
     const [direccionExtra, setDireccionExtra] = useState("");
 
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            navigate("/login", {
+                state: { from: location.pathname }
+            });
+        }
+    }, [navigate, location]);
 
     const buscarCalles = async (valor) => {
         if (!provincia || !valor) return;

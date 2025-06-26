@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { HiXCircle, HiArrowLeft } from 'react-icons/hi';
 
 const CrearArticulo = () => {
@@ -7,13 +7,16 @@ const CrearArticulo = () => {
     const [contenido, setContenido] = useState("");
     const [pdfFile, setPdfFile] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
-            navigate("/login");
+            navigate("/login", {
+                state: { from: location.pathname }
+            });
         }
-    }, [navigate]);
+    }, [navigate, location]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

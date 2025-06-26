@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate, useLocation } from "react-router-dom"; 
 
 const CrearProyecto = () => {
     const fondoCrearProyecto = {
@@ -28,6 +28,7 @@ const CrearProyecto = () => {
     };
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [formData, setFormData] = useState({
         nombre_proyecto: "",
@@ -43,9 +44,11 @@ const CrearProyecto = () => {
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
-            navigate("/login");
+            navigate("/login", {
+                state: { from: location.pathname }
+            });
         }
-    }, [navigate]);
+    }, [navigate, location]);
 
     const handleChange = (e) => {
         setFormData(f => ({ ...f, [e.target.name]: e.target.value }));

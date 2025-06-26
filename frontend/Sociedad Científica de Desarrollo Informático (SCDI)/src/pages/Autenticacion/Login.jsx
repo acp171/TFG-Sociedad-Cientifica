@@ -1,10 +1,15 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/AuthContext";
 
 const Login = () => {
     const navigate = useNavigate();
-    const { login } = useAuth(); // usa el método login del contexto
+    const location = useLocation();
+    const { login } = useAuth();
+
+    const cameFrom = location.state?.from;
+
+    const redireccionFinal = cameFrom && cameFrom !== "/unete" ? cameFrom : "/";
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -29,9 +34,11 @@ const Login = () => {
                 throw new Error(data.message || "Error al iniciar sesión");
             }
 
-            login(data.token, data.socio); // aquí se actualiza el contexto
+            login(data.token, data.socio);
 
-            navigate("/");
+            // Aquí redirigimos correctamente según de dónde vino el usuario
+            navigate(redireccionFinal, { replace: true });
+
         } catch (err) {
             setError(err.message);
         } finally {
@@ -67,7 +74,7 @@ const Login = () => {
                         to="/register"
                         title="Registrate"
                         className="w-full mb-10 text-blue-600 hover:text-blue-700"
-                        >
+                    >
                         ¿Aún no tienes una cuenta?
                     </Link>
 
