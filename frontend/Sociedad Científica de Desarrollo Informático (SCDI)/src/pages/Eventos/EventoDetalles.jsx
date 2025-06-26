@@ -9,6 +9,7 @@ const EventoDetalles = () => {
     const [evento, setEvento] = useState(null);
     const [miembrosComite, setMiembrosComite] = useState([]);
     const [coords, setCoords] = useState(null);
+    const [modoEdicion, setModoEdicion] = useState(false);
     const navigate = useNavigate();
     const usuario = JSON.parse(localStorage.getItem("socio"));
 
@@ -18,29 +19,56 @@ const EventoDetalles = () => {
             .then(data => {
                 setEvento(data.evento);
                 setMiembrosComite(data.miembrosComite || []);
-
-                // Cargar coordenadas si están disponibles
-                const dir = data.evento.direccion;
-                if (dir?.latitud && dir?.longitud) {
+                if (data.evento?.direccion?.latitud && data.evento?.direccion?.longitud) {
                     setCoords({
-                        lat: parseFloat(dir.latitud),
-                        lon: parseFloat(dir.longitud)
+                        lat: parseFloat(data.evento.direccion.latitud),
+                        lon: parseFloat(data.evento.direccion.longitud)
                     });
                 }
             });
     }, [id]);
 
     const eliminar = async () => {
-        if (!window.confirm("¿Seguro que deseas eliminar este evento? Esta acción no se puede deshacer.")) return;
+        if (!window.confirm("¿Seguro que deseas eliminar este evento?")) return;
         const token = localStorage.getItem("token");
         const res = await fetch(`http://localhost:4000/eventos-cientificos/${id}`, {
             method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+            headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {
             navigate("/eventos-cientificos");
+        }
+    };
+
+    const guardarCambios = async () => {
+        const token = localStorage.getItem("token");
+
+        try {
+            const res = await fetch(`http://localhost:4000/eventos-cientificos/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    nombre_evento: evento.nombre_evento,
+                    descripcion_evento: evento.descripcion_evento,
+                    fecha_evento_inicio: evento.fecha_evento_inicio,
+                    fecha_evento_fin: evento.fecha_evento_fin
+                })
+            });
+
+            if (!res.ok) {
+                const error = await res.json();
+                alert("Error al guardar: " + error.message);
+                return;
+            }
+
+            alert("Cambios guardados con éxito");
+            setModoEdicion(false);
+        } catch (error) {
+            console.error("Error al actualizar evento:", error);
+            alert("No se pudo actualizar el evento.");
         }
     };
 
@@ -67,6 +95,7 @@ const EventoDetalles = () => {
 
     const presidentes = miembrosComite.filter((m) => m.rol === "Presidente");
     const esPresidente = presidentes.some((p) => p.id_socio === usuario?.id);
+    const esAdministrador = usuario?.rol === 1;
 
     return (
         <section className="min-h-screen bg-gradient-to-b from-blue-200 to-white py-16 px-6 lg:px-20 flex flex-col items-center">
@@ -78,19 +107,62 @@ const EventoDetalles = () => {
             </button>
 
             <article className="bg-gradient-to-b from-blue-50 to-white shadow-xl rounded-xl p-10 max-w-4xl w-full">
-                <h1 className="text-center text-5xl font-extrabold mb-8 text-gray-900 tracking-wide drop-shadow-sm">
-                    {evento.nombre_evento}
-                </h1>
+                {modoEdicion ? (
+                    <input
+                        type="text"
+                        value={evento.nombre_evento}
+                        onChange={(e) =>
+                            setEvento({ ...evento, nombre_evento: e.target.value })
+                        }
+                        className="text-3xl font-bold mb-6 border border-gray-300 px-4 py-2 rounded w-full"
+                    />
+                ) : (
+                    <h1 className="text-center text-5xl font-extrabold mb-8 text-gray-900 tracking-wide drop-shadow-sm">
+                        {evento.nombre_evento}
+                    </h1>
+                )}
 
-                <p className="text-gray-800 whitespace-pre-wrap leading-relaxed text-lg mb-12 border-l-4 border-blue-600 pl-6">
-                    {evento.descripcion_evento}
-                </p>
-
-                <div className="flex justify-between items-center mb-10 flex-wrap gap-4">
-                    <p className="text-sm text-black italic">
-                        Empieza {fechaInicioFormateada} hasta {fechaFinFormateada}.
+                {modoEdicion ? (
+                    <textarea
+                        value={evento.descripcion_evento}
+                        onChange={(e) =>
+                            setEvento({ ...evento, descripcion_evento: e.target.value })
+                        }
+                        rows={6}
+                        className="w-full border border-gray-300 rounded p-4 mb-8"
+                    />
+                ) : (
+                    <p className="text-gray-800 whitespace-pre-wrap leading-relaxed text-lg mb-12 border-l-4 border-blue-600 pl-6">
+                        {evento.descripcion_evento}
                     </p>
-                </div>
+                )}
+
+                {modoEdicion ? (
+                    <div className="flex gap-4 mb-10 flex-wrap">
+                        <input
+                            type="datetime-local"
+                            value={evento.fecha_evento_inicio}
+                            onChange={(e) =>
+                                setEvento({ ...evento, fecha_evento_inicio: e.target.value })
+                            }
+                            className="border border-gray-300 rounded p-2"
+                        />
+                        <input
+                            type="datetime-local"
+                            value={evento.fecha_evento_fin}
+                            onChange={(e) =>
+                                setEvento({ ...evento, fecha_evento_fin: e.target.value })
+                            }
+                            className="border border-gray-300 rounded p-2"
+                        />
+                    </div>
+                ) : (
+                    <div className="flex justify-between items-center mb-10 flex-wrap gap-4">
+                        <p className="text-sm text-black italic">
+                            Empieza {fechaInicioFormateada} hasta {fechaFinFormateada}.
+                        </p>
+                    </div>
+                )}
 
                 {evento.direccion && (
                     <div className="mb-10 text-gray-800">
@@ -141,8 +213,24 @@ const EventoDetalles = () => {
                     </section>
                 )}
 
-                {esPresidente && (
-                    <div className="flex justify-end">
+                {(esPresidente || esAdministrador) && (
+                    <div className="flex justify-end gap-4">
+                        {modoEdicion ? (
+                            <button
+                                onClick={guardarCambios}
+                                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md shadow-md transition focus:outline-none focus:ring-2 focus:ring-green-600"
+                            >
+                                Guardar cambios
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => setModoEdicion(true)}
+                                className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                            >
+                                Editar evento
+                            </button>
+                        )}
+
                         <button
                             onClick={eliminar}
                             className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"

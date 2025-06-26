@@ -79,7 +79,8 @@ router.post('/login', async (req, res) => {
             socio: {
                 id: socio.id_socio,
                 nombre: socio.nombre,
-                email: socio.email
+                email: socio.email,
+                rol: socio.socio_rol
             },
             token
         });
@@ -740,9 +741,9 @@ router.post('/eventos-cientificos/crear-evento-cientifico', verificarToken, asyn
 // PUT editar un evento científico
 router.put('/eventos-cientificos/:id', verificarToken, async (req, res) =>  {
     const id_evento = req.params.id;
-    const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
+    const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento } = req.body;
 
-    if (!id_evento || !nombre_evento || !fecha_evento_inicio || !fecha_evento_fin || !descripcion_evento || !direccion) {
+    if (!id_evento || !nombre_evento || !fecha_evento_inicio || !fecha_evento_fin || !descripcion_evento) {
         return res.status(400).json({ message: 'Faltan datos.' });
     }
 
@@ -762,12 +763,11 @@ router.put('/eventos-cientificos/:id', verificarToken, async (req, res) =>  {
                 fecha_evento_inicio,
                 fecha_evento_fin,
                 descripcion_evento,
-                direccion,
                 id_evento
             ];
 
             const query = 'UPDATE Evento SET nombre_evento = $1, fecha_evento_inicio = $2, fecha_evento_fin = $3,' +
-                          'descripcion_evento = $4, direccion = $5 WHERE id_evento = $6 RETURNING id_evento,' +
+                          'descripcion_evento = $4 WHERE id_evento = $5 RETURNING id_evento,' +
                           'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento;';
             const result = await pool.query(query, values);
 
@@ -806,7 +806,7 @@ router.delete('/eventos-cientificos/:id', verificarToken, async (req, res) =>  {
     
     try {
         const query = 'DELETE FROM Evento WHERE id_evento = $1;';
-        const result = await pool.query(query, [id_evento]);
+        await pool.query(query, [id_evento]);
 
         res.status(200).json({
             message: 'Evento científico eliminado.',
