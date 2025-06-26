@@ -218,7 +218,7 @@ const CrearEvento = () => {
                     />
                     <button
                         type="submit"
-                        className="w-full bg-green-600 text-white font-semibold py-3 rounded-md hover:bg-green-700 transition duration-200"
+                        className="w-full bg-green-600 text-white font-semibold py-3 rounded-md hover:bg-green-700 transition duration-200 cursor-pointer"
                     >
                         Crear evento
                     </button>
