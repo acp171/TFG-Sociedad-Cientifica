@@ -72,6 +72,24 @@ const EventoDetalles = () => {
         }
     };
 
+    const inscribirse = async () => {
+        const token = localStorage.getItem("token");
+    
+        const res = await fetch(`http://localhost:4000/eventos-cientificos/${id}/inscribirse`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    
+        const data = await res.json();
+        if (res.ok && data.url) {
+            window.location.href = data.url;
+        } else {
+            alert(data.message || "No se pudo iniciar el pago");
+        }
+    };
+
     if (!evento) {
         return (
             <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-blue-50 to-white">
@@ -212,6 +230,10 @@ const EventoDetalles = () => {
                         </ul>
                     </section>
                 )}
+
+                <button onClick={inscribirse} className="bg-indigo-600 text-white px-4 py-2 rounded">
+                    Inscribirme
+                </button>
 
                 {(esPresidente || esAdministrador) && (
                     <div className="flex justify-end gap-4">

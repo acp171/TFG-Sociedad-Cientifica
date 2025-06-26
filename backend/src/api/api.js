@@ -1,3 +1,4 @@
+const express = require("express");
 const { Router } = require ('express');
 const path = require('path');
 const fs = require('fs');
@@ -902,6 +903,65 @@ router.get('/eventos-cientificos/:id', async (req, res) =>  {
         console.error("Error al intentar obtener detalles del evento científico: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
+});
+
+router.post('/eventos-cientificos/:id/inscribirse', verificarToken, async (req, res) => {
+    const id_evento = req.params.id;
+    const socio_id = req.usuario.id;
+
+    try {
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [{
+                price: 'price_1RaH0WPbMwKwBYLWKDv1KpaX',
+                quantity: 1,
+            }],
+            mode: 'payment',
+            metadata: {
+                id_evento,
+                socio_id,
+            },
+            success_url: `http://localhost:5173/eventos-cientificos/${id_evento}/inscribirse/evento-exito?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `http://localhost:5173/eventos-cientificos/${id_evento}`,
+        });
+
+        pool.query("INSERT INTO Inscripciones (estado_inscripcion, evento, socio) VALUES ($1, $2, $3)", ["pendiente", id_evento, socio_id])
+            .then(() => console.log("✅ Inscripción registrada"))
+            .catch(err => console.error("Error registrando inscripción:", err.message));
+
+        res.json({ url: session.url });
+    }
+    catch (error) {
+        console.error("Error creando sesión de pago Stripe:", error.message);
+        res.status(500).json({ message: 'Error al iniciar el pago' });
+    }
+});
+
+router.post('/webhook', express.raw({ type: 'application/json' }), (request, response) => {
+    const sig = request.headers['stripe-signature'];
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    }
+    catch (err) {
+        console.log('⚠️  Webhook error:', err.message);
+        return response.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    if (event.type === 'checkout.session.completed') {
+        const session = event.data.object;
+        const id_evento = session.metadata.id_evento;
+        const socio_id = session.metadata.socio_id;
+
+        pool.query("UPDATE Inscripciones SET estado_inscripcion = $1 WHERE evento = $2 AND socio = $3;", ["pagado", id_evento, socio_id])
+            .then(() => console.log("✅ Inscripción pagada"))
+            .catch(err => console.error("Error pagando inscripción:", err.message));
+    }
+
+    response.status(200).send();
 });
 
 // POST publicar articulo científico
