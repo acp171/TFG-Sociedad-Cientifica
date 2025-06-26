@@ -29,7 +29,7 @@ const CrearEvento = () => {
         if (!provincia || !valor) return;
 
         try {
-            const url = `http://localhost:4000/buscar-calles?provincia=${encodeURIComponent(
+            const url = `https://tfg-sociedad-cientifica-production.up.railway.app/buscar-calles?provincia=${encodeURIComponent(
                 provincia
             )}&query=${encodeURIComponent(valor)}`;
 
@@ -92,7 +92,7 @@ const CrearEvento = () => {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
-                "http://localhost:4000/eventos-cientificos/crear-evento-cientifico",
+                "https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/crear-evento-cientifico",
                 {
                     method: "POST",
                     headers: { 

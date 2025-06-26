@@ -16,7 +16,7 @@ const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresiden
 
     const guardarProyecto = async () => {
         try {
-            const res = await fetch(`http://localhost:4000/proyectos-investigacion/${proyectoId}`, {
+            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${proyectoId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -40,7 +40,7 @@ const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresiden
     const eliminarProyecto = async () => {
         if (!window.confirm("¿Eliminar proyecto?")) return;
         try {
-            const res = await fetch(`http://localhost:4000/proyectos-investigacion/${proyectoId}`, {
+            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${proyectoId}`, {
                 method: "DELETE",
                 headers: { 
                     "Content-Type": "application/json",

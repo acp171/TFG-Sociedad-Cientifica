@@ -28,7 +28,7 @@ const Register = () => {
         setSuccess("");
 
         try {
-            const res = await fetch("http://localhost:4000/register", {
+            const res = await fetch("https://tfg-sociedad-cientifica-production.up.railway.app/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),

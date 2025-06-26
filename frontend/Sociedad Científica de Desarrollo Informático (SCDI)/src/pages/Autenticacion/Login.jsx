@@ -22,7 +22,7 @@ const Login = () => {
         setError(null);
 
         try {
-            const res = await fetch("http://localhost:4000/login", {
+            const res = await fetch("https://tfg-sociedad-cientifica-production.up.railway.app/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),

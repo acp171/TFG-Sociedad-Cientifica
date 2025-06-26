@@ -10,7 +10,7 @@ const Articulos = () => {
     const currentPage = parseInt(searchParams.get("page")) || 1;
 
     useEffect(() => {
-        fetch("http://localhost:4000/listado-articulos-cientificos")
+        fetch("https://tfg-sociedad-cientifica-production.up.railway.app/listado-articulos-cientificos")
             .then((res) => res.json())
             .then((data) => {
                 setArticulos(data.articulos?.listadoArticulos || []);

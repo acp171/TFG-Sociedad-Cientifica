@@ -10,7 +10,7 @@ const Eventos = () => {
     const currentPage = parseInt(searchParams.get("page")) || 1;
 
     useEffect(() => {
-        fetch("http://localhost:4000/listado-eventos-cientificos")
+        fetch("https://tfg-sociedad-cientifica-production.up.railway.app/listado-eventos-cientificos")
             .then((res) => res.json())
             .then((data) => {
                 setEventos(data.eventos?.listaEventos || []);

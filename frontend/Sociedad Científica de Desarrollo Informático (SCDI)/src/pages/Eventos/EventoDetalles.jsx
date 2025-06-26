@@ -15,7 +15,7 @@ const EventoDetalles = () => {
     const usuario = JSON.parse(localStorage.getItem("socio"));
 
     useEffect(() => {
-        fetch(`http://localhost:4000/eventos-cientificos/${id}`)
+        fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}`)
             .then(res => res.json())
             .then(data => {
                 setEvento(data.evento);
@@ -33,7 +33,7 @@ const EventoDetalles = () => {
     const eliminar = async () => {
         if (!window.confirm("¿Seguro que deseas eliminar este evento?")) return;
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:4000/eventos-cientificos/${id}`, {
+        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}`, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${token}` }
         });
@@ -46,7 +46,7 @@ const EventoDetalles = () => {
         const token = localStorage.getItem("token");
 
         try {
-            const res = await fetch(`http://localhost:4000/eventos-cientificos/${id}`, {
+            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -77,7 +77,7 @@ const EventoDetalles = () => {
     const inscribirse = async () => {
         const token = localStorage.getItem("token");
     
-        const res = await fetch(`http://localhost:4000/eventos-cientificos/${id}/inscribirse`, {
+        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}/inscribirse`, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -94,7 +94,7 @@ const EventoDetalles = () => {
 
     const cancelarInscripcion = async () => {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:4000/eventos-cientificos/${id}/cancelar-inscripcion`, {
+        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}/cancelar-inscripcion`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`,

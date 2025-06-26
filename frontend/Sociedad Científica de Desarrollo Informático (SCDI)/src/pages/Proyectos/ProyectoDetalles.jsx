@@ -19,7 +19,7 @@ const ProyectoDetalles = () => {
     const fetchProyecto = async () => {
         try {
             setLoading(true);
-            const res = await fetch(`http://localhost:4000/proyectos-investigacion/${id}`);
+            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${id}`);
 
             if (!res.ok) {
                 throw new Error("Proyecto no encontrado")

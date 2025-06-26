@@ -11,7 +11,7 @@ const ArticuloDetalles = () => {
     const usuario = JSON.parse(localStorage.getItem("socio"));
 
     useEffect(() => {
-        fetch(`http://localhost:4000/articulos-cientificos/${id}`)
+        fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${id}`)
             .then(res => res.json())
             .then(data => {
                 setArticulo(data.articulo);
@@ -22,7 +22,7 @@ const ArticuloDetalles = () => {
     const eliminar = async () => {
         if (!window.confirm("¿Seguro que deseas eliminar este artículo? Esta acción no se puede deshacer.")) return;
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:4000/articulos-cientificos/${id}`, {
+        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`
@@ -38,7 +38,7 @@ const ArticuloDetalles = () => {
         if (!nuevoComentario.trim()) return;
 
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:4000/articulos-cientificos/${idPublicacion}/comentarios`, {
+        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${idPublicacion}/comentarios`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

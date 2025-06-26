@@ -62,7 +62,7 @@ const CrearProyecto = () => {
         const token = localStorage.getItem("token");
 
         try {
-            const res = await fetch('http://localhost:4000/proyectos-investigacion/crear-proyecto-investigacion', {
+            const res = await fetch('https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/crear-proyecto-investigacion', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
