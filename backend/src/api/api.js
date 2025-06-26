@@ -677,31 +677,45 @@ router.post('/eventos-cientificos/crear-evento-cientifico', verificarToken, asyn
     
     if (fecha_evento_fin > fecha_evento_inicio) {
         try {
-            const values = [
+            const direccionObj = JSON.parse(direccion);
+
+            const { calle, ciudad, codigo_postal, provincia, extra } = direccionObj;
+            if (!calle || !ciudad || !codigo_postal || !provincia) {
+                return res.status(400).json({ message: 'Faltan campos obligatorios en la dirección.' });
+            }
+
+            // Insertar dirección y obtener id
+            const direccionQuery = `INSERT INTO Direccion (calle, ciudad, codigo_postal, provincia, extra)
+                                    VALUES ($1, $2, $3, $4, $5) 
+                                    RETURNING id_direccion;`;
+            const direccionResult = await pool.query(direccionQuery, [calle, ciudad, codigo_postal, provincia, extra || null]);
+            const id_direccion = direccionResult.rows[0].id_direccion;
+
+            const valuesEvento = [
                 nombre_evento,
                 fecha_evento_inicio,
                 fecha_evento_fin,
                 descripcion_evento,
-                direccion,
+                id_direccion,
                 id_comite
             ];
 
-            const query = 'INSERT INTO Evento(nombre_evento, fecha_evento_inicio, fecha_evento_fin,' +
+            const queryEvento = 'INSERT INTO Evento(nombre_evento, fecha_evento_inicio, fecha_evento_fin,' +
                           'descripcion_evento, direccion, comite) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_evento,' +
                           'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento;';
-            const result = await pool.query(query, values);
+            const resultEvento = await pool.query(queryEvento, valuesEvento);
 
             await crearNotificacionEvento(
                 'Nuevo evento publicado',
-                `Se ha creado un nuevo evento: ${result.rows[0].nombre_evento}`);
+                `Se ha creado un nuevo evento: ${resultEvento.rows[0].nombre_evento}`);
 
             res.status(200).json({
                 message: 'Evento científico creado.',
                 proyecto: {
-                    id_evento: result.rows[0].id_evento,
-                    nombre_evento: result.rows[0].nombre_evento,
+                    id_evento: resultEvento.rows[0].id_evento,
+                    nombre_evento: resultEvento.rows[0].nombre_evento,
                     fecha: fecha_evento_inicio + ' hasta ' + fecha_evento_fin,
-                    descripcion_evento: result.rows[0].descripcion_evento,
+                    descripcion_evento: resultEvento.rows[0].descripcion_evento,
                 }
             });
         }
@@ -711,7 +725,7 @@ router.post('/eventos-cientificos/crear-evento-cientifico', verificarToken, asyn
         }
     }
     else {
-        res.status(403).json({ message: 'Fecha inválida.'});
+        return res.status(400).json({ message: 'Fecha inválida: la fecha de fin debe ser posterior a la de inicio.' });
     }
 });
 
@@ -1450,5 +1464,37 @@ router.post('/pagar-suscripcion', async (req, res) => {
         res.status(500).json({ message: 'Error interno del servidor.' });
     }  
 });
+
+router.get('/buscar-calles', async (req, res) => {
+    const { provincia, query } = req.query;
+  
+    if (!provincia || !query) {
+        return res.status(400).json({ message: 'Faltan parámetros provincia o query' });
+    }
+  
+    try {
+        const direccionCompleta = `${query}, ${provincia}, España`;
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+            direccionCompleta
+        )}&format=json&addressdetails=1&limit=10`;
+
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': 'TuApp/1.0 (contacto@tusitio.com)',
+            },
+        });
+    
+        if (!response.ok) {
+            console.error("Error en la API de Nominatim");
+            return res.status(500).json({ message: 'Error en la API de Nominatim' });
+        }
+    
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Error en backend:', error);
+        res.status(500).json({ message: 'Error interno del servidor' });
+    }
+});  
 
 module.exports = router;

@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS Direccion (
     ciudad VARCHAR(50) NOT NULL,
     codigo_postal VARCHAR(10) NOT NULL,
     provincia VARCHAR(50) NOT NULL,
+    extra TEXT,
     socio INT,
     CONSTRAINT FK_DIRECCION_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio) ON DELETE CASCADE
 );
