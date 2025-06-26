@@ -4,7 +4,7 @@ const pool = require('../database');
 const stripe = require('stripe')(process.env.STRIPE_SECRET);
 
 // Comprobar pago
-router.post('/webhook', express.raw({ type: 'application/json' }), (request, response) => {
+router.post('/', express.raw({ type: 'application/json' }), (request, response) => {
     const sig = request.headers['stripe-signature'];
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -30,6 +30,5 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (request, res
 
     response.status(200).send();
 });
-
 
 module.exports = router;

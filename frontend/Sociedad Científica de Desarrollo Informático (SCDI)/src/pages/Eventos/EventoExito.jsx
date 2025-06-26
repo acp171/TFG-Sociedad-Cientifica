@@ -1,7 +1,8 @@
 import { useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 
 const EventoExito = () => {
+    const { id } = useParams();
     const [params] = useSearchParams();
     const navigate = useNavigate();
     const sessionId = params.get("session_id");
@@ -19,7 +20,7 @@ const EventoExito = () => {
                 <h1 className="text-3xl font-bold text-green-600 mb-4">¡Pago exitoso!</h1>
                 <p className="text-gray-700 mb-6">Tu inscripción ha sido confirmada correctamente.</p>
                 <button
-                    onClick={() => navigate("/eventos-cientificos")}
+                    onClick={() => navigate(`/eventos-cientificos/${id}`)}
                     className="px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700"
                 >
                     Volver a eventos
