@@ -8,6 +8,7 @@ const EventoDetalles = () => {
     const { id } = useParams();
     const [evento, setEvento] = useState(null);
     const [miembrosComite, setMiembrosComite] = useState([]);
+    const [miembrosInscritos, setMiembrosInscritos] = useState([]);
     const [coords, setCoords] = useState(null);
     const [modoEdicion, setModoEdicion] = useState(false);
     const navigate = useNavigate();
@@ -25,6 +26,7 @@ const EventoDetalles = () => {
                         lon: parseFloat(data.evento.direccion.longitud)
                     });
                 }
+                setMiembrosInscritos(data.miembrosIncritos);
             });
     }, [id]);
 
@@ -90,6 +92,24 @@ const EventoDetalles = () => {
         }
     };
 
+    const cancelarInscripcion = async () => {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`http://localhost:4000/eventos-cientificos/${id}/cancelar-inscripcion`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    
+        const data = await res.json();
+        if (res.ok) {
+            alert("Inscripción cancelada con éxito");
+            navigate(`/eventos-cientificos/${id}`);
+        } else {
+            alert(data.message || "Error al cancelar inscripción");
+        }
+    };
+
     if (!evento) {
         return (
             <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-blue-50 to-white">
@@ -114,15 +134,51 @@ const EventoDetalles = () => {
     const presidentes = miembrosComite.filter((m) => m.rol === "Presidente");
     const esPresidente = presidentes.some((p) => p.id_socio === usuario?.id);
     const esAdministrador = usuario?.rol === 1;
+    const estaInscrito = miembrosInscritos.some((m) => m.socio === usuario?.id);
+    
+    const fechaEvento = new Date(evento.fecha_evento_inicio);
+    const hoy = new Date();
+    const unaSemanaEnMs = 7 * 24 * 60 * 60 * 1000;
+    const diferenciaEnMs = fechaEvento - hoy;
+    const habilitado = diferenciaEnMs > unaSemanaEnMs;
 
     return (
         <section className="min-h-screen bg-gradient-to-b from-blue-200 to-white py-16 px-6 lg:px-20 flex flex-col items-center">
-            <button
-                onClick={() => navigate(-1)}
-                className="self-start mb-8 flex items-center text-blue-600 hover:text-blue-800 font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 rounded"
-            >
-                <HiArrowLeft className="mr-2 text-xl" /> Volver
-            </button>
+            <div className="flex justify-between items-center w-full mb-8">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="flex items-center text-blue-600 hover:text-blue-800 font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 rounded"
+                >
+                    <HiArrowLeft className="mr-2 text-xl" /> Volver
+                </button>
+
+                {(esPresidente || esAdministrador) && (
+                    <div className="flex gap-4">
+                        {modoEdicion ? (
+                            <button
+                                onClick={guardarCambios}
+                                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md shadow-md transition focus:outline-none focus:ring-2 focus:ring-green-600"
+                            >
+                                Guardar cambios
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => setModoEdicion(true)}
+                                className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                            >
+                                Editar evento
+                            </button>
+                        )}
+
+                        <button
+                            onClick={eliminar}
+                            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
+                        >
+                            <HiTrash className="text-xl" /> Eliminar evento
+                        </button>
+                    </div>
+                )}
+            </div>
 
             <article className="bg-gradient-to-b from-blue-50 to-white shadow-xl rounded-xl p-10 max-w-4xl w-full">
                 {modoEdicion ? (
@@ -231,35 +287,26 @@ const EventoDetalles = () => {
                     </section>
                 )}
 
-                <button onClick={inscribirse} className="bg-indigo-600 text-white px-4 py-2 rounded">
-                    Inscribirme
-                </button>
-
-                {(esPresidente || esAdministrador) && (
-                    <div className="flex justify-end gap-4">
-                        {modoEdicion ? (
-                            <button
-                                onClick={guardarCambios}
-                                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md shadow-md transition focus:outline-none focus:ring-2 focus:ring-green-600"
-                            >
-                                Guardar cambios
-                            </button>
-                        ) : (
-                            <button
-                                onClick={() => setModoEdicion(true)}
-                                className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                            >
-                                Editar evento
-                            </button>
-                        )}
-
+                {habilitado ? (
+                    estaInscrito ? (
                         <button
-                            onClick={eliminar}
-                            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
+                            onClick={cancelarInscripcion}
+                            className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 cursor-pointer"
                         >
-                            <HiTrash className="text-xl" /> Eliminar evento
+                            Cancelar inscripción
                         </button>
-                    </div>
+                    ) : (
+                        <button 
+                            onClick={inscribirse} 
+                            className="bg-indigo-600 text-white px-4 py-2 rounded cursor-pointer"
+                        >
+                            Inscribirme
+                        </button>
+                    )
+                ) : (
+                    <p className="mt-4 text-red-600 font-medium">
+                        Plazo de inscripción expridao
+                    </p>
                 )}
             </article>
         </section>

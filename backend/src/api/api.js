@@ -20,6 +20,7 @@ const { obtenernRol, obtenerSocio } = require('../utils/socioUtils');
 const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones');
 const { obtenerNombreProyecto, obtenerPresidenteProyecto, obtenerMiembro } = require('../utils/proyectoUtils');
 const { obtenerNombreComite, obtenerPresidenteComite, obtenerComiteEvento, obtenerComitePorSocio } = require('../utils/comiteUtils');
+const { obtenerMiembrosComiteEvento, obtenerInscripcionesEvento } = require("../utils/eventoUtils");
 
 // Middlewares
 function verificarToken(req, res, next) {
@@ -872,22 +873,12 @@ router.get('/eventos-cientificos/:id', async (req, res) =>  {
         delete evento.longitud;
         delete evento.latitud;
 
+        const miembrosInscritos = await obtenerInscripcionesEvento(id_evento) || [];
+
         let miembrosComite = [];
 
         if (evento.comite) {
-            const queryMiembros = `
-                SELECT 
-                    s.id_socio,
-                    s.nombre,
-                    s.apellidos,
-                    sr.nombre AS rol
-                FROM Miembros_Comite mc
-                JOIN Socio s ON mc.socio = s.id_socio
-                JOIN Socio_Rol sr ON mc.rol_comite = sr.id_socio_rol
-                WHERE mc.comite = $1;
-            `;
-            const resultMiembros = await pool.query(queryMiembros, [evento.comite]);
-            miembrosComite = resultMiembros.rows;
+            miembrosComite = await obtenerMiembrosComiteEvento(evento.comite);
         }
 
         res.status(200).json({
@@ -896,7 +887,8 @@ router.get('/eventos-cientificos/:id', async (req, res) =>  {
                 ...evento,
                 direccion,
             },
-            miembrosComite: miembrosComite
+            miembrosComite: miembrosComite,
+            miembrosIncritos: miembrosInscritos
         });
     }
     catch (error) {
@@ -905,6 +897,7 @@ router.get('/eventos-cientificos/:id', async (req, res) =>  {
     }
 });
 
+// POST Inscribirse al evento
 router.post('/eventos-cientificos/:id/inscribirse', verificarToken, async (req, res) => {
     const id_evento = req.params.id;
     const socio_id = req.usuario.id;
@@ -937,6 +930,27 @@ router.post('/eventos-cientificos/:id/inscribirse', verificarToken, async (req, 
     }
 });
 
+// DELETE Borrar inscripción
+router.delete('/eventos-cientificos/:id/cancelar-inscripcion', verificarToken, async (req, res) => {
+    const id_evento = req.params.id;
+    const socio_id = req.usuario.id;
+
+    try {
+        const query =  "DELETE FROM Inscripciones WHERE evento = $1 AND socio = $2 RETURNING *;";
+        const result = await pool.query(query,[id_evento, socio_id]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Inscripción no encontrada." });
+        }
+
+        res.json({ message: "Inscripción cancelada correctamente." });
+    } catch (error) {
+        console.error("Error cancelando inscripción:", error.message);
+        res.status(500).json({ message: "Error al cancelar la inscripción." });
+    }
+});
+
+// Comprobar pago
 router.post('/webhook', express.raw({ type: 'application/json' }), (request, response) => {
     const sig = request.headers['stripe-signature'];
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
