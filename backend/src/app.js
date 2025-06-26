@@ -5,7 +5,6 @@ const fs = require('fs');
 require('dotenv').config();
 
 // Initializations
-const app = express(express.json());
 const pool = require('./database');
 const sqlPathCreate = path.join(__dirname, './database/db.sql');
 const sqlPathDrop = path.join(__dirname, './database/dropDatabase.sql');
@@ -27,6 +26,8 @@ app.use(express.json());
 
 
 // API
+
+const app = express(express.json());
 app.use('/', require('./api/api'));
 
 
