@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { HiArrowLeft } from 'react-icons/hi';
 
 import DatosProyecto from "../../components/Proyectos/DatosProyecto";
 import MiembrosProyecto from "../../components/Proyectos/MiembrosProyecto";
@@ -50,6 +51,14 @@ const ProyectoDetalles = () => {
 
     return (
         <section className="min-h-screen w-full bg-gradient-to-b from-blue-200 to-white py-16 px-6 lg:px-20 font-sans">
+            <button
+                onClick={() => navigate(-1)}
+                className="self-start mb-6 flex items-center text-blue-600 hover:text-blue-800 font-semibold transition"
+            >
+                <HiArrowLeft className="mr-2 text-xl" />
+                Volver
+            </button>
+
             <h1 className="text-4xl font-extrabold text-gray-900 mb-8">{proyecto.nombre_proyecto}</h1>
 
             <nav className="flex gap-4 mb-12">
