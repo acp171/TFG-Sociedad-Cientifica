@@ -1,11 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { HiArrowLeft, HiDownload, HiTrash } from "react-icons/hi";
+import { HiArrowLeft, HiTrash } from "react-icons/hi";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import 'leaflet/dist/leaflet.css';
 
 const EventoDetalles = () => {
     const { id } = useParams();
     const [evento, setEvento] = useState(null);
-    const [miembrosComite, setMiembrosComite] = useState(null);
+    const [miembrosComite, setMiembrosComite] = useState([]);
+    const [coords, setCoords] = useState(null);
     const navigate = useNavigate();
     const usuario = JSON.parse(localStorage.getItem("socio"));
 
@@ -14,7 +17,16 @@ const EventoDetalles = () => {
             .then(res => res.json())
             .then(data => {
                 setEvento(data.evento);
-                setMiembrosComite(data.miembrosComite)
+                setMiembrosComite(data.miembrosComite || []);
+
+                // Cargar coordenadas si están disponibles
+                const dir = data.evento.direccion;
+                if (dir?.latitud && dir?.longitud) {
+                    setCoords({
+                        lat: parseFloat(dir.latitud),
+                        lon: parseFloat(dir.longitud)
+                    });
+                }
             });
     }, [id]);
 
@@ -27,7 +39,6 @@ const EventoDetalles = () => {
                 Authorization: `Bearer ${token}`
             }
         });
-
         if (res.ok) {
             navigate("/eventos-cientificos");
         }
@@ -54,15 +65,14 @@ const EventoDetalles = () => {
         minute: "2-digit"
     });
 
-    const presidentes = miembrosComite.filter((miembro) => miembro.rol === "Presidente");
-    const esPresidente = presidentes.some((presidente) => presidente.id_socio === usuario?.id);
+    const presidentes = miembrosComite.filter((m) => m.rol === "Presidente");
+    const esPresidente = presidentes.some((p) => p.id_socio === usuario?.id);
 
     return (
         <section className="min-h-screen bg-gradient-to-b from-blue-200 to-white py-16 px-6 lg:px-20 flex flex-col items-center">
             <button
                 onClick={() => navigate(-1)}
                 className="self-start mb-8 flex items-center text-blue-600 hover:text-blue-800 font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 rounded"
-                aria-label="Volver a la página anterior"
             >
                 <HiArrowLeft className="mr-2 text-xl" /> Volver
             </button>
@@ -82,7 +92,37 @@ const EventoDetalles = () => {
                     </p>
                 </div>
 
-                {miembrosComite && miembrosComite.length > 0 && (
+                {evento.direccion && (
+                    <div className="mb-10 text-gray-800">
+                        <h2 className="text-2xl font-semibold mb-2">Dirección del evento</h2>
+                        <p>{evento.direccion.calle}, {evento.direccion.ciudad}, {evento.direccion.provincia}, {evento.direccion.codigo_postal}</p>
+                    </div>
+                )}
+
+                {coords && (
+                    <div className="mb-12">
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Ubicación en el mapa</h2>
+                        <MapContainer
+                            center={[coords.lat, coords.lon]}
+                            zoom={16}
+                            scrollWheelZoom={false}
+                            style={{ height: '300px', width: '100%', borderRadius: '0.5rem' }}
+                        >
+                            <TileLayer
+                                attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            />
+                            <Marker position={[coords.lat, coords.lon]}>
+                                <Popup>
+                                    {evento.nombre_evento}<br />
+                                    {evento.direccion.calle}, {evento.direccion.ciudad}
+                                </Popup>
+                            </Marker>
+                        </MapContainer>
+                    </div>
+                )}
+
+                {miembrosComite.length > 0 && (
                     <section aria-label="Miembros del comité" className="mb-12">
                         <h2 className="text-2xl font-semibold text-gray-800 mb-4">Miembros del comité</h2>
                         <ul className="grid gap-4">
@@ -106,7 +146,6 @@ const EventoDetalles = () => {
                         <button
                             onClick={eliminar}
                             className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
-                            aria-label="Eliminar evento"
                         >
                             <HiTrash className="text-xl" /> Eliminar evento
                         </button>

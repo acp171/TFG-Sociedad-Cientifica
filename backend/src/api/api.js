@@ -679,16 +679,24 @@ router.post('/eventos-cientificos/crear-evento-cientifico', verificarToken, asyn
         try {
             const direccionObj = JSON.parse(direccion);
 
-            const { calle, ciudad, codigo_postal, provincia, extra } = direccionObj;
+            const { calle, ciudad, codigo_postal, provincia, extra, latitud, longitud } = direccionObj;
             if (!calle || !ciudad || !codigo_postal || !provincia) {
                 return res.status(400).json({ message: 'Faltan campos obligatorios en la dirección.' });
             }
 
-            // Insertar dirección y obtener id
-            const direccionQuery = `INSERT INTO Direccion (calle, ciudad, codigo_postal, provincia, extra)
-                                    VALUES ($1, $2, $3, $4, $5) 
+            const direccionQuery = `INSERT INTO Direccion (calle, ciudad, codigo_postal, provincia, extra, latitud, longitud)
+                                    VALUES ($1, $2, $3, $4, $5, $6, $7) 
                                     RETURNING id_direccion;`;
-            const direccionResult = await pool.query(direccionQuery, [calle, ciudad, codigo_postal, provincia, extra || null]);
+
+            const direccionResult = await pool.query(direccionQuery, [
+                calle,
+                ciudad,
+                codigo_postal,
+                provincia,
+                extra || null,
+                latitud || null,
+                longitud || null
+            ]);
             const id_direccion = direccionResult.rows[0].id_direccion;
 
             const valuesEvento = [
@@ -765,7 +773,7 @@ router.put('/eventos-cientificos/:id', verificarToken, async (req, res) =>  {
 
             res.status(200).json({
                 message: 'Evento científico editado.',
-                proyecto: {
+                evento: {
                     id_evento: result.rows[0].id_evento,
                     nombre_evento: result.rows[0].nombre_evento,
                     fecha: fecha_evento_inicio + ' hasta ' + fecha_evento_fin,
@@ -834,9 +842,11 @@ router.get('/eventos-cientificos/:id', async (req, res) =>  {
     const id_evento = req.params.id;
 
     try {
-        const queryEvento = `SELECT * 
-                       FROM Evento
-                       WHERE id_evento = $1;`;
+        const queryEvento = `SELECT e.*, d.calle, d.ciudad, d.codigo_postal,
+                                    d.provincia, d.extra, d.longitud, d.latitud 
+                             FROM Evento e 
+                             LEFT JOIN Direccion d ON e.direccion = d.id_direccion
+                             WHERE e.id_evento = $1;`;
         const resultEvento = await pool.query(queryEvento, [id_evento]);
 
         if (resultEvento.rows.length === 0) {
@@ -844,6 +854,23 @@ router.get('/eventos-cientificos/:id', async (req, res) =>  {
         }
 
         const evento = resultEvento.rows[0];
+        const direccion = {
+            calle: evento.calle,
+            ciudad: evento.ciudad,
+            codigo_postal: evento.codigo_postal,
+            provincia: evento.provincia,
+            extra: evento.extra,
+            longitud: evento.longitud,
+            latitud: evento.latitud
+        };
+        delete evento.calle;
+        delete evento.ciudad;
+        delete evento.codigo_postal;
+        delete evento.provincia;
+        delete evento.extra;
+        delete evento.longitud;
+        delete evento.latitud;
+
         let miembrosComite = [];
 
         if (evento.comite) {
@@ -864,7 +891,10 @@ router.get('/eventos-cientificos/:id', async (req, res) =>  {
 
         res.status(200).json({
             message: 'Detalles del evento científico.',
-            evento: evento,
+            evento: {
+                ...evento,
+                direccion,
+            },
             miembrosComite: miembrosComite
         });
     }
