@@ -107,7 +107,6 @@ const EventoDetalles = () => {
     
         const data = await res.json();
         if (res.ok) {
-            alert("Inscripción cancelada con éxito");
             fetchEvento();
         } else {
             alert(data.message || "Error al cancelar inscripción");
