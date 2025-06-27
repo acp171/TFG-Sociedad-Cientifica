@@ -212,7 +212,7 @@ VALUES
 INSERT INTO Socio (nombre, apellidos, email, password, telefono, fecha_nacimiento, fecha_alta, socio_rol, tipo_socio) 
 VALUES 
     ('admin', 'admin', 'admin@admin.com', '$2b$10$Y1rqKelTr4mRJL/RHtL18e0hj/eAvCGsW56TwROA9L/bTcvjCkfO.', '123456789', '2001-11-03 00:00:00', '2025-05-10 15:37:21.561', 1, 1),
-    ('Ángel', 'Cardoso Parreño', 'acp171@gcloud.ua.es', '$2b$10$SdT5faI11yQYepzIHzD33OhkgK9oNP77OHrI3Ri/Sppgn1yW2Vesm.', '123456789', '2001-11-03 00:00:00', '2025-05-10 15:37:21.561', 8, 2);
+    ('Ángel', 'Cardoso Parreño', 'acp171@gcloud1.ua.es', '$2b$10$SdT5faI11yQYepzIHzD33OhkgK9oNP77OHrI3Ri/Sppgn1yW2Vesm.', '123456789', '2001-11-03 00:00:00', '2025-05-10 15:37:21.561', 8, 2);
 
 -- Insertar valores en la tabla Direccion
 INSERT INTO Direccion(calle, ciudad, codigo_postal, provincia, latitud, longitud) 

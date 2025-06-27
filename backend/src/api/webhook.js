@@ -36,7 +36,7 @@ router.post('/', express.raw({ type: 'application/json' }), async (request, resp
         const evento = await obtenerEvento(id_evento);
 
         await crearNotificacion(
-            socio,
+            socio_id,
             '¡Inscripción evento!',
             `
                 Hola ${socio.nombre} ${socio.apellidos},<br><br>
