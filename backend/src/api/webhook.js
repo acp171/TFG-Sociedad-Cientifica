@@ -18,6 +18,8 @@ router.post('/', express.raw({ type: 'application/json' }), (request, response) 
         return response.status(400).send(`Webhook Error: ${err.message}`);
     }
 
+    console.log(event.type);
+
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
         const id_evento = session.metadata.id_evento;
