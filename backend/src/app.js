@@ -23,7 +23,6 @@ app.use(cors({
   methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
-app.use(express.json());
 
 
 // API
