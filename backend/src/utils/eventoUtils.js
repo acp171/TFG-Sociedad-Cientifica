@@ -2,7 +2,7 @@ const pool = require('../database');
 
 async function obtenerEvento(id_evento) {
     const queryEvento = `SELECT e.*, d.calle, d.ciudad, 
-                         d.provincia, d.codigo_postal, 
+                         d.provincia, d.codigo_postal 
                          FROM Evento e
                          JOIN Direccion d ON e.direccion = d.id_direccion
                          WHERE id_evento = $1;`;
