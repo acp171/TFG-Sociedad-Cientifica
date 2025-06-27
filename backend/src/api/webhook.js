@@ -23,6 +23,9 @@ router.post('/', express.raw({ type: 'application/json' }), (request, response) 
         const id_evento = session.metadata.id_evento;
         const socio_id = session.metadata.socio_id;
 
+        console.log(id_evento);
+        console.log(socio_id);
+
         pool.query("UPDATE Inscripciones SET estado_inscripcion = $1 WHERE evento = $2 AND socio = $3;", ["pagado", id_evento, socio_id])
             .then(() => console.log("✅ Inscripción pagada"))
             .catch(err => console.error("Error pagando inscripción:", err.message));
