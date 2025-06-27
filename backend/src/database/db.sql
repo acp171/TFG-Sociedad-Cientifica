@@ -215,6 +215,7 @@ VALUES
     ('Ángel', 'Cardoso Parreño', 'acp171@gcloud.ua.es', '$2b$10$SdT5faI11yQYepzIHzD33OhkgK9oNP77OHrI3Ri/Sppgn1yW2Vesm.', '123456789', '2001-11-03 00:00:00', '2025-05-10 15:37:21.561', 8, 2);
 
 -- Insertar valores en la tabla Direccion
-INSERT INTO Direccion(calle, ciudad, codigo_postal, provincia) 
+INSERT INTO Direccion(calle, ciudad, codigo_postal, provincia, latitud, longitud) 
 VALUES 
-    ('Carrer del Filet de Fora, 1', 'Elche', '03201', 'Alicante');
+    ('Carrer del Filet de Fora, 1', 'Elche', '03201', 'Alicante', null, null),
+    ('Gran Vía, Malasaña, Universidad, Centro, Madrid, Comunidad de Madrid, 28013, España', 'Madrid', '28013', 'Comunidad de Madrid', 40.4226636, -3.7096954);

@@ -6,7 +6,7 @@ async function obtenerEvento(id_evento) {
                          FROM Evento e
                          JOIN Direccion d ON e.direccion = d.id_direccion
                          WHERE id_evento = $1;`;
-    const resultEvento = await pool.query(queryEvento, [id_vento]);
+    const resultEvento = await pool.query(queryEvento, [id_evento]);
     const evento = resultEvento.rows[0];
 
     return evento;
