@@ -922,7 +922,7 @@ router.post('/eventos-cientificos/:id/inscribirse', verificarToken, async (req, 
             .then(() => console.log("✅ Inscripción registrada"))
             .catch(err => console.error("Error registrando inscripción:", err.message));
 
-        res.json({ url: session.url });
+        res.status(200).json({ url: session.url });
     }
     catch (error) {
         console.error("Error creando sesión de pago Stripe:", error.message);
@@ -956,7 +956,7 @@ router.delete('/eventos-cientificos/:id/cancelar-inscripcion', verificarToken, a
             `
         );
 
-        res.json({ message: "Inscripción cancelada correctamente." });
+        res.status(200).json({ message: "Inscripción cancelada correctamente." });
     } catch (error) {
         console.error("Error cancelando inscripción:", error.message);
         res.status(500).json({ message: "Error al cancelar la inscripción." });

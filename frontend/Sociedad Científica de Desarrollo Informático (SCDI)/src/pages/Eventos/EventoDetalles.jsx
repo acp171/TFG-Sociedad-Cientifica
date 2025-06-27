@@ -14,7 +14,7 @@ const EventoDetalles = () => {
     const navigate = useNavigate();
     const usuario = JSON.parse(localStorage.getItem("socio"));
 
-    const fetchEvento = () => {
+    useEffect(() => {
         fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}`)
             .then(res => res.json())
             .then(data => {
@@ -26,12 +26,8 @@ const EventoDetalles = () => {
                         lon: parseFloat(data.evento.direccion.longitud)
                     });
                 }
-                setMiembrosInscritos(data.miembrosIncritos || []);
+                setMiembrosInscritos(data.miembrosIncritos);
             });
-    };
-    
-    useEffect(() => {
-        fetchEvento();
     }, [id]);
 
     const eliminar = async () => {
@@ -107,7 +103,10 @@ const EventoDetalles = () => {
     
         const data = await res.json();
         if (res.ok) {
-            fetchEvento();
+            alert("Inscripción cancelada con éxito");
+            setMiembrosInscritos(prev =>
+                prev.filter(m => m.socio !== usuario?.id)
+            );
         } else {
             alert(data.message || "Error al cancelar inscripción");
         }
