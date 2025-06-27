@@ -18,15 +18,11 @@ router.post('/', express.raw({ type: 'application/json' }), (request, response) 
         return response.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    console.log(event.type);
-
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
         const id_evento = session.metadata.id_evento;
         const socio_id = session.metadata.socio_id;
 
-        console.log(id_evento);
-        console.log(socio_id);
 
         pool.query("UPDATE Inscripciones SET estado_inscripcion = $1 WHERE evento = $2 AND socio = $3;", ["pagado", id_evento, socio_id])
             .then(() => console.log("✅ Inscripción pagada"))
