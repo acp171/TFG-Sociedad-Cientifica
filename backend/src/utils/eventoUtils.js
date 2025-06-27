@@ -7,7 +7,7 @@ async function obtenerEvento(evento) {
                          JOIN Direccion d ON e.direccion = d.id_direccion
                          WHERE id_evento = $1;`;
     const resultEvento = await pool.query(queryEvento, [evento]);
-    const evento = queryEvento.rows[0];
+    const evento = resultEvento.rows[0];
 
     return evento;
 }
