@@ -20,7 +20,7 @@ const { obtenernRol, obtenerSocio } = require('../utils/socioUtils');
 const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones');
 const { obtenerNombreProyecto, obtenerPresidenteProyecto, obtenerMiembro } = require('../utils/proyectoUtils');
 const { obtenerNombreComite, obtenerPresidenteComite, obtenerComiteEvento, obtenerComitePorSocio } = require('../utils/comiteUtils');
-const { obtenerMiembrosComiteEvento, obtenerInscripcionesEvento } = require("../utils/eventoUtils");
+const { obtenerMiembrosComiteEvento, obtenerInscripcionesEvento, obtenerEvento } = require("../utils/eventoUtils");
 
 // Middlewares
 function verificarToken(req, res, next) {
@@ -942,6 +942,22 @@ router.delete('/eventos-cientificos/:id/cancelar-inscripcion', verificarToken, a
         if (result.rowCount === 0) {
             return res.status(404).json({ message: "Inscripción no encontrada." });
         }
+
+        const socio = await obtenerSocio(socio_id);
+        const evento = await obtenerEvento(id_evento);
+
+        await crearNotificacion(
+            socio_id,
+            '¡Inscripción evento!',
+            `
+                Hola ${socio.nombre} ${socio.apellidos},<br><br>
+                Tu inscripción al evento <strong>"${evento.nombre_evento}"</strong> ha sido registrada correctamente.<br><br>
+                <strong>📅 Fecha:</strong> ${evento.fecha_evento_inicio} hastas ${evento.fecha_evento_fin}<br>
+                <strong>📍 Lugar:</strong> ${evento.calle}, ${evento.ciudad}<br><br>
+                ¡Gracias por tu participación!<br><br>
+                <em>Sociedad Científica de Desarrollo Informático</em>
+            `
+        );
 
         res.json({ message: "Inscripción cancelada correctamente." });
     } catch (error) {
