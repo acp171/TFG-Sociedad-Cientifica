@@ -948,13 +948,10 @@ router.delete('/eventos-cientificos/:id/cancelar-inscripcion', verificarToken, a
 
         await crearNotificacion(
             socio_id,
-            '¡Inscripción evento!',
+            '¡Inscripción evento cancelada!',
             `
                 Hola ${socio.nombre} ${socio.apellidos},<br><br>
-                Tu inscripción al evento <strong>"${evento.nombre_evento}"</strong> ha sido registrada correctamente.<br><br>
-                <strong>📅 Fecha:</strong> ${evento.fecha_evento_inicio} hastas ${evento.fecha_evento_fin}<br>
-                <strong>📍 Lugar:</strong> ${evento.calle}, ${evento.ciudad}<br><br>
-                ¡Gracias por tu participación!<br><br>
+                Tu inscripción al evento <strong>"${evento.nombre_evento}"</strong> ha sido cancelada correctamente.<br><br>
                 <em>Sociedad Científica de Desarrollo Informático</em>
             `
         );
