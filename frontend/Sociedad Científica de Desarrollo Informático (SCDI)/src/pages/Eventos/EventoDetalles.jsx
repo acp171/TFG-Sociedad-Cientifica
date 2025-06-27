@@ -108,7 +108,7 @@ const EventoDetalles = () => {
                 prev.filter(m => m.socio !== usuario?.id)
             );
         } else {
-            alert(data.message || "Error al cancelar inscripción");
+            alert("Error al cancelar inscripción");
         }
     };
 
