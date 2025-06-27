@@ -1,12 +1,12 @@
 const pool = require('../database');
 
-async function obtenerEvento(evento) {
+async function obtenerEvento(id_evento) {
     const queryEvento = `SELECT e.*, d.calle, d.ciudad, 
                          d.provincia, d.codigo_postal, 
                          FROM Evento e
                          JOIN Direccion d ON e.direccion = d.id_direccion
                          WHERE id_evento = $1;`;
-    const resultEvento = await pool.query(queryEvento, [evento]);
+    const resultEvento = await pool.query(queryEvento, [id_vento]);
     const evento = resultEvento.rows[0];
 
     return evento;
