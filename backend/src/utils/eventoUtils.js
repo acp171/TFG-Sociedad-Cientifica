@@ -1,5 +1,17 @@
 const pool = require('../database');
 
+async function obtenerEvento(id_evento) {
+    const queryEvento = `SELECT e.*, d.calle, d.ciudad, 
+                         d.provincia, d.codigo_postal 
+                         FROM Evento e
+                         JOIN Direccion d ON e.direccion = d.id_direccion
+                         WHERE id_evento = $1;`;
+    const resultEvento = await pool.query(queryEvento, [id_evento]);
+    const evento = resultEvento.rows[0];
+
+    return evento;
+}
+
 async function obtenerMiembrosComiteEvento(comite) {
     const queryMiembros = `
         SELECT 
@@ -30,5 +42,6 @@ async function obtenerInscripcionesEvento(evento) {
 
 module.exports = {
     obtenerMiembrosComiteEvento,
-    obtenerInscripcionesEvento
+    obtenerInscripcionesEvento, 
+    obtenerEvento
 }

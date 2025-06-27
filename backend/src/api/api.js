@@ -20,7 +20,7 @@ const { obtenernRol, obtenerSocio } = require('../utils/socioUtils');
 const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones');
 const { obtenerNombreProyecto, obtenerPresidenteProyecto, obtenerMiembro } = require('../utils/proyectoUtils');
 const { obtenerNombreComite, obtenerPresidenteComite, obtenerComiteEvento, obtenerComitePorSocio } = require('../utils/comiteUtils');
-const { obtenerMiembrosComiteEvento, obtenerInscripcionesEvento } = require("../utils/eventoUtils");
+const { obtenerMiembrosComiteEvento, obtenerInscripcionesEvento, obtenerEvento } = require("../utils/eventoUtils");
 
 // Middlewares
 function verificarToken(req, res, next) {
@@ -922,7 +922,7 @@ router.post('/eventos-cientificos/:id/inscribirse', verificarToken, async (req, 
             .then(() => console.log("✅ Inscripción registrada"))
             .catch(err => console.error("Error registrando inscripción:", err.message));
 
-        res.json({ url: session.url });
+        res.status(200).json({ url: session.url });
     }
     catch (error) {
         console.error("Error creando sesión de pago Stripe:", error.message);
@@ -943,7 +943,20 @@ router.delete('/eventos-cientificos/:id/cancelar-inscripcion', verificarToken, a
             return res.status(404).json({ message: "Inscripción no encontrada." });
         }
 
-        res.json({ message: "Inscripción cancelada correctamente." });
+        const socio = await obtenerSocio(socio_id);
+        const evento = await obtenerEvento(id_evento);
+
+        await crearNotificacion(
+            socio_id,
+            '¡Inscripción evento cancelada!',
+            `
+                Hola ${socio.nombre} ${socio.apellidos},<br><br>
+                Tu inscripción al evento <strong>"${evento.nombre_evento}"</strong> ha sido cancelada correctamente.<br><br>
+                <em>Sociedad Científica de Desarrollo Informático</em>
+            `
+        );
+
+        res.status(200).json({ message: "Inscripción cancelada correctamente." });
     } catch (error) {
         console.error("Error cancelando inscripción:", error.message);
         res.status(500).json({ message: "Error al cancelar la inscripción." });

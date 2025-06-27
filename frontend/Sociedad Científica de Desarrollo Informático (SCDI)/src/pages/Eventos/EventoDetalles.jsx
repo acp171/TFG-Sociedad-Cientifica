@@ -104,9 +104,11 @@ const EventoDetalles = () => {
         const data = await res.json();
         if (res.ok) {
             alert("Inscripción cancelada con éxito");
-            navigate(`/eventos-cientificos/${id}`);
+            setMiembrosInscritos(prev =>
+                prev.filter(m => m.socio !== usuario?.id)
+            );
         } else {
-            alert(data.message || "Error al cancelar inscripción");
+            alert("Error al cancelar inscripción");
         }
     };
 

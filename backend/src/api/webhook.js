@@ -3,8 +3,12 @@ const router = express.Router();
 const pool = require('../database');
 const stripe = require('stripe')(process.env.STRIPE_SECRET);
 
+const { crearNotificacion } = require('../utils/notificaciones')
+const { obtenerEvento } = require('../utils/eventoUtils');
+const { obtenerSocio } = require("../utils/socioUtils");
+
 // Comprobar pago
-router.post('/', express.raw({ type: 'application/json' }), (request, response) => {
+router.post('/', express.raw({ type: 'application/json' }), async (request, response) => {
     const sig = request.headers['stripe-signature'];
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -24,9 +28,25 @@ router.post('/', express.raw({ type: 'application/json' }), (request, response) 
         const socio_id = session.metadata.socio_id;
 
 
-        pool.query("UPDATE Inscripciones SET estado_inscripcion = $1 WHERE evento = $2 AND socio = $3;", ["pagado", id_evento, socio_id])
+        await pool.query("UPDATE Inscripciones SET estado_inscripcion = $1 WHERE evento = $2 AND socio = $3;", ["pagado", id_evento, socio_id])
             .then(() => console.log("✅ Inscripción pagada"))
             .catch(err => console.error("Error pagando inscripción:", err.message));
+
+        const socio = await obtenerSocio(socio_id);
+        const evento = await obtenerEvento(id_evento);
+
+        await crearNotificacion(
+            socio_id,
+            '¡Inscripción evento!',
+            `
+                Hola ${socio.nombre} ${socio.apellidos},<br><br>
+                Tu inscripción al evento <strong>"${evento.nombre_evento}"</strong> ha sido registrada correctamente.<br><br>
+                <strong>📅 Fecha:</strong> ${evento.fecha_evento_inicio} hastas ${evento.fecha_evento_fin}<br>
+                <strong>📍 Lugar:</strong> ${evento.calle}, ${evento.ciudad}<br><br>
+                ¡Gracias por tu participación!<br><br>
+                <em>Sociedad Científica de Desarrollo Informático</em>
+            `
+        );
     }
 
     response.status(200).send();
