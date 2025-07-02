@@ -38,7 +38,7 @@ const Register = () => {
 
         try {
             const dataToSend = {
-                ...formData,
+                formData: formData,
                 plan: selectedPlan,
             };
 
