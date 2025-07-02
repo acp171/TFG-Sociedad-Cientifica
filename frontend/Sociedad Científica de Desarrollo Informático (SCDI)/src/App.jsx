@@ -6,6 +6,7 @@ import QuienesSomos from './pages/Quienes-Somos';
 import Unete from './pages/Unete';
 import Login from './pages/Autenticacion/Login';
 import Register from './pages/Autenticacion/Register';
+import SeleccionarPlan from './pages/Autenticacion/SeleccionarPlan';
 import Articulos from './pages/Articulos/Articulos';
 import ArticuloDetalles from './pages/Articulos/ArticuloDetalles';
 import CrearArticulo from './pages/Articulos/CrearArticulo';
@@ -29,6 +30,7 @@ function App() {
           <Route path="/unete" element={<Unete />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/register/seleccionar-plan" element={<SeleccionarPlan />} />
           <Route path="/quienes-somos" element={<QuienesSomos />} />
           <Route path="/articulos-cientificos" element={<Articulos />} />
           <Route path="/articulos-cientificos/:id" element={<ArticuloDetalles />} />
