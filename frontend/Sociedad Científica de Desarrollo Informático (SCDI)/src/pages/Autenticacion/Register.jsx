@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
     const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         nombre: "",
         apellidos: "",
@@ -10,12 +11,20 @@ const Register = () => {
         password: "",
         telefono: "",
         fecha_nacimiento: "",
-        socio_rol: "1", // puedes ajustar el valor por defecto
-        tipo_socio: "2" // o premium, etc.
     });
 
+    const [selectedPlan, setSelectedPlan] = useState(null);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+
+    useEffect(() => {
+        const plan = JSON.parse(localStorage.getItem("planSeleccionado"));
+        if (!plan) {
+            navigate("/seleccionar-plan");
+        } else {
+            setSelectedPlan(plan);
+        }
+    }, [navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -28,17 +37,25 @@ const Register = () => {
         setSuccess("");
 
         try {
+            const dataToSend = {
+                ...formData,
+                plan: selectedPlan,
+            };
+
             const res = await fetch("https://tfg-sociedad-cientifica-production.up.railway.app/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(dataToSend),
             });
 
             const data = await res.json();
 
             if (res.ok) {
                 setSuccess("Registro exitoso. Redirigiendo al login...");
-                setTimeout(() => navigate("/login"), 2000);
+                setTimeout(() => {
+                    localStorage.removeItem("planSeleccionado");
+                    navigate("/login");
+                }, 2000);
             } else {
                 setError(data.message || "Error en el registro.");
             }
@@ -50,7 +67,13 @@ const Register = () => {
 
     return (
         <section className="min-h-[80vh] flex flex-col items-center justify-center py-16 px-6 bg-gradient-to-b from-blue-200 to-white">
-            <h2 className="text-3xl font-bold mb-8 text-gray-900">Registro de Socios</h2>
+            <h2 className="text-3xl font-bold mb-4 text-gray-900">REGISTRO DE SOCIOS</h2>
+
+            {selectedPlan && (
+                <p className="mb-6 text-indigo-700 font-semibold">
+                    Plan seleccionado: <span className="font-bold">{selectedPlan.nombre_tipo}</span> — {selectedPlan.cuota === 0 ? "Gratis" : `${selectedPlan.cuota} €/mes`}
+                </p>
+            )}
 
             <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-xl p-8 max-w-md w-full space-y-5">
                 {error && <p className="text-red-600 font-medium">{error}</p>}
@@ -66,8 +89,8 @@ const Register = () => {
                 <Link
                     to="/login"
                     title="Iniciar sesión"
-                    className="w-full mb-10 text-blue-600 hover:text-blue-700"
-                    >
+                    className="w-full text-center text-blue-600 hover:text-blue-700"
+                >
                     ¿Ya tienes una cuenta?
                 </Link>
 

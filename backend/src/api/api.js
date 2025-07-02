@@ -94,57 +94,52 @@ router.post('/login', async (req, res) => {
 
 // POST register
 router.post('/register', async (req, res) => {
-    const { nombre, apellidos, email, password, telefono, fecha_nacimiento, socio_rol, tipo_socio } = req.body;
+    const { plan, formData } = req.body;
 
-    const isValidEmail = /\S+@\S+\.\S+/.test(email);
+    if (!plan || !formData) {
+        return res.status(400).json({ message: 'Faltan datos del plan o formulario.' });
+    }
+
+    const isValidEmail = /\S+@\S+\.\S+/.test(formData.email);
     if (!isValidEmail) {
         return res.status(400).json({ message: 'Correo electrónico no válido.' });
     }
 
-    // Validar que todos los campos necesarios no estén vacíos
-    if (!nombre || !apellidos || !password || !telefono || !fecha_nacimiento || !socio_rol || !tipo_socio) {
-        return res.status(400).json({ message: 'Todos los campos son obligatorios y no pueden estar vacíos.' });
-    }
-
-    const query = 'INSERT INTO Socio(nombre, apellidos, email, password, telefono,' + 
-                  'fecha_nacimiento, fecha_alta, socio_rol, tipo_socio)' +
-                  'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id_socio, nombre, email;';
-
-    const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
-
-    const values = [
-        nombre,
-        apellidos,
-        email,
-        hashedPassword,
-        telefono,
-        fecha_nacimiento,
-        new Date(), // fecha_alta
-        socio_rol,
-        tipo_socio
-    ];
+    const hashedPassword = await bcrypt.hash(formData.password, saltRounds);
 
     try {
-        const result = await pool.query(query, values);
-        console.log("Socio insertado con ID: ", result.rows[0].id_socio);
-
-        await crearNotificacion(
-            result.rows[0].id_socio,
-            'Bienvenido a la Sociedad Científica',
-            'Gracias por registrarte. Esperamos que disfrutes tu experiencia.');
-
-        res.status(200).json({
-            message: 'Registro exitoso.',
-            socio: {
-                id: result.rows[0].id_socio,
-                nombre: result.rows[0].nombre,
-                email: result.rows[0].email
-            }
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [{
+                price: plan.price_stripe,
+                price_data: {
+                    currency: 'eur',
+                    product_data: {
+                        name: `Registro plan: ${plan.nombre_tipo}`,
+                    },
+                    unit_amount: plan.cuota * 100,
+                },
+                quantity: 1,
+            }],
+            mode: 'payment',
+            success_url: `${process.env.FRONTEND_URL}/registro-exitoso?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.FRONTEND_URL}/registro-cancelado`,
+            metadata: {
+                tipo_pago: 'registro_socio',
+                id_plan: plan.id_tipo_socio.toString(),
+                nombre: formData.nombre,
+                apellidos: formData.apellidos,
+                email: formData.email,
+                contraseña: hashedPassword,
+                telefono: formData.telefono,
+                fecha_nacimiento: formData.fecha_nacimiento,
+            },
         });
-    } catch (error) {
-        console.error("Error insertando socio: ", error.message);
-        res.status(500).json({ message: 'Error interno del servidor.' });
 
+        res.json({ url: session.url });
+    } catch (error) {
+        console.error('Error creando sesión de Stripe:', error);
+        res.status(500).json({ message: 'Error creando sesión de pago.' });
     }
 });
 
@@ -911,6 +906,7 @@ router.post('/eventos-cientificos/:id/inscribirse', verificarToken, async (req, 
             }],
             mode: 'payment',
             metadata: {
+                tipo_pago: 'inscripcion_evento',
                 id_evento,
                 socio_id,
             },
