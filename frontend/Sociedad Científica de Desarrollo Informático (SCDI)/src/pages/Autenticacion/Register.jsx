@@ -39,7 +39,7 @@ const Register = () => {
         try {
             const dataToSend = {
                 ...formData,
-                tipo_socio: selectedPlan.id_tipo_socio,
+                plan: selectedPlan,
             };
 
             const res = await fetch("https://tfg-sociedad-cientifica-production.up.railway.app/register", {
