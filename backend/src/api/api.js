@@ -111,7 +111,6 @@ router.post('/register', async (req, res) => {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [{
-                price: plan.price_stripe,
                 price_data: {
                     currency: 'eur',
                     product_data: {
