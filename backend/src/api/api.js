@@ -16,7 +16,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET);
 // Funciones privadas
 const upload = require('../utils/upload');
 const eliminarArchivoPDF = require('../utils/deleteFile');
-const { obtenernRol, obtenerSocio } = require('../utils/socioUtils');
+const { obtenernRol, obtenerSocio, obtenerSocios } = require('../utils/socioUtils');
 const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones');
 const { obtenerNombreProyecto, obtenerPresidenteProyecto, obtenerMiembro } = require('../utils/proyectoUtils');
 const { obtenerNombreComite, obtenerPresidenteComite, obtenerComiteEvento, obtenerComitePorSocio } = require('../utils/comiteUtils');
@@ -175,6 +175,62 @@ router.get('/perfil', verificarToken, async (req, res) => {
         console.error("Error al entrar al perfil: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
+});
+
+router.get('/socios/listado-socios', verificarToken, async (req, res) => {
+    try {
+        const listaSocios = await obtenerSocios();
+        res.status(200).json({
+            message: 'Lista de proyectos de investigación.',
+            socios: {
+                listaSocios: listaSocios
+            }
+        });
+
+    }
+    catch (error) {
+        console.error("Error al intentar listar los socios: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+router.get('/socois/crear-socios', verificarToken, async (req,res) => {            
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
+    const { nombre, apellidos, email, password, telefono, fecha_nacimiento, id_plan } = req.body;
+
+    const hashedPassword = await bcrypt.hash(formData.password, saltRounds);
+    const query = `INSERT INTO Socio(nombre, apellidos, email, password, telefono, 
+                    fecha_nacimiento, fecha_alta, socio_rol, tipo_socio)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id_socio, nombre, email;`;
+
+    const values = [
+        nombre,
+        apellidos,
+        email,
+        hashedPassword,
+        telefono,
+        fecha_nacimiento,
+        new Date(),
+        8,
+        id_plan,
+    ];
+
+    try {
+        const result = await pool.query(query, values);
+        console.log("Socio insertado con ID: ", result.rows[0].id_socio);
+
+        await crearNotificacion(
+            result.rows[0].id_socio,
+            'Bienvenido a la Sociedad Científica',
+            'Gracias por registrarte. Esperamos que disfrutes tu experiencia.'
+        );
+    } catch (error) {
+        console.error("Error insertando socio: ", error.message);
+    }        
 });
 
 // PUT editar perfil

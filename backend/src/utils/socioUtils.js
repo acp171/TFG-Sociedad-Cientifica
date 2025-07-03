@@ -22,9 +22,10 @@ async function obtenerSocio(id) {
 
 async function obtenerSocios() {
     const querySocios = `SELECT s.id_socio, s.nombre, s.apellidos, s.email, s.telefono,
-                         s.fecha_nacimiento, s.fecha_alta, sr.nombre AS socio_rol
+                         s.fecha_nacimiento, s.fecha_alta, ts.nombre_tipo AS plan, sr.nombre AS socio_rol
                          FROM Socio s
-                         JOIN Socio_Rol sr ON s.socio_rol = sr.id_socio_rol;`;
+                         JOIN Socio_Rol sr ON s.socio_rol = sr.id_socio_rol
+                         JOIN Tipo_Socio ts ON s.tipo_socio = ts.id_tipo_socio;`;
     const socios = await pool.query(querySocios);
 
     return socios.rows;
