@@ -122,7 +122,7 @@ router.post('/register', async (req, res) => {
             }],
             mode: 'payment',
             success_url: `https://scdi.vercel.app/registro-exitoso?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `https://scdi.vercel.app/registro-cancelado`,
+            cancel_url: `https://scdi.vercel.app/register`,
             metadata: {
                 tipo_pago: 'registro_socio',
                 id_plan: plan.id_tipo_socio.toString(),

@@ -50,12 +50,8 @@ const Register = () => {
 
             const data = await res.json();
 
-            if (res.ok) {
-                setSuccess("Registro exitoso. Redirigiendo al login...");
-                setTimeout(() => {
-                    localStorage.removeItem("planSeleccionado");
-                    navigate("/login");
-                }, 2000);
+            if (res.ok && data.url) {
+                window.location.href = data.url;
             } else {
                 setError(data.message || "Error en el registro.");
             }
