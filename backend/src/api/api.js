@@ -111,13 +111,7 @@ router.post('/register', async (req, res) => {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [{
-                price_data: {
-                    currency: 'eur',
-                    product_data: {
-                        name: `Registro plan: ${plan.nombre_tipo}`,
-                    },
-                    unit_amount: plan.cuota * 100,
-                },
+                price: plan.price_stripe,
                 quantity: 1,
             }],
             mode: 'payment',
@@ -880,7 +874,7 @@ router.get('/eventos-cientificos/:id', async (req, res) =>  {
             evento: {
                 ...evento,
                 direccion,
-            },
+            },  
             miembrosComite: miembrosComite,
             miembrosIncritos: miembrosInscritos
         });
