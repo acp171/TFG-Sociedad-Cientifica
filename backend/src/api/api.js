@@ -106,7 +106,7 @@ router.post('/register', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(formData.password, saltRounds);
-
+    console.log(hashedPassword);
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
