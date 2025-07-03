@@ -111,12 +111,18 @@ router.post('/register', async (req, res) => {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [{
-                price: plan.price_stripe,
+                price_data: {
+                    currency: 'eur',
+                    product_data: {
+                        name: `Registro plan: ${plan.nombre_tipo}`,
+                    },
+                    unit_amount: plan.cuota * 100,
+                },
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `${process.env.FRONTEND_URL}/registro-exitoso?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.FRONTEND_URL}/registro-cancelado`,
+            success_url: `https://scdi.vercel.app/registro-exitoso?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `https://scdi.vercel.app/registro-cancelado`,
             metadata: {
                 tipo_pago: 'registro_socio',
                 id_plan: plan.id_tipo_socio.toString(),
