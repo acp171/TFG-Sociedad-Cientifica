@@ -10,6 +10,7 @@ const EventoExito = () => {
     useEffect(() => {
         if (sessionId) {
             // Aquí podrías mostrar algún estado cargando si quieres validar la sesión con Stripe
+            localStorage.removeItem("planSeleccionado");
             console.log("Sesión de Stripe confirmada.");
         }
     }, [sessionId]);
