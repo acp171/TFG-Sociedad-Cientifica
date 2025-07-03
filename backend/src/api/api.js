@@ -129,7 +129,7 @@ router.post('/register', async (req, res) => {
                 nombre: formData.nombre,
                 apellidos: formData.apellidos,
                 email: formData.email,
-                contraseña: hashedPassword,
+                password: hashedPassword,
                 telefono: formData.telefono,
                 fecha_nacimiento: formData.fecha_nacimiento,
             },
