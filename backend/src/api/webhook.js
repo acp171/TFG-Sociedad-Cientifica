@@ -30,7 +30,7 @@ router.post('/', express.raw({ type: 'application/json' }), async (request, resp
         const tipoPago = session.metadata.tipo_pago;
         if (tipoPago === 'registro_socio') {
             const { nombre, apellidos, email, password, telefono, fecha_nacimiento, id_plan } = session.metadata;
-            console.log(password);
+            
             const query = `INSERT INTO Socio(nombre, apellidos, email, password, telefono, 
                             fecha_nacimiento, fecha_alta, socio_rol, tipo_socio)
                             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id_socio, nombre, email;`;
