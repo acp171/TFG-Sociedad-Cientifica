@@ -209,7 +209,7 @@ router.post('/socios/crear-socios', verificarToken, async (req,res) => {
 
     const { nombre, apellidos, email, password, telefono, fecha_nacimiento, id_plan } = req.body;
 
-    const hashedPassword = await bcrypt.hash(formData.password, saltRounds);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     const query = `INSERT INTO Socio(nombre, apellidos, email, password, telefono, 
                     fecha_nacimiento, fecha_alta, socio_rol, tipo_socio)
                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id_socio, nombre, email;`;
