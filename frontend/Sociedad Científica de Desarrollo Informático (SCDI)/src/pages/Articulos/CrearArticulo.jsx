@@ -54,7 +54,7 @@ const CrearArticulo = () => {
         <section className="min-h-[80vh] flex flex-col justify-center items-center bg-gradient-to-b from-blue-200 to-white py-16 px-6 lg:px-20 font-sans">
             {/* Botón Volver */}
             <button
-                onClick={() => navigate(-1)}
+                onClick={() => navigate("/articulos-cientificos")}
                 className="self-start mb-6 flex items-center text-blue-600 hover:text-blue-800 font-semibold transition"
             >
                 <HiArrowLeft className="mr-2 text-xl" />

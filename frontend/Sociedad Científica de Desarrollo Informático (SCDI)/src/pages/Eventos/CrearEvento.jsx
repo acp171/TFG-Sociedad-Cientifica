@@ -128,7 +128,7 @@ const CrearEvento = () => {
     return (
         <div className="w-full bg-white shadow-xl rounded-2xl p-8 mt-10 relative">
             <button
-                onClick={() => navigate(-1)}
+                onClick={() => navigate("/eventos-cientificos")}
                 className="ml-10 flex items-center text-blue-600 hover:text-blue-800 font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 rounded"
             >
                 <HiArrowLeft className="mr-2 text-xl" />

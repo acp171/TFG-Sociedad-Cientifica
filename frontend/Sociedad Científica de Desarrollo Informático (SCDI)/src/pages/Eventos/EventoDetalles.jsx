@@ -93,7 +93,9 @@ const EventoDetalles = () => {
             }
         }
         else {
-            navigate("/login");
+            navigate("/login", {
+                state: { from: location.pathname }
+            });
         }
     };
 
@@ -153,7 +155,7 @@ const EventoDetalles = () => {
         <section className="min-h-screen bg-gradient-to-b from-blue-200 to-white py-16 px-6 lg:px-20 flex flex-col items-center">
             <div className="flex justify-between items-center w-full mb-8">
                 <button
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate("/eventos-cientificos")}
                     className="flex items-center text-blue-600 hover:text-blue-800 font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 rounded"
                 >
                     <HiArrowLeft className="mr-2 text-xl" /> Volver

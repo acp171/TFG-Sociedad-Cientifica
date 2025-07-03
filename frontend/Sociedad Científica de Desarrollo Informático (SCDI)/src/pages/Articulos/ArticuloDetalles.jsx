@@ -111,7 +111,7 @@ const ArticuloDetalles = () => {
     return (
         <section className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-16 px-6 lg:px-20 flex flex-col items-center">
             <button
-                onClick={() => navigate(-1)}
+                onClick={() => navigate("/articulos-cientificos")}
                 className="self-start mb-8 flex items-center text-blue-600 hover:text-blue-800 font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 rounded"
                 aria-label="Volver a la página anterior"
             >
