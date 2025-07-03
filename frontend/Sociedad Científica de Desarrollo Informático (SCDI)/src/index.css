@@ -3,3 +3,35 @@
 html, body, #root {
     height: 100%;
 }
+
+@layer utilities {
+    .slide-in-left {
+        animation: slideInLeft 0.3s ease-out forwards;
+    }
+
+    @keyframes slideInLeft {
+        from {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0%);
+            opacity: 1;
+        }
+    }
+
+    .slide-out-left {
+        animation: slideOutLeft 0.2s ease-in forwards;
+    }
+
+    @keyframes slideOutLeft {
+        from {
+            transform: translateX(0%);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+    }
+}
