@@ -177,7 +177,13 @@ router.get('/perfil', verificarToken, async (req, res) => {
     }
 });
 
+// GET Listado solo para administradores
 router.get('/socios/listado-socios', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
     try {
         const listaSocios = await obtenerSocios();
         res.status(200).json({
@@ -194,7 +200,8 @@ router.get('/socios/listado-socios', verificarToken, async (req, res) => {
     }
 });
 
-router.get('/socois/crear-socios', verificarToken, async (req,res) => {            
+// POST Añadir usuarios solo para administradores
+router.post('/socios/crear-socios', verificarToken, async (req,res) => {            
     const adminRol = await obtenernRol(req.usuario);
     if (!adminRol || adminRol.nombre !== 'Administrador') {
         return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
@@ -230,6 +237,7 @@ router.get('/socois/crear-socios', verificarToken, async (req,res) => {
         );
     } catch (error) {
         console.error("Error insertando socio: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }        
 });
 
