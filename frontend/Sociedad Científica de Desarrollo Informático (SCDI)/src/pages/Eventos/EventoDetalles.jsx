@@ -77,18 +77,23 @@ const EventoDetalles = () => {
     const inscribirse = async () => {
         const token = localStorage.getItem("token");
     
-        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}/inscribirse`, {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-    
-        const data = await res.json();
-        if (res.ok && data.url) {
-            window.location.href = data.url;
-        } else {
-            alert(data.message || "No se pudo iniciar el pago");
+        if (token) {
+            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}/inscribirse`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+        
+            const data = await res.json();
+            if (res.ok && data.url) {
+                window.location.href = data.url;
+            } else {
+                alert(data.message || "No se pudo iniciar el pago");
+            }
+        }
+        else {
+            navigate("/login");
         }
     };
 
