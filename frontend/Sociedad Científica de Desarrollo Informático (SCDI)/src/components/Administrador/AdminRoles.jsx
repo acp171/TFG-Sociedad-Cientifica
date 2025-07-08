@@ -103,35 +103,34 @@ const AdminRoles = () => {
   };
 
   const handleDelete = async (role) => {
-    if (
-      !window.confirm(
-        `¿Seguro que quieres eliminar el rol "${role.nombre}"? Esta acción no se puede deshacer.`
-      )
-    )
-      return;
-
-    setError("");
-    setSuccess("");
-
+    console.log("Intentando eliminar rol:", role);
+  
+    if (!window.confirm(`¿Seguro que quieres eliminar el rol "${role.nombre}"?`)) return;
+  
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
         `https://tfg-sociedad-cientifica-production.up.railway.app/roles/${role.id_socio_rol}`,
         {
           method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-
+  
       const data = await res.json();
+      console.log("Respuesta del backend:", data); // 👈🏼 Agregado
+  
       if (!res.ok) {
         setError(data.message || "No se pudo eliminar el rol");
         return;
       }
-
+  
       setSuccess("Rol eliminado correctamente.");
       fetchRoles();
     } catch (err) {
+      console.error("Error de red:", err); // 👈🏼 Agregado
       setError("Error en la comunicación con el servidor");
     }
   };

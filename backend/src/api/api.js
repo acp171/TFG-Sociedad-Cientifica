@@ -292,7 +292,7 @@ router.get('/roles', verificarToken, async (req, res) => {
     }
 
     try {
-        const queryRoles = 'SELECT * FROM Socio_Rol;';
+        const queryRoles = 'SELECT id_socio_rol AS id, nombre FROM Socio_Rol;';
         const resultRoles = await pool.query(queryRoles);
 
         res.status(200).json({
@@ -381,7 +381,7 @@ router.delete('/roles/:id', verificarToken, async (req, res) => {
     try {
         const queryRoles = `DELETE FROM Socio_Rol 
                             WHERE id_socio_rol = $1;`;
-        const resultRoles = await pool.query(queryRoles, [id]);
+        await pool.query(queryRoles, [id]);
 
         res.status(200).json({
             message: 'Rol borrado correctamente.'
