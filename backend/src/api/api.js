@@ -672,17 +672,26 @@ router.put("/proyectos-investigacion/:id", verificarToken, async (req, res) => {
         return res.status(400).json({ message: "La fecha fin no puede ser anterior a la de inicio." });
     }
 
+    let estado;
+    if (fecha_actual < fecha_inicio_date) {
+        estado = "Pendiente";
+    } 
+    else if (fecha_actual >= fecha_inicio_date && fecha_actual <= fecha_fin_Date) {
+        estado = "En curso";
+    }
+
     try {
-        const query = `UPDATE Proyecto_Investigacion
+        const query = `UPDATE Proyectos_Investigacion
                     SET nombre_proyecto = $1, descripcion = $2, 
-                        fecha_inicio = $3, fecha_fin = $4 
-                    WHERE id_proyecto = $5
+                        fecha_inicio = $3, fecha_fin = $4, estado = $5,
+                    WHERE id_proyecto = $6
                     RETURNING id_proyecto, nombre_proyecto, descripcion, fecha_inicio, fecha_fin, estado;`;
         const values = [
             nombre_proyecto.trim(),
             descripcion || null,
             fecha_inicio || null,
             fecha_fin || null,
+            estado,
             id,
         ];
 
