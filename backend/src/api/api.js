@@ -284,6 +284,115 @@ router.put('/perfil', verificarToken, async (req, res) => {
     }
 });
 
+// GET listado de roles
+router.get('/roles', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    try {
+        const queryRoles = 'SELECT * FROM Socio_Rol;';
+        const resultRoles = await pool.query(queryRoles);
+
+        res.status(200).json({
+            message: 'Listado de socio roles.',
+            roles: resultRoles.rows
+        });
+    }
+    catch (error) {
+        console.log('Error listando roles: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// POST crear un rol
+router.post('/roles', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    const { nombre } = req.body;
+
+    try {
+        const queryRoles = `INSERT INTO Socio_Rol(nombre) 
+                            VALUES ($1) 
+                            RETURNING id_socio_rol, nombre;`;
+        const resultRoles = await pool.query(queryRoles, [nombre]);
+
+        res.status(200).json({
+            message: 'Rol creado correctamente.',
+            roles: {
+                id: resultRoles.rows[0].id_socio_rol,
+                nombre: resultRoles.rows[0].nombre
+            }
+        });
+    }
+    catch (error) {
+        console.log('Error creando roles: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// PUT actualizar un rol
+router.put('/roles/:id', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    const id = req.params.id;
+    const { nombre } = req.body;
+
+    try {
+        const values = [
+            nombre,
+            id
+        ];
+        const queryRoles = `UPDATE Socio_Rol 
+                            SET nombre = $1 
+                            WHERE id_socio_rol = $2;`;
+        const resultRoles = await pool.query(queryRoles, values);
+
+        res.status(200).json({
+            message: 'Rol actualizado correctamente.',
+            roles: {
+                id: resultRoles.rows[0].id_socio_rol,
+                nombre: resultRoles.rows[0].nombre
+            }
+        });
+    }
+    catch (error) {
+        console.log('Error actualizando roles: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// DELETE borrar un rol
+router.delete('/roles/:id', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    const id = req.params.id;
+
+    try {
+        const queryRoles = `DELETE FROM Socio_Rol 
+                            WHERE id_socio_rol = $1;`;
+        const resultRoles = await pool.query(queryRoles, [id]);
+
+        res.status(200).json({
+            message: 'Rol borrado correctamente.'
+        });
+    }
+    catch (error) {
+        console.log('Error borrando roles: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
 // PUT asignar rol siendo administrador general
 router.put('/asignar-rol', verificarToken, async (req, res) =>  {
     const { id_socio, rol, proyecto, comite, funcion } = req.body;    
