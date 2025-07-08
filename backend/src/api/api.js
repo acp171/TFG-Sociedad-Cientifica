@@ -14,9 +14,8 @@ const SECRET_KEY = process.env.JWT_SECRET
 const stripe = require('stripe')(process.env.STRIPE_SECRET);
 
 // Funciones privadas
-const upload = require('../utils/upload');
-const eliminarArchivoPDF = require('../utils/deleteFile');
-const { obtenernRol, obtenerSocio } = require('../utils/socioUtils');
+const upload = require('../utils/uploadCloudinary');
+const { obtenernRol, obtenerSocio, obtenerSocios } = require('../utils/socioUtils');
 const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones');
 const { obtenerNombreProyecto, obtenerPresidenteProyecto, obtenerMiembro } = require('../utils/proyectoUtils');
 const { obtenerNombreComite, obtenerPresidenteComite, obtenerComiteEvento, obtenerComitePorSocio } = require('../utils/comiteUtils');
@@ -177,6 +176,70 @@ router.get('/perfil', verificarToken, async (req, res) => {
     }
 });
 
+// GET Listado solo para administradores
+router.get('/socios/listado-socios', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
+    try {
+        const listaSocios = await obtenerSocios();
+        res.status(200).json({
+            message: 'Lista de proyectos de investigación.',
+            socios: {
+                listaSocios: listaSocios
+            }
+        });
+
+    }
+    catch (error) {
+        console.error("Error al intentar listar los socios: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// POST Añadir usuarios solo para administradores
+router.post('/socios/crear-socios', verificarToken, async (req,res) => {            
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
+    const { nombre, apellidos, email, password, telefono, fecha_nacimiento, id_plan } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const query = `INSERT INTO Socio(nombre, apellidos, email, password, telefono, 
+                    fecha_nacimiento, fecha_alta, socio_rol, tipo_socio)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id_socio, nombre, email;`;
+
+    const values = [
+        nombre,
+        apellidos,
+        email,
+        hashedPassword,
+        telefono,
+        fecha_nacimiento,
+        new Date(),
+        8,
+        id_plan,
+    ];
+
+    try {
+        const result = await pool.query(query, values);
+        console.log("Socio insertado con ID: ", result.rows[0].id_socio);
+
+        await crearNotificacion(
+            result.rows[0].id_socio,
+            'Bienvenido a la Sociedad Científica',
+            'Gracias por registrarte. Esperamos que disfrutes tu experiencia.'
+        );
+    } catch (error) {
+        console.error("Error insertando socio: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }        
+});
+
 // PUT editar perfil
 router.put('/perfil', verificarToken, async (req, res) => {
     const { nombre, apellidos, telefono } = req.body;
@@ -220,6 +283,117 @@ router.put('/perfil', verificarToken, async (req, res) => {
     }
 });
 
+// GET listado de roles
+router.get('/roles', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    try {
+        const queryRoles = 'SELECT id_socio_rol AS id, nombre FROM Socio_Rol;';
+        const resultRoles = await pool.query(queryRoles);
+
+        res.status(200).json({
+            message: 'Listado de socio roles.',
+            roles: resultRoles.rows
+        });
+    }
+    catch (error) {
+        console.log('Error listando roles: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// POST crear un rol
+router.post('/roles', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    const { nombre } = req.body;
+
+    try {
+        const queryRoles = `INSERT INTO Socio_Rol(nombre) 
+                            VALUES ($1) 
+                            RETURNING id_socio_rol, nombre;`;
+        const resultRoles = await pool.query(queryRoles, [nombre]);
+
+        res.status(200).json({
+            message: 'Rol creado correctamente.',
+            roles: {
+                id: resultRoles.rows[0].id_socio_rol,
+                nombre: resultRoles.rows[0].nombre
+            }
+        });
+    }
+    catch (error) {
+        console.log('Error creando roles: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// PUT actualizar un rol
+router.put('/roles/:id', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    const id = req.params.id;
+    const { nombre } = req.body;
+
+    try {
+        const values = [
+            nombre,
+            id
+        ];
+        const queryRoles = `UPDATE Socio_Rol 
+                            SET nombre = $1 
+                            WHERE id_socio_rol = $2
+                            RETURNING id_socio_rol, nombre;`;
+        const resultRoles = await pool.query(queryRoles, values);
+
+        res.status(200).json({
+            message: 'Rol actualizado correctamente.',
+            roles: {
+                id: resultRoles.rows[0].id_socio_rol,
+                nombre: resultRoles.rows[0].nombre
+            }
+        });
+    }
+    catch (error) {
+        console.log('Error actualizando roles: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// DELETE borrar un rol
+router.delete('/roles/:id', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    const id = req.params.id;
+    console.log(id);
+
+    try {
+        const queryRoles = `DELETE FROM Socio_Rol 
+                            WHERE id_socio_rol = $1;`;
+        await pool.query(queryRoles, [id]);
+
+        res.status(200).json({
+            message: 'Rol borrado correctamente.'
+        });
+    }
+    catch (error) {
+        console.log('Error borrando roles: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
 // PUT asignar rol siendo administrador general
 router.put('/asignar-rol', verificarToken, async (req, res) =>  {
     const { id_socio, rol, proyecto, comite, funcion } = req.body;    
@@ -231,7 +405,7 @@ router.put('/asignar-rol', verificarToken, async (req, res) =>  {
     }
 
     try {
-        var query, values;
+        let query, values;
         switch(funcion) {
             case 'socio':
                 values = [
@@ -360,7 +534,7 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
     }
 
     try {
-        var query, values;
+        let query, values;
         switch(funcion) {
             case 'socio':
                 values = [
@@ -418,7 +592,7 @@ router.post('/proyectos-investigacion/crear-proyecto-investigacion', verificarTo
     const fecha_inicio_date = fecha_inicio ? new Date(fecha_inicio) : new Date();
     const fecha_fin_Date = new Date(fecha_fin);
     
-    var estado;
+    let estado;
     const fecha_actual = new Date();
 
     if (fecha_actual > fecha_inicio_date) {
@@ -476,6 +650,71 @@ router.post('/proyectos-investigacion/crear-proyecto-investigacion', verificarTo
         res.status(403).json({ message: 'Fecha fin inválida.'});
     }
 });
+
+// PUT actualizar un proyecto de investigación
+router.put("/proyectos-investigacion/:id", verificarToken, async (req, res) => {  
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        const presidenteProyecto = await obtenerPresidenteProyecto(id_proyecto);
+        if (presidenteProyecto.socio !== req.usuario.id) {
+            return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+        }
+    }
+
+    const id = req.params.id;
+    const { nombre_proyecto, descripcion, fecha_inicio, fecha_fin } = req.body;
+
+    if (!nombre_proyecto || nombre_proyecto.trim() === "") {
+        return res.status(400).json({ message: "El título es obligatorio." });
+    }
+    if (fecha_inicio && fecha_fin && fecha_fin < fecha_inicio) {
+        return res.status(400).json({ message: "La fecha fin no puede ser anterior a la de inicio." });
+    }
+
+    const fecha_inicio_date = new Date(fecha_inicio);
+    const fecha_fin_Date = new Date(fecha_fin);
+
+    let estado;
+    const fecha_actual = new Date();
+    if (fecha_actual < fecha_inicio_date) {
+        estado = "Pendiente";
+    } 
+    else if (fecha_actual >= fecha_inicio_date && fecha_actual <= fecha_fin_Date) {
+        estado = "En curso";
+    }
+
+    try {
+        const query = `UPDATE Proyectos_Investigacion
+                    SET nombre_proyecto = $1, descripcion = $2, 
+                        fecha_inicio = $3, fecha_fin = $4, estado = $5
+                    WHERE id_proyecto = $6
+                    RETURNING id_proyecto, nombre_proyecto, descripcion, fecha_inicio, fecha_fin, estado;`;
+        const values = [
+            nombre_proyecto.trim(),
+            descripcion || null,
+            fecha_inicio || null,
+            fecha_fin || null,
+            estado,
+            id,
+        ];
+
+        const result = await pool.query(query, values);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Proyecto no encontrado." });
+        }
+
+        res.status(200).json({
+            message: "Proyecto actualizado correctamente.",
+            proyecto: result.rows[0],
+        });
+    }
+    catch (error) {
+        console.error("Error actualizando proyecto:", error);
+        res.status(500).json({ message: "Error interno del servidor." });
+    }
+});
+
 
 // DELETE eliminar un proyecto de investigación
 router.delete('/proyectos-investigacion/:id', verificarToken, async (req, res) =>  {
@@ -961,17 +1200,17 @@ router.delete('/eventos-cientificos/:id/cancelar-inscripcion', verificarToken, a
 // POST publicar articulo científico
 router.post('/articulos-cientificos/publicar-articulo-cientifico', verificarToken, upload.single('pdf'), async (req, res) => {
     const { titulo, contenido } = req.body;
-    var rutaPDF;
+    let rutaPDF;
 
     if (!titulo || (!req.file && !contenido)) {
         return res.status(400).json({ message: 'Faltan datos.' });
     }
     else if (req.file) {
-        rutaPDF = `/uploads/pdfs/${req.file.filename}`;
+        rutaPDF = req.file ? req.file.path : null;
     }
 
     try {
-        var query, values;
+        let query, values;
 
         if (req.file && !contenido) {
             values = [
@@ -1045,12 +1284,6 @@ router.delete('/articulos-cientificos/:id', verificarToken, async (req, res) => 
             if (!esAutor) {
                 return res.status(403).json({ message: 'No autorizado. Se requieren permisos.' });
             }
-        }
-
-        // Elimina el archivo si existe
-        if (publicacion.contenidopdf) {
-            console.log('Ejecutando eliminación de PDF...');
-            eliminarArchivoPDF(publicacion.contenidopdf);
         }
 
         const queryDelete = 'DELETE FROM Publicaciones WHERE id_publicacion = $1;';
@@ -1569,16 +1802,142 @@ router.get('/buscar-calles', async (req, res) => {
         });
     
         if (!response.ok) {
-            console.error("Error en la API de Nominatim");
-            return res.status(500).json({ message: 'Error en la API de Nominatim' });
+            console.error("Error en la API de Nominatim.");
+            return res.status(500).json({ message: 'Error en la API de Nominatim.' });
         }
     
         const data = await response.json();
-        res.json(data);
-    } catch (error) {
-        console.error('Error en backend:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
+        res.status(200).json(data);
     }
-});  
+    catch (error) {
+        console.error('Error en backend: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// GET listado de tipo socios
+router.get('/tipos', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    try {
+        const queryTipos = 'SELECT * FROM Tipo_Socio;';
+        const resultTipos = await pool.query(queryTipos);
+
+        res.status(200).json({
+            message: 'Listado de tipos de socios.',
+            tipos: resultTipos.rows
+        });
+    }
+    catch (error) {
+        console.log('Error listado de tipo socios: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// POST tipo de socio
+router.post('/tipos', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    const { nombre_tipo, descripcion, cuota, price_stripe } = req.body;
+
+    try {
+        const values = [
+            nombre_tipo,
+            descripcion,
+            cuota,
+            price_stripe
+        ];
+
+        const queryTipos = `INSERT INTO Tipo_Socio(nombre_tipo, descripcion, cuota, price_stripe)
+                            VALUES ($1, $2, $3, $4)
+                            RETURNING id_tipo_socio, nombre_tipo, descripcion, cuota, price_stripe;`;
+        const resultTipos = await pool.query(queryTipos, values);
+
+        res.status(200).json({
+            message: 'Creado de tipo de socios.',
+            tipo: {
+                id: resultTipos.rows[0].id_tipo_socio,
+                nombre: resultTipos.rows[0].nombre_tipo,
+                descripcion: resultTipos.rows[0].descripcion,
+                cuota: resultTipos.rows[0].cuota,
+                price_stripe: resultTipos.rows[0].price_stripe
+            }
+        });
+    }
+    catch (error) {
+        console.log('Error creando tipo socio: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// PUT tipo de socio
+router.put('/tipos/:id', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    const id_tipo = req.params.id;
+    const { nombre_tipo, descripcion, cuota, price_stripe } = req.body;
+
+    try {
+        const values = [
+            nombre_tipo,
+            descripcion,
+            cuota,
+            price_stripe,
+            id_tipo
+        ];
+        const queryTipos = `UPDATE Tipo_Socio 
+                            SET nombre_tipo = $1, descripcion = $2, cuota = $3, price_stripe = $4 
+                            WHERE id_tipo_socio = $5 
+                            RETURNING id_tipo_socio, nombre_tipo, descripcion, cuota, price_stripe;`;
+        const resultTipos = await pool.query(queryTipos, values);
+
+        res.status(200).json({
+            message: 'Actualizado tipo de socios.',
+            tipo: {
+                id: resultTipos.rows[0].id_tipo_socio,
+                nombre: resultTipos.rows[0].nombre_tipo,
+                descripcion: resultTipos.rows[0].descripcion,
+                cuota: resultTipos.rows[0].cuota,
+                price_stripe: resultTipos.rows[0].price_stripe
+            }
+        });
+    }
+    catch (error) {
+        console.log('Error actualizando tipo socio: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// DELETE tipo de socio
+router.delete('/tipos/:id', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    const id_tipo = req.params.id;
+
+    try {
+        const queryTipos = 'DELETE FROM Tipo_Socio WHERE id_tipo_socio = $1;';
+        await pool.query(queryTipos, [id_tipo]);
+
+        res.status(200).json({
+            message: 'Borrado de tipo de socios.'
+        });
+    }
+    catch (error) {
+        console.log('Error borrando tipo socio: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
 
 module.exports = router;

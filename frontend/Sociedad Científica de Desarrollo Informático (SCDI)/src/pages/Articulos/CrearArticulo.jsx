@@ -27,7 +27,7 @@ const CrearArticulo = () => {
         formData.append("contenido", contenido);
 
         if (pdfFile) {
-            formData.append("contenidopdf", pdfFile);
+            formData.append("pdf", pdfFile);
         }
 
         try {
@@ -39,11 +39,20 @@ const CrearArticulo = () => {
                 body: formData,
             });
 
+            const text = await res.text();
+            console.log("Respuesta cruda del servidor:", text);
+
             if (res.ok) {
                 navigate("/articulos-cientificos");
             } else {
-                const error = await res.json();
-                alert("Error al publicar: " + (error.message || "Error desconocido"));
+                let mensaje = "Error desconocido";
+                try {
+                    const data = JSON.parse(text);
+                    mensaje = data.message || mensaje;
+                } catch {
+                    // ya tenemos `text`, lo mostramos por consola
+                }
+                alert("Error al publicar: " + mensaje);
             }
         } catch (err) {
             console.error("Error al subir artículo:", err);

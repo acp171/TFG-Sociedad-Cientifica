@@ -19,7 +19,7 @@ app.set('port', process.env.PORT || 4000);
 
 // Middlewares
 app.use(cors({
-  origin: 'https://scdi.vercel.app',
+  //origin: 'https://scdi.vercel.app',
   methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
@@ -33,8 +33,6 @@ app.use('/', require('./api/api'));
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
-app.use('/deleteFile', express.static(path.join(__dirname, 'public', 'deleteFile')));
 
 if (process.env.NODE_ENV === 'development') {
   // Borrar tablas base de datos development
