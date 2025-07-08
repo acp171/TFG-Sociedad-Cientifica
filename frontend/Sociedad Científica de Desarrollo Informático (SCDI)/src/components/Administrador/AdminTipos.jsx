@@ -113,9 +113,9 @@ const AdminTipos = () => {
 
             <button
                 onClick={() => {
-                setShowForm(true);
-                setEditandoId(null);
-                setFormData({ nombre_tipo: "", descripcion: "", cuota: "", price_stripe: "" });
+                    setShowForm(true);
+                    setEditandoId(null);
+                    setFormData({ nombre_tipo: "", descripcion: "", cuota: "", price_stripe: "" });
                 }}
                 className="mb-4 bg-indigo-600 text-white px-4 py-2 rounded cursor-pointer"
             >
@@ -217,20 +217,20 @@ const AdminTipos = () => {
                                 <td className="border px-2 py-1">{tipo.descripcion}</td>
                                 <td className="border px-2 py-1">{tipo.cuota}</td>
                                 <td className="border px-2 py-1">{tipo.price_stripe}</td>
-                                <td className="border px-2 py-1 space-x-2">
-                                <button
-                                    onClick={() => handleEdit(tipo)}
-                                    className="bg-yellow-500 text-white px-2 py-1 rounded cursor-pointer"
-                                >
-                                    Editar
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(tipo.id_tipo_socio)}
-                                    className="bg-red-600 text-white px-2 py-1 rounded cursor-pointer"
-                                >
-                                    Eliminar
-                                </button>
-                                </td>
+                                <th className="border px-2 py-1 space-x-2">
+                                    <button
+                                        onClick={() => handleEdit(tipo)}
+                                        className="bg-yellow-500 text-white px-2 py-1 rounded cursor-pointer"
+                                    >
+                                        Editar
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(tipo.id_tipo_socio)}
+                                        className="bg-red-600 text-white px-2 py-1 rounded cursor-pointer"
+                                    >
+                                        Eliminar
+                                    </button>
+                                </th>
                             </tr>
                         ))}
                     </tbody>

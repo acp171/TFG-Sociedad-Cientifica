@@ -195,20 +195,20 @@ const AdminProyectos = () => {
                                         : ""}
                                 </td>
                                 <td className="border border-gray-300 px-3 py-1">{proyecto.estado}</td>
-                                <td className="border border-gray-300 px-3 py-1 space-x-2">
-                                <button
-                                    onClick={() => openEditForm(proyecto)}
-                                    className="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded"
-                                >
-                                    Editar
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(proyecto)}
-                                    className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
-                                >
-                                    Eliminar
-                                </button>
-                                </td>
+                                <th className="border border-gray-300 px-3 py-1 space-x-2">
+                                    <button
+                                        onClick={() => openEditForm(proyecto)}
+                                        className="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded"
+                                    >
+                                        Editar
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(proyecto)}
+                                        className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
+                                    >
+                                        Eliminar
+                                    </button>
+                                </th>
                             </tr>
                         ))}
                         {proyectos.length === 0 && (

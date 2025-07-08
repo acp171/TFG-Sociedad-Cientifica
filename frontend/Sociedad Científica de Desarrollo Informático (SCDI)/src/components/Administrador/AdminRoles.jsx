@@ -161,7 +161,7 @@ const AdminRoles = () => {
               <tr key={role.id}>
                 <td className="border px-3 py-2">{role.id}</td>
                 <td className="border px-3 py-2">{role.nombre}</td>
-                <td className="border px-3 py-2 space-x-2">
+                <th className="border px-3 py-2 space-x-2">
                   {role.nombre === "Administrador" ? (
                     <span className="text-gray-500 italic">Protegido</span>
                   ) : (
@@ -180,7 +180,7 @@ const AdminRoles = () => {
                       </button>
                     </>
                   )}
-                </td>
+                </th>
               </tr>
             ))}
             {roles.length === 0 && (

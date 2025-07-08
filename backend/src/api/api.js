@@ -593,7 +593,7 @@ router.post('/proyectos-investigacion/crear-proyecto-investigacion', verificarTo
     const fecha_inicio_date = fecha_inicio ? new Date(fecha_inicio) : new Date();
     const fecha_fin_Date = new Date(fecha_fin);
     
-    var estado;
+    let estado;
     const fecha_actual = new Date();
 
     if (fecha_actual > fecha_inicio_date) {
@@ -673,6 +673,7 @@ router.put("/proyectos-investigacion/:id", verificarToken, async (req, res) => {
     }
 
     let estado;
+    const fecha_actual = new Date();
     if (fecha_actual < fecha_inicio_date) {
         estado = "Pendiente";
     } 
