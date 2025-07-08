@@ -14,7 +14,7 @@ const SECRET_KEY = process.env.JWT_SECRET
 const stripe = require('stripe')(process.env.STRIPE_SECRET);
 
 // Funciones privadas
-const upload = require('./uploadCloudinary');
+const upload = require('../utils/uploadCloudinary');
 const eliminarArchivoPDF = require('../utils/deleteFile');
 const { obtenernRol, obtenerSocio, obtenerSocios } = require('../utils/socioUtils');
 const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones');
