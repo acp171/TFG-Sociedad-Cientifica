@@ -663,9 +663,9 @@ router.put("/proyectos-investigacion/:id", verificarToken, async (req, res) => {
     }
 
     const id = req.params.id;
-    const { titulo, descripcion, fecha_inicio, fecha_fin } = req.body;
+    const { nombre_proyecto, descripcion, fecha_inicio, fecha_fin } = req.body;
 
-    if (!titulo || titulo.trim() === "") {
+    if (!nombre_proyecto || nombre_proyecto.trim() === "") {
         return res.status(400).json({ message: "El título es obligatorio." });
     }
     if (fecha_inicio && fecha_fin && fecha_fin < fecha_inicio) {
@@ -679,7 +679,7 @@ router.put("/proyectos-investigacion/:id", verificarToken, async (req, res) => {
                     WHERE id_proyecto = $5
                     RETURNING id_proyecto, nombre_proyecto, descripcion, fecha_inicio, fecha_fin, estado;`;
         const values = [
-            titulo.trim(),
+            nombre_proyecto.trim(),
             descripcion || null,
             fecha_inicio || null,
             fecha_fin || null,

@@ -21,22 +21,24 @@ const AdminProyectos = () => {
     const fetchProyectos = async () => {
         setLoading(true);
         try {
-        const token = localStorage.getItem("token");
-        const res = await fetch(
-            "https://tfg-sociedad-cientifica-production.up.railway.app/listado-proyectos-investigacion",
-            {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            }
-        );
-        if (!res.ok) throw new Error("Error al obtener los proyectos");
-        const data = await res.json();
-        setProyectos(data.proyectos?.listaProyectos || []);
-        } catch (err) {
-        setError("Error cargando proyectos");
-        } finally {
-        setLoading(false);
+            const token = localStorage.getItem("token");
+            const res = await fetch(
+                "https://tfg-sociedad-cientifica-production.up.railway.app/listado-proyectos-investigacion",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            if (!res.ok) throw new Error("Error al obtener los proyectos");
+            const data = await res.json();
+            setProyectos(data.proyectos?.listaProyectos || []);
+        }
+        catch (err) {
+            setError("Error cargando proyectos");
+        }
+        finally {
+            setLoading(false);
         }
     };
 
@@ -80,70 +82,67 @@ const AdminProyectos = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.nombre_proyecto.trim()) {
-        setError("El título es obligatorio");
-        return;
-        }
-
-        try {
-        const token = localStorage.getItem("token");
-        const url = editingProyecto
-            ? `https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${editingProyecto.id_proyecto || editingProyecto.id}`
-            : "https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/crear-proyecto-investigacion";
-        const method = editingProyecto ? "PUT" : "POST";
-
-        const res = await fetch(url, {
-            method,
-            headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(formData),
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            setError(data.message || "Error en la operación");
+            setError("El título es obligatorio");
             return;
         }
 
-        setSuccess(editingProyecto ? "Proyecto actualizado." : "Proyecto creado.");
-        fetchProyectos();
-        closeForm();
-        } catch (err) {
-        setError("Error al comunicarse con el servidor");
+        try {
+            const token = localStorage.getItem("token");
+            const url = editingProyecto
+                ? `https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${editingProyecto.id_proyecto}`
+                : "https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/crear-proyecto-investigacion";
+            const method = editingProyecto ? "PUT" : "POST";
+
+            const res = await fetch(url, {
+                method,
+                headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                setError(data.message || "Error en la operación");
+                return;
+            }
+
+            setSuccess(editingProyecto ? "Proyecto actualizado." : "Proyecto creado.");
+            fetchProyectos();
+            closeForm();
+        }
+        catch (err) {
+            setError("Error al comunicarse con el servidor");
         }
     };
 
     const handleDelete = async (proyecto) => {
-        if (
-        !window.confirm(
-            `¿Seguro que quieres eliminar el proyecto "${proyecto.nombre_proyecto}"?`
-        )
-        )
-        return;
+        if (!window.confirm(`¿Seguro que quieres eliminar el proyecto "${proyecto.nombre_proyecto}"?`)) return;
 
         try {
-        const token = localStorage.getItem("token");
-        const res = await fetch(
-            `https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${proyecto.id_proyecto || proyecto.id}`,
-            {
-            method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` },
+            const token = localStorage.getItem("token");
+            const res = await fetch(
+                `https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${proyecto.id_proyecto}`,
+                {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                setError(data.message || "No se pudo eliminar el proyecto");
+                return;
             }
-        );
 
-        const data = await res.json();
-
-        if (!res.ok) {
-            setError(data.message || "No se pudo eliminar el proyecto");
-            return;
+            setSuccess("Proyecto eliminado correctamente.");
+            fetchProyectos();
         }
-
-        setSuccess("Proyecto eliminado correctamente.");
-        fetchProyectos();
-        } catch (err) {
-        setError("Error al comunicarse con el servidor");
+        catch (err) {
+            setError("Error al comunicarse con el servidor");
         }
     };
 
