@@ -1207,7 +1207,7 @@ router.post('/articulos-cientificos/publicar-articulo-cientifico', verificarToke
         return res.status(400).json({ message: 'Faltan datos.' });
     }
     else if (req.file) {
-        rutaPDF = `/uploads/pdfs/${req.file.filename}`;
+        rutaPDF = req.file ? req.file.path : null;
     }
 
     try {
