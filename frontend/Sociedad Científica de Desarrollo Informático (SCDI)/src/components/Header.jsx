@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
-import { Search, User, LogOut } from "lucide-react";
+import { Search, User, LogOut, Settings } from "lucide-react";
 import { useEffect } from "react";
 import { useAuth } from "../hooks/AuthContext";
 
 
 const Header = () => {
-    const { isLoggedIn, logout } = useAuth();
+    const { isLoggedIn, logout, userRole } = useAuth();
 
     const handleLogout = () => {
         logout();
@@ -47,6 +47,16 @@ const Header = () => {
                 <button className="p-2 rounded-full shadow">
                     <Search className="w-5 h-5" />
                 </button>
+
+                {isLoggedIn && userRole === 1 && (
+                    <Link
+                        to="/panel-administrador"
+                        className="p-2 rounded-full shadow text-black hover:text-green-600 transition"
+                        title="Panel de administrador"
+                    >
+                        <Settings className="w-5 h-5" />
+                    </Link>
+                )}
 
                 {isLoggedIn ? (
                     <button
