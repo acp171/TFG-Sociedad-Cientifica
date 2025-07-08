@@ -652,6 +652,58 @@ router.post('/proyectos-investigacion/crear-proyecto-investigacion', verificarTo
     }
 });
 
+// PUT actualizar un proyecto de investigación
+router.put("/proyectos-investigacion/:id", verificarToken, async (req, res) => {  
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        const presidenteProyecto = await obtenerPresidenteProyecto(id_proyecto);
+        if (presidenteProyecto.socio !== req.usuario.id) {
+            return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+        }
+    }
+
+    const id = req.params.id;
+    const { titulo, descripcion, fecha_inicio, fecha_fin } = req.body;
+
+    if (!titulo || titulo.trim() === "") {
+        return res.status(400).json({ message: "El título es obligatorio." });
+    }
+    if (fecha_inicio && fecha_fin && fecha_fin < fecha_inicio) {
+        return res.status(400).json({ message: "La fecha fin no puede ser anterior a la de inicio." });
+    }
+
+    try {
+        const query = `UPDATE Proyecto_Investigacion
+                    SET nombre_proyecto = $1, descripcion = $2, 
+                        fecha_inicio = $3, fecha_fin = $4 
+                    WHERE id_proyecto = $5
+                    RETURNING id_proyecto, nombre_proyecto, descripcion, fecha_inicio, fecha_fin, estado;`;
+        const values = [
+            titulo.trim(),
+            descripcion || null,
+            fecha_inicio || null,
+            fecha_fin || null,
+            id,
+        ];
+
+        const result = await pool.query(query, values);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Proyecto no encontrado." });
+        }
+
+        res.status(200).json({
+            message: "Proyecto actualizado correctamente.",
+            proyecto: result.rows[0],
+        });
+    }
+    catch (error) {
+        console.error("Error actualizando proyecto:", error);
+        res.status(500).json({ message: "Error interno del servidor." });
+    }
+});
+
+
 // DELETE eliminar un proyecto de investigación
 router.delete('/proyectos-investigacion/:id', verificarToken, async (req, res) =>  {
     const id_proyecto = req.params.id;
