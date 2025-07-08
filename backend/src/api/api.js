@@ -377,6 +377,7 @@ router.delete('/roles/:id', verificarToken, async (req, res) => {
     }
 
     const id = req.params.id;
+    console.log(id);
 
     try {
         const queryRoles = `DELETE FROM Socio_Rol 

@@ -24,10 +24,11 @@ const AdminRoles = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      if (!res.ok) throw new Error(`Error ${res.status}`);
       const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Error");
       setRoles(data.roles || []);
     } catch (err) {
+      console.error(err);
       setError("Error cargando roles");
     } finally {
       setLoading(false);
@@ -37,25 +38,21 @@ const AdminRoles = () => {
   const openNewForm = () => {
     setEditingRole(null);
     setFormData({ nombre: "" });
-    setError("");
-    setSuccess("");
     setShowForm(true);
   };
 
   const openEditForm = (role) => {
     setEditingRole(role);
     setFormData({ nombre: role.nombre });
-    setError("");
-    setSuccess("");
     setShowForm(true);
   };
 
   const closeForm = () => {
+    setEditingRole(null);
+    setFormData({ nombre: "" });
     setShowForm(false);
     setError("");
     setSuccess("");
-    setFormData({ nombre: "" });
-    setEditingRole(null);
   };
 
   const handleChange = (e) => {
@@ -66,6 +63,7 @@ const AdminRoles = () => {
     e.preventDefault();
     setError("");
     setSuccess("");
+
     if (!formData.nombre.trim()) {
       setError("El nombre es obligatorio");
       return;
@@ -73,10 +71,10 @@ const AdminRoles = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const url = editingRole
-        ? `https://tfg-sociedad-cientifica-production.up.railway.app/roles/${editingRole.id_socio_rol}`
-        : "https://tfg-sociedad-cientifica-production.up.railway.app/roles";
       const method = editingRole ? "PUT" : "POST";
+      const url = editingRole
+        ? `https://tfg-sociedad-cientifica-production.up.railway.app/roles/${editingRole.id}`
+        : "https://tfg-sociedad-cientifica-production.up.railway.app/roles";
 
       const res = await fetch(url, {
         method,
@@ -88,7 +86,6 @@ const AdminRoles = () => {
       });
 
       const data = await res.json();
-
       if (!res.ok) {
         setError(data.message || "Error en la operación");
         return;
@@ -98,115 +95,98 @@ const AdminRoles = () => {
       fetchRoles();
       closeForm();
     } catch (err) {
+      console.error("Error:", err);
       setError("Error en la comunicación con el servidor");
     }
   };
 
   const handleDelete = async (role) => {
-    console.log("Intentando eliminar rol:", role);
-  
-    if (!window.confirm(`¿Seguro que quieres eliminar el rol "${role.nombre}"?`)) return;
-  
+    if (!window.confirm(`¿Seguro que quieres eliminar el rol "${role.nombre}"?`))
+      return;
+
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `https://tfg-sociedad-cientifica-production.up.railway.app/roles/${role.id_socio_rol}`,
+        `https://tfg-sociedad-cientifica-production.up.railway.app/roles/${role.id}`,
         {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-  
+
       const data = await res.json();
-      console.log("Respuesta del backend:", data); // 👈🏼 Agregado
-  
       if (!res.ok) {
         setError(data.message || "No se pudo eliminar el rol");
         return;
       }
-  
+
       setSuccess("Rol eliminado correctamente.");
       fetchRoles();
     } catch (err) {
-      console.error("Error de red:", err); // 👈🏼 Agregado
-      setError("Error en la comunicación con el servidor");
+      console.error("Error:", err);
+      setError("Error al eliminar el rol");
     }
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
+    <div className="p-6 max-w-4xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Gestión de Roles</h2>
         <button
           onClick={openNewForm}
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
         >
           Nuevo Rol
         </button>
       </div>
 
-      {error && (
-        <div className="bg-red-100 text-red-700 p-2 rounded mb-4">{error}</div>
-      )}
+      {error && <div className="bg-red-100 text-red-700 p-2 mb-4 rounded">{error}</div>}
       {success && (
-        <div className="bg-green-100 text-green-700 p-2 rounded mb-4">
-          {success}
-        </div>
+        <div className="bg-green-100 text-green-700 p-2 mb-4 rounded">{success}</div>
       )}
 
       {loading ? (
         <p>Cargando roles...</p>
       ) : (
-        <table className="w-full border-collapse border border-gray-300">
-          <thead>
-            <tr className="bg-indigo-100">
-              <th className="border border-gray-300 px-3 py-1">ID</th>
-              <th className="border border-gray-300 px-3 py-1">Nombre</th>
-              <th className="border border-gray-300 px-3 py-1">Acciones</th>
+        <table className="w-full border border-gray-300 rounded overflow-hidden">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="border px-3 py-2">ID</th>
+              <th className="border px-3 py-2">Nombre</th>
+              <th className="border px-3 py-2">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {roles.map((role) => (
-              <tr key={role.id_socio_rol}>
-                <td className="border border-gray-300 px-3 py-1">
-                  {role.id_socio_rol}
-                </td>
-                <td className="border border-gray-300 px-3 py-1">{role.nombre}</td>
-                <td className="border border-gray-300 px-3 py-1 space-x-2">
-                  {/* No mostrar botones para rol "Administrador" */}
-                  {role.nombre !== "Administrador" && (
+              <tr key={role.id}>
+                <td className="border px-3 py-2">{role.id}</td>
+                <td className="border px-3 py-2">{role.nombre}</td>
+                <td className="border px-3 py-2 space-x-2">
+                  {role.nombre === "Administrador" ? (
+                    <span className="text-gray-500 italic">Protegido</span>
+                  ) : (
                     <>
                       <button
                         onClick={() => openEditForm(role)}
-                        className="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded"
-                        title="Editar"
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded"
                       >
                         Editar
                       </button>
                       <button
                         onClick={() => handleDelete(role)}
                         className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
-                        title="Eliminar"
                       >
                         Eliminar
                       </button>
                     </>
-                  )}
-                  {role.nombre === "Administrador" && (
-                    <span className="text-gray-500 italic">Protegido</span>
                   )}
                 </td>
               </tr>
             ))}
             {roles.length === 0 && (
               <tr>
-                <td
-                  colSpan="3"
-                  className="text-center py-4 text-gray-600 italic"
-                >
-                  No hay roles.
+                <td colSpan="3" className="text-center py-4 text-gray-600 italic">
+                  No hay roles registrados.
                 </td>
               </tr>
             )}
@@ -214,14 +194,14 @@ const AdminRoles = () => {
         </table>
       )}
 
-      {/* Modal / Form */}
+      {/* Formulario modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <form
             onSubmit={handleSubmit}
-            className="bg-white rounded-lg p-6 w-96 max-w-full shadow-lg"
+            className="bg-white p-6 rounded-lg shadow-md w-full max-w-md"
           >
-            <h3 className="text-xl font-semibold mb-4">
+            <h3 className="text-lg font-semibold mb-4">
               {editingRole ? "Editar Rol" : "Nuevo Rol"}
             </h3>
 
@@ -232,23 +212,22 @@ const AdminRoles = () => {
                 name="nombre"
                 value={formData.nombre}
                 onChange={handleChange}
-                className="border rounded px-3 py-2 mt-1 w-full"
-                autoFocus
+                className="w-full border px-3 py-2 mt-1 rounded"
                 required
               />
             </label>
 
-            <div className="flex justify-end space-x-3 mt-4">
+            <div className="flex justify-end gap-2 mt-4">
               <button
                 type="button"
                 onClick={closeForm}
-                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition"
+                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+                className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
               >
                 Guardar
               </button>
