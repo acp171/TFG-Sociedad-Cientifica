@@ -1633,16 +1633,142 @@ router.get('/buscar-calles', async (req, res) => {
         });
     
         if (!response.ok) {
-            console.error("Error en la API de Nominatim");
-            return res.status(500).json({ message: 'Error en la API de Nominatim' });
+            console.error("Error en la API de Nominatim.");
+            return res.status(500).json({ message: 'Error en la API de Nominatim.' });
         }
     
         const data = await response.json();
-        res.json(data);
-    } catch (error) {
-        console.error('Error en backend:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
+        res.status(200).json(data);
     }
-});  
+    catch (error) {
+        console.error('Error en backend: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// GET listado de tipo socios
+router.get('/tipos', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    try {
+        const queryTipos = 'SELECT * FROM Tipo_Socio;';
+        const resultTipos = await pool.query(queryTipos);
+
+        res.status(200).json({
+            message: 'Listado de tipos de socios.',
+            tipos: resultTipos.rows
+        });
+    }
+    catch (error) {
+        console.log('Error listado de tipo socios: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// POST tipo de socio
+router.post('/tipos', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    const { nombre_tipo, descripcion, cuota, price_stripe } = req.body;
+
+    try {
+        const values = [
+            nombre_tipo,
+            descripcion,
+            cuota,
+            price_stripe
+        ];
+
+        const queryTipos = `INSERT INTO Tipo_Socio(nombre_tipo, descripcion, cuota, price_stripe)
+                            VALUES ($1, $2, $3, $4)
+                            RETURNING id_tipo_socio, nombre_tipo, descripcion, cuota, price_stripe;`;
+        const resultTipos = await pool.query(queryTipos, values);
+
+        res.status(200).json({
+            message: 'Creado de tipo de socios.',
+            tipo: {
+                id: resultTipos.rows[0].id_tipo_socio,
+                nombre: resultTipos.rows[0].nombre_tipo,
+                descripcion: resultTipos.rows[0].descripcion,
+                cuota: resultTipos.rows[0].cuota,
+                price_stripe: resultTipos.rows[0].price_stripe
+            }
+        });
+    }
+    catch (error) {
+        console.log('Error creando tipo socio: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// PUT tipo de socio
+router.put('/tipos/:id', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    const id_tipo = req.params.id;
+    const { nombre_tipo, descripcion, cuota, price_stripe } = req.body;
+
+    try {
+        const values = [
+            nombre_tipo,
+            descripcion,
+            cuota,
+            price_stripe,
+            id_tipo
+        ];
+        const queryTipos = `UPDATE Tipo_Socio 
+                            SET nombre_tipo = $1, descripcion = $2, cuota = $3, price_stripe = $4 
+                            WHERE id_tipo_socio = $5 
+                            RETURNING id_tipo_socio, nombre_tipo, descripcion, cuota, price_stripe;`;
+        const resultTipos = await pool.query(queryTipos, values);
+
+        res.status(200).json({
+            message: 'Actualizado tipo de socios.',
+            tipo: {
+                id: resultTipos.rows[0].id_tipo_socio,
+                nombre: resultTipos.rows[0].nombre_tipo,
+                descripcion: resultTipos.rows[0].descripcion,
+                cuota: resultTipos.rows[0].cuota,
+                price_stripe: resultTipos.rows[0].price_stripe
+            }
+        });
+    }
+    catch (error) {
+        console.log('Error actualizando tipo socio: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// DELETE tipo de socio
+router.delete('/tipos/:id', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    }
+
+    const id_tipo = req.params.id;
+
+    try {
+        const queryTipos = 'DELETE FROM Tipo_Socio WHERE id_tipo_socio = $1;';
+        await pool.query(queryTipos, [id_tipo]);
+
+        res.status(200).json({
+            message: 'Borrado de tipo de socios.'
+        });
+    }
+    catch (error) {
+        console.log('Error borrando tipo socio: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
 
 module.exports = router;

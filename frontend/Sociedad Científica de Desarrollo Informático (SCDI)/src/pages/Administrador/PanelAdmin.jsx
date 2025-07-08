@@ -2,11 +2,11 @@ import { useState } from "react";
 import { FaUsers, FaUserTag, FaUserShield, FaProjectDiagram, FaNewspaper, FaCalendarAlt } from "react-icons/fa";
 
 import AdminSocios from "../../components/Administrador/AdminSocios";
-/*import AdminTipos from "./AdminTipos";
-import AdminRoles from "./AdminRoles";
-import AdminProyectos from "./AdminProyectos";
-import AdminArticulos from "./AdminArticulos";
-import AdminEventos from "./AdminEventos";*/
+import AdminTipos from "../../components/Administrador/AdminTipos";
+/*import AdminRoles from "../../components/Administrador/AdminRoles";
+import AdminProyectos from "../../components/Administrador/AdminProyectos";
+import AdminArticulos from "../../components/Administrador/AdminArticulos";
+import AdminEventos from "../../components/Administrador/AdminEventos";*/
 
 const tabs = [
     { id: "socios", label: "Socios", icon: <FaUsers /> },
