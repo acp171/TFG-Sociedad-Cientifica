@@ -687,7 +687,7 @@ router.put("/proyectos-investigacion/:id", verificarToken, async (req, res) => {
     try {
         const query = `UPDATE Proyectos_Investigacion
                     SET nombre_proyecto = $1, descripcion = $2, 
-                        fecha_inicio = $3, fecha_fin = $4, estado = $5,
+                        fecha_inicio = $3, fecha_fin = $4, estado = $5
                     WHERE id_proyecto = $6
                     RETURNING id_proyecto, nombre_proyecto, descripcion, fecha_inicio, fecha_fin, estado;`;
         const values = [
