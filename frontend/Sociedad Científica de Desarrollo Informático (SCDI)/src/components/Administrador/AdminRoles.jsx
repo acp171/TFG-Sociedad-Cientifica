@@ -168,13 +168,13 @@ const AdminRoles = () => {
                     <>
                       <button
                         onClick={() => openEditForm(role)}
-                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded"
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded cursor-pointer"
                       >
                         Editar
                       </button>
                       <button
                         onClick={() => handleDelete(role)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
+                        className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded cursor-pointer"
                       >
                         Eliminar
                       </button>

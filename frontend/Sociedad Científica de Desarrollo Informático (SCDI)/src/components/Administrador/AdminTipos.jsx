@@ -220,13 +220,13 @@ const AdminTipos = () => {
                                 <td className="border px-2 py-1 space-x-2">
                                 <button
                                     onClick={() => handleEdit(tipo)}
-                                    className="bg-yellow-500 text-white px-2 py-1 rounded"
+                                    className="bg-yellow-500 text-white px-2 py-1 rounded cursor-pointer"
                                 >
                                     Editar
                                 </button>
                                 <button
                                     onClick={() => handleDelete(tipo.id_tipo_socio)}
-                                    className="bg-red-600 text-white px-2 py-1 rounded"
+                                    className="bg-red-600 text-white px-2 py-1 rounded cursor-pointer"
                                 >
                                     Eliminar
                                 </button>

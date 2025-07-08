@@ -352,7 +352,8 @@ router.put('/roles/:id', verificarToken, async (req, res) => {
         ];
         const queryRoles = `UPDATE Socio_Rol 
                             SET nombre = $1 
-                            WHERE id_socio_rol = $2;`;
+                            WHERE id_socio_rol = $2
+                            RETURNING id_socio_rol, nombre;`;
         const resultRoles = await pool.query(queryRoles, values);
 
         res.status(200).json({
