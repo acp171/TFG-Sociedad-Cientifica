@@ -406,7 +406,7 @@ router.put('/asignar-rol', verificarToken, async (req, res) =>  {
     }
 
     try {
-        var query, values;
+        let query, values;
         switch(funcion) {
             case 'socio':
                 values = [
@@ -535,7 +535,7 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
     }
 
     try {
-        var query, values;
+        let query, values;
         switch(funcion) {
             case 'socio':
                 values = [
@@ -671,6 +671,9 @@ router.put("/proyectos-investigacion/:id", verificarToken, async (req, res) => {
     if (fecha_inicio && fecha_fin && fecha_fin < fecha_inicio) {
         return res.status(400).json({ message: "La fecha fin no puede ser anterior a la de inicio." });
     }
+
+    const fecha_inicio_date = new Date(fecha_inicio);
+    const fecha_fin_Date = new Date(fecha_fin);
 
     let estado;
     const fecha_actual = new Date();
@@ -1198,7 +1201,7 @@ router.delete('/eventos-cientificos/:id/cancelar-inscripcion', verificarToken, a
 // POST publicar articulo científico
 router.post('/articulos-cientificos/publicar-articulo-cientifico', verificarToken, upload.single('pdf'), async (req, res) => {
     const { titulo, contenido } = req.body;
-    var rutaPDF;
+    let rutaPDF;
 
     if (!titulo || (!req.file && !contenido)) {
         return res.status(400).json({ message: 'Faltan datos.' });
@@ -1208,7 +1211,7 @@ router.post('/articulos-cientificos/publicar-articulo-cientifico', verificarToke
     }
 
     try {
-        var query, values;
+        let query, values;
 
         if (req.file && !contenido) {
             values = [
