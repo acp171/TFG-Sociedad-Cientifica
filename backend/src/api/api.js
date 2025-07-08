@@ -1287,12 +1287,6 @@ router.delete('/articulos-cientificos/:id', verificarToken, async (req, res) => 
             }
         }
 
-        // Elimina el archivo si existe
-        if (publicacion.contenidopdf) {
-            console.log('Ejecutando eliminación de PDF...');
-            eliminarArchivoPDF(publicacion.contenidopdf);
-        }
-
         const queryDelete = 'DELETE FROM Publicaciones WHERE id_publicacion = $1;';
         await pool.query(queryDelete, [id_publicacion]);
 

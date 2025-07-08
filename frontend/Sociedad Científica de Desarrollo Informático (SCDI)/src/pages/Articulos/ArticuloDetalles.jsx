@@ -138,10 +138,10 @@ const ArticuloDetalles = () => {
 
                     {articulo.contenidopdf && (
                         <a
-                            href={`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${id}/pdf`}
+                            href={articulo.contenidopdf}
                             target="_blank"
                             rel="noopener noreferrer"
-                            download={`articulo_${id}.pdf`}
+                            download
                             className="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-3 rounded-md hover:bg-blue-700 transition shadow-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                         >
                             <HiDownload className="text-xl" /> Descargar PDF

@@ -65,35 +65,41 @@ const AdminArticulos = () => {
             setError("El título es obligatorio");
             return;
         }
-
+    
         try {
             const token = localStorage.getItem("token");
             const body = new FormData();
             body.append("titulo", formData.titulo.trim());
             body.append("contenido", formData.contenido.trim());
-            
+    
             if (pdfFile) {
-                formData.append("contenidopdf", pdfFile);
+                body.append("pdf", pdfFile);
             }
-
+    
             const res = await fetch(
                 "https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/publicar-articulo-cientifico",
                 {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
                     body,
                 }
             );
-
-            const data = await res.json();
+    
+            const text = await res.text();
+            console.log("Respuesta:", text);
+    
             if (!res.ok) {
-                setError(data.message || "Error en la operación");
+                try {
+                    const data = JSON.parse(text);
+                    setError(data.message || "Error en la operación");
+                } catch {
+                    setError("Error inesperado");
+                }
                 return;
             }
-
+    
             setSuccess("Artículo creado correctamente.");
             fetchArticulos();
             closeForm();
@@ -159,7 +165,7 @@ const AdminArticulos = () => {
                     </thead>
                     <tbody>
                         {articulos.map((art) => (
-                            <tr key={art.id}>
+                            <tr key={art.id_publicacion}>
                                 <td className="border border-gray-300 px-3 py-2">{art.id_publicacion}</td>
                                 <td className="border border-gray-300 px-3 py-2">{art.titulo}</td>
                                 <td className="border border-gray-300 px-3 py-2 text-center">
@@ -252,13 +258,13 @@ const AdminArticulos = () => {
                             <button
                                 type="button"
                                 onClick={closeForm}
-                                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+                                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 cursor-pointer"
                             >
                                 Cancelar
                             </button>
                             <button
                                 type="submit"
-                                className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                                className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 cursor-pointer"
                             >
                                 Guardar
                             </button>
