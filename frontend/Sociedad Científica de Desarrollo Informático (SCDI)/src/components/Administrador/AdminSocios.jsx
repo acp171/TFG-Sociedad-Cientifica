@@ -110,12 +110,15 @@ const AdminSocios = () => {
 
     return (
         <div>
-            <button
-                className="mb-4 bg-indigo-600 text-white px-4 py-2 rounded cursor-pointer"
-                onClick={() => setShowForm(true)}
-            >
-                NUEVO SOCIO
-            </button>
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold mb-4">Gestión de Socios</h2>
+                <button
+                    className="mb-4 bg-indigo-600 text-white px-4 py-2 rounded cursor-pointer"
+                    onClick={() => setShowForm(true)}
+                >
+                    NUEVO SOCIO
+                </button>
+            </div>
 
             {loading ? (
                 <p>Cargando socios...</p>

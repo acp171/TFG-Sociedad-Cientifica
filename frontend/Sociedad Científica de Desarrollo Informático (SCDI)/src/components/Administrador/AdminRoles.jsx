@@ -129,14 +129,14 @@ const AdminRoles = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
+    <div>
+      <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Gestión de Roles</h2>
         <button
           onClick={openNewForm}
           className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
         >
-          Nuevo Rol
+          NUEVO ROL
         </button>
       </div>
 

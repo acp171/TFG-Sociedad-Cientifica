@@ -5,8 +5,8 @@ import AdminSocios from "../../components/Administrador/AdminSocios";
 import AdminTipos from "../../components/Administrador/AdminTipos";
 import AdminRoles from "../../components/Administrador/AdminRoles";
 import AdminProyectos from "../../components/Administrador/AdminProyectos";
-/*import AdminArticulos from "../../components/Administrador/AdminArticulos";
-import AdminEventos from "../../components/Administrador/AdminEventos";*/
+import AdminArticulos from "../../components/Administrador/AdminArticulos";
+/*import AdminEventos from "../../components/Administrador/AdminEventos";*/
 
 const tabs = [
     { id: "socios", label: "Socios", icon: <FaUsers /> },

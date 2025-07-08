@@ -154,7 +154,7 @@ const AdminProyectos = () => {
                     onClick={openNewForm}
                     className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
                 >
-                    Nuevo Proyecto
+                    NUEVO PROYECTO
                 </button>
             </div>
 
@@ -169,18 +169,18 @@ const AdminProyectos = () => {
                 <table className="w-full border-collapse border border-gray-300">
                     <thead>
                         <tr className="bg-indigo-100">
-                        <th className="border border-gray-300 px-3 py-1">ID</th>
-                        <th className="border border-gray-300 px-3 py-1">Título</th>
-                        <th className="border border-gray-300 px-3 py-1">Descripción</th>
-                        <th className="border border-gray-300 px-3 py-1">Fecha inicio</th>
-                        <th className="border border-gray-300 px-3 py-1">Fecha fin</th>
-                        <th className="border border-gray-300 px-3 py-1">Estado</th>
-                        <th className="border border-gray-300 px-3 py-1">Acciones</th>
+                            <th className="border border-gray-300 px-3 py-1">ID</th>
+                            <th className="border border-gray-300 px-3 py-1">Título</th>
+                            <th className="border border-gray-300 px-3 py-1">Descripción</th>
+                            <th className="border border-gray-300 px-3 py-1">Fecha inicio</th>
+                            <th className="border border-gray-300 px-3 py-1">Fecha fin</th>
+                            <th className="border border-gray-300 px-3 py-1">Estado</th>
+                            <th className="border border-gray-300 px-3 py-1">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {proyectos.map((proyecto) => (
-                            <tr key={proyecto.id_proyecto || proyecto.id}>
+                            <tr key={proyecto.id_proyecto}>
                                 <th className="border border-gray-300 px-3 py-1">{proyecto.id_proyecto}</th>
                                 <td className="border border-gray-300 px-3 py-1">{proyecto.nombre_proyecto}</td>
                                 <td className="border border-gray-300 px-3 py-1">{proyecto.descripcion}</td>

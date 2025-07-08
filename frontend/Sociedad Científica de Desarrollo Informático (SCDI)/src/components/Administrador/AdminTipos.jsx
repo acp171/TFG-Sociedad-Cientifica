@@ -109,18 +109,20 @@ const AdminTipos = () => {
 
     return (
         <div>
-            <h2 className="text-xl font-bold mb-4">Gestión de Tipos de Socio</h2>
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold mb-4">Gestión de Tipos de Socio</h2>
 
-            <button
-                onClick={() => {
-                    setShowForm(true);
-                    setEditandoId(null);
-                    setFormData({ nombre_tipo: "", descripcion: "", cuota: "", price_stripe: "" });
-                }}
-                className="mb-4 bg-indigo-600 text-white px-4 py-2 rounded cursor-pointer"
-            >
-                NUEVO TIPO
-            </button>
+                <button
+                    onClick={() => {
+                        setShowForm(true);
+                        setEditandoId(null);
+                        setFormData({ nombre_tipo: "", descripcion: "", cuota: "", price_stripe: "" });
+                    }}
+                    className="mb-4 bg-indigo-600 text-white px-4 py-2 rounded cursor-pointer"
+                >
+                    NUEVO TIPO
+                </button>
+            </div>
 
             {showForm && (
                 <form onSubmit={handleSubmit} className="mb-6 p-4 border rounded bg-white max-w-md">

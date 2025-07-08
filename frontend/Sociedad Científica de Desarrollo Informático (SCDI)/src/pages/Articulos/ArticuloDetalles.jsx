@@ -109,7 +109,7 @@ const ArticuloDetalles = () => {
     }));    
 
     return (
-        <section className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-16 px-6 lg:px-20 flex flex-col items-center">
+        <section className="min-h-screen bg-gradient-to-b from-blue-200 to-white py-16 px-6 lg:px-20 flex flex-col items-center">
             <button
                 onClick={() => navigate("/articulos-cientificos")}
                 className="self-start mb-8 flex items-center text-blue-600 hover:text-blue-800 font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 rounded"
@@ -118,7 +118,7 @@ const ArticuloDetalles = () => {
                 <HiArrowLeft className="mr-2 text-xl" /> Volver
             </button>
 
-            <article className="bg-gradient-to-b from-blue-200 to-white shadow-xl rounded-xl p-10 max-w-4xl w-full">
+            <article className="bg-gradient-to-b from-blue-50 to-white shadow-xl rounded-xl p-10 max-w-4xl w-full">
                 <h1 className="text-center text-5xl font-extrabold mb-8 text-gray-900 tracking-wide drop-shadow-sm">
                     {articulo.titulo}
                 </h1>
