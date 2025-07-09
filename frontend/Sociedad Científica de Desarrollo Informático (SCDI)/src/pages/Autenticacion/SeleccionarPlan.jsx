@@ -109,7 +109,7 @@ const SeleccionarPlan = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-white to-blue-50 py-16 px-4 relative">
+        <div className="min-h-[80vh] bg-gradient-to-br from-white to-blue-50 py-16 px-4 relative">
         <h1 className="text-5xl font-bold text-center text-indigo-800 mb-16">Elige tu plan de membresía</h1>
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
