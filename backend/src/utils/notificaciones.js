@@ -32,6 +32,21 @@ async function crearNotificacion(socioId, titulo, mensaje) {
     }
 }
 
+async function crearNotificacionSocio(titulo, mensaje) {
+    const values = [
+        1,
+        titulo,
+        mensaje
+    ];
+    const query = `INSERT INTO Notificaciones(socio, titulo, mensaje)
+                   VALUES ($1, $2, $3);`;
+    await pool.query(query, values);
+
+    if (email) {
+        await enviarEmail("admin@admin.com", titulo, mensaje);
+    }
+}
+
 async function crearNotificacionEvento(titulo, mensaje) {
     // Obtener todos los socios
     const socios = await obtenerSocios();
@@ -68,5 +83,6 @@ async function enviarEmail(destinatario, asunto, mensaje) {
 
 module.exports = {
     crearNotificacion,
+    crearNotificacionSocio,
     crearNotificacionEvento,
 };

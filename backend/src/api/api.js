@@ -15,8 +15,8 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET);
 
 // Funciones privadas
 const upload = require('../utils/uploadCloudinary');
-const { obtenernRol, obtenerSocio, obtenerSocios } = require('../utils/socioUtils');
-const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones');
+const { obtenernRol, obtenerSocio, obtenerSocios, obtenerSocioPorEmail } = require('../utils/socioUtils');
+const { crearNotificacion, crearNotificacionEvento, crearNotificacionSocio } = require('../utils/notificaciones');
 const { obtenerNombreProyecto, obtenerPresidenteProyecto, obtenerMiembro } = require('../utils/proyectoUtils');
 const { obtenerNombreComite, obtenerPresidenteComite, obtenerComiteEvento, obtenerComitePorSocio } = require('../utils/comiteUtils');
 const { obtenerMiembrosComiteEvento, obtenerInscripcionesEvento, obtenerEvento } = require("../utils/eventoUtils");
@@ -1682,6 +1682,34 @@ router.post('/notificacion-usuario', verificarToken, async (req, res) => {
     }
     catch (error) {
         console.error("Error al enviar notificación al socio: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// POST enviar notificacion
+router.post('/notificacion-contacto', verificarToken, async (req, res) => {
+    const { email, titulo, mensaje } = req.body;
+
+    if (req.usuario.email !== email) {
+        return res.status(403).json({ message: 'El correo electrónico equivocado. Por favor, verifique su correo.' });
+    }
+
+    if (!titulo || !mensaje) {
+        return res.status(400).json({ message: 'Faltan datos.' });
+    }
+
+    try {
+        await crearNotificacionSocio(
+            titulo,
+            mensaje
+        );
+
+        res.status(200).json({
+            message: 'Notificación enviada.'
+        });
+    }
+    catch (error) {
+        console.error("Error al enviar notificación: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
