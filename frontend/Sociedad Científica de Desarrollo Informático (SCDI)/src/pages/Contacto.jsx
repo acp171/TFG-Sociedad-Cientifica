@@ -24,7 +24,7 @@ const Contacto = () => {
         }
 
         try {
-            const response = await fetch("http://localhost:3000/api/notificacion-contacto", {
+            const response = await fetch("https://tfg-sociedad-cientifica-production.up.railway.app/notificacion-contacto", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
