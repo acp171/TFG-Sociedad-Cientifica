@@ -42,9 +42,7 @@ async function crearNotificacionSocio(titulo, mensaje) {
                    VALUES ($1, $2, $3);`;
     await pool.query(query, values);
 
-    if (email) {
-        await enviarEmail('admin@admin.com', titulo, mensaje);
-    }
+    await enviarEmail("admin@admin.com", titulo, mensaje);
 }
 
 async function crearNotificacionEvento(titulo, mensaje) {
