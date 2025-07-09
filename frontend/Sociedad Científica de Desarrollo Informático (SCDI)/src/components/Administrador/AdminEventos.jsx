@@ -34,7 +34,7 @@ const AdminEventos = () => {
             const res = await fetch(
                 "https://tfg-sociedad-cientifica-production.up.railway.app/listado-eventos-cientificos",
                 {
-                headers: { Authorization: `Bearer ${token}` },
+                    headers: { Authorization: `Bearer ${token}` },
                 }
             );
             if (!res.ok) throw new Error("Error al cargar eventos");
