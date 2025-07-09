@@ -20,6 +20,7 @@ import CrearEvento from './pages/Eventos/CrearEvento';
 import EventoExito from './pages/Eventos/EventoExito';
 import AvisoLegal from './pages/Aviso-Legal';
 import PanelAdmin from './pages/Administrador/PanelAdmin';
+import Contacto from './pages/Contacto';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
           <Route path="/eventos-cientificos/:id/inscribirse/evento-exito" element={<EventoExito />} />
           <Route path="/politica-privacidad" element={<AvisoLegal />} />
           <Route path="/panel-administrador" element={<PanelAdmin />} />
+          <Route path="/contacto" element={<Contacto />} />
         </Routes>
       </main>
 

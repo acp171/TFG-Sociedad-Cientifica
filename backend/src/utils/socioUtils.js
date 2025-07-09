@@ -31,9 +31,18 @@ async function obtenerSocios() {
     return socios.rows;
 }
 
+async function obtenerSocioPorEmail(email) {
+    const querySocio = 'SELECT * FROM Socio WHERE email = $1;';
+    const resultSocio = await pool.query(querySocio, [email]);
+    const socio = resultSocio.rows[0];
+
+    return socio;
+}
+
 
 module.exports = {
     obtenernRol,
     obtenerSocio,
-    obtenerSocios
+    obtenerSocios,
+    obtenerSocioPorEmail
 };
