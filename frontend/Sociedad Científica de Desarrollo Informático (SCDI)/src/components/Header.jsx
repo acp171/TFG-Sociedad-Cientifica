@@ -253,43 +253,6 @@ const Header = () => {
                     </div>
                 )}
 
-                <div className="relative">
-                    <button
-                        onClick={() => setMostrarNotificaciones(!mostrarNotificaciones)}
-                        className="p-2 rounded-full shadow text-black hover:text-blue-600 transition relative"
-                        title="Notificaciones"
-                    >
-                        <Inbox className="w-5 h-5" />
-                        {notificaciones.length > 0 && (
-                        <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1">
-                            {notificaciones.length}
-                        </span>
-                        )}
-                    </button>
-
-                    {mostrarNotificaciones && (
-                        <div className="absolute right-0 mt-2 w-72 bg-white border shadow-lg rounded-lg z-50 max-h-80 overflow-auto">
-                            {notificaciones.length > 0 ? (
-                                <ul>
-                                    {notificaciones.map((n) => (
-                                        <li
-                                            key={n.id_notificacion}
-                                            className="px-4 py-2 border-b last:border-none hover:bg-gray-100 cursor-pointer"
-                                            onClick={() => abrirNotificacion(n)}
-                                        >
-                                            <p className="font-semibold">{n.titulo}</p>
-                                            <p className="text-sm text-gray-600">{n.mensaje.substring(0, 50)}...</p>
-                                        </li>
-                                    ))}
-                                </ul>
-
-                            ) : (
-                                <p className="px-4 py-2 text-sm text-gray-500">No hay notificaciones</p>
-                            )}
-                        </div>
-                    )}
-                </div>
-
                 {isLoggedIn && userRole === 1 && (
                     <Link
                         to="/panel-administrador"
@@ -299,6 +262,45 @@ const Header = () => {
                         <Settings className="w-5 h-5" />
                     </Link>
                 )}
+
+                {isLoggedIn && (
+                    <div className="relative">
+                        <button
+                            onClick={() => setMostrarNotificaciones(!mostrarNotificaciones)}
+                            className="p-2 rounded-full shadow text-black hover:text-blue-600 transition relative"
+                            title="Notificaciones"
+                        >
+                        <Inbox className="w-5 h-5" />
+                            {notificaciones.length > 0 && (
+                                <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1">
+                                    {notificaciones.length}
+                                </span>
+                            )}
+                        </button>
+
+                        {mostrarNotificaciones && (
+                            <div className="absolute right-0 mt-2 w-72 bg-white border shadow-lg rounded-lg z-50 max-h-80 overflow-auto">
+                                {notificaciones.length > 0 ? (
+                                    <ul>
+                                        {notificaciones.map((n) => (
+                                            <li
+                                                key={n.id_notificacion}
+                                                className="px-4 py-2 border-b last:border-none hover:bg-gray-100 cursor-pointer"
+                                                onClick={() => abrirNotificacion(n)}
+                                            >
+                                                <p className="font-semibold">{n.titulo}</p>
+                                                <p className="text-sm text-gray-600">{n.mensaje.substring(0, 50)}...</p>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p className="px-4 py-2 text-sm text-gray-500">No hay notificaciones</p>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
+
 
                 {isLoggedIn ? (
                     <button
@@ -318,14 +320,12 @@ const Header = () => {
                     </Link>
                 )}
 
-                {userRole !== 1 && (
-                    <Link
-                        to="/contacto"
-                        className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-full shadow"
-                    >
-                        CONTÁCTANOS
-                    </Link>
-                )}
+                <Link
+                    to="/contacto"
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-full shadow"
+                >
+                    CONTÁCTANOS
+                </Link>
             </div>
 
             {notificacionSeleccionada && (
