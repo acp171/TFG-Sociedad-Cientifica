@@ -223,12 +223,14 @@ const Header = () => {
                     </Link>
                 )}
 
-                <Link
-                    to="/contacto"
-                    className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-full shadow"
-                >
-                    CONTÁCTANOS
-                </Link>
+                {userRole !== 1 && (
+                    <Link
+                        to="/contacto"
+                        className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-full shadow"
+                    >
+                        CONTÁCTANOS
+                    </Link>
+                )}
             </div>
         </header>
     );
