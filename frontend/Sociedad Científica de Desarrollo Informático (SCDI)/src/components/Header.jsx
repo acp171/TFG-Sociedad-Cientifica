@@ -6,6 +6,7 @@ import { useAuth } from "../hooks/AuthContext";
 
 const Header = () => {
     const { isLoggedIn, logout, userRole } = useAuth();
+    cconsole.log("userRole en Header:", userRole, typeof userRole);
 
     const [query, setQuery] = useState("");
     const [resultados, setResultados] = useState({
@@ -44,6 +45,12 @@ const Header = () => {
             id: proyecto.id_proyecto,
         }
     ));
+
+    const [notificaciones, setNotificaciones] = useState([
+        { id: 1, mensaje: "Nuevo artículo publicado", leido: false },
+        { id: 2, mensaje: "Evento científico próximo", leido: false },
+    ]);
+    const [mostrarNotificaciones, setMostrarNotificaciones] = useState(false);
       
 
     useEffect(() => {
@@ -194,6 +201,49 @@ const Header = () => {
                         )}
                     </div>
                 )}
+
+                <div className="relative">
+                    <button
+                        onClick={() => setMostrarNotificaciones(!mostrarNotificaciones)}
+                        className="p-2 rounded-full shadow text-black hover:text-yellow-600 transition relative"
+                        title="Notificaciones"
+                    >
+                        <Bell className="w-5 h-5" />
+                        {notificaciones.some(n => !n.leido) && (
+                        <span className="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full px-1">
+                            {notificaciones.filter(n => !n.leido).length}
+                        </span>
+                        )}
+                    </button>
+
+                    {mostrarNotificaciones && (
+                        <div className="absolute right-0 mt-2 w-64 bg-white border shadow-lg rounded-lg z-50">
+                        {notificaciones.length > 0 ? (
+                            <ul>
+                            {notificaciones.map((n) => (
+                                <li
+                                key={n.id}
+                                className={`px-4 py-2 border-b last:border-none ${
+                                    n.leido ? "bg-gray-50" : "bg-blue-50"
+                                } hover:bg-gray-100 cursor-pointer`}
+                                onClick={() =>
+                                    setNotificaciones(prev =>
+                                    prev.map(item =>
+                                        item.id === n.id ? { ...item, leido: true } : item
+                                    )
+                                    )
+                                }
+                                >
+                                {n.mensaje}
+                                </li>
+                            ))}
+                            </ul>
+                        ) : (
+                            <p className="px-4 py-2 text-sm text-gray-500">No hay notificaciones</p>
+                        )}
+                        </div>
+                    )}
+                </div>
 
                 {isLoggedIn && userRole === 1 && (
                     <Link
