@@ -1,12 +1,11 @@
 import { Link } from "react-router-dom";
-import { Search, User, LogOut, Settings } from "lucide-react";
+import { Search, User, LogOut, Settings, Inbox } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/AuthContext";
 
 
 const Header = () => {
     const { isLoggedIn, logout, userRole } = useAuth();
-    cconsole.log("userRole en Header:", userRole, typeof userRole);
 
     const [query, setQuery] = useState("");
     const [resultados, setResultados] = useState({
@@ -15,6 +14,8 @@ const Header = () => {
         proyectos: [],
     });
     const [isSearching, setIsSearching] = useState(false);
+    const [notificaciones, setNotificaciones] = useState([]);
+    const [mostrarNotificaciones, setMostrarNotificaciones] = useState(false);
 
     const filtrarEventos = (eventos) =>
         eventos.filter((evento) =>
@@ -46,13 +47,7 @@ const Header = () => {
         }
     ));
 
-    const [notificaciones, setNotificaciones] = useState([
-        { id: 1, mensaje: "Nuevo artículo publicado", leido: false },
-        { id: 2, mensaje: "Evento científico próximo", leido: false },
-    ]);
-    const [mostrarNotificaciones, setMostrarNotificaciones] = useState(false);
       
-
     useEffect(() => {
         const fetchDatos = async () => {
             if (query.trim() === "") {
@@ -89,6 +84,32 @@ const Header = () => {
         
         fetchDatos();
     }, [query]);
+
+    useEffect(() => {
+        const fetchNotificaciones = async () => {
+            if (!isLoggedIn) return;
+
+            try {
+                const res = await fetch("https://tfg-sociedad-cientifica-production.up.railway.app/listado-notificacion-usuario-sin-leer", {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                });
+
+                if (!res.ok) { 
+                    throw new Error("Error al obtener notificaciones");
+                }
+
+                const data = await res.json();
+                setNotificaciones(data); // data = array de notificaciones
+            } catch (error) {
+                console.error("Error al cargar notificaciones:", error);
+                setNotificaciones([]);
+            }
+        };
+
+        fetchNotificaciones();
+    }, [isLoggedIn]);
 
     const handleLogout = () => {
         logout();
@@ -208,7 +229,7 @@ const Header = () => {
                         className="p-2 rounded-full shadow text-black hover:text-yellow-600 transition relative"
                         title="Notificaciones"
                     >
-                        <Bell className="w-5 h-5" />
+                        <Inbox className="w-5 h-5" />
                         {notificaciones.some(n => !n.leido) && (
                         <span className="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full px-1">
                             {notificaciones.filter(n => !n.leido).length}
@@ -273,7 +294,7 @@ const Header = () => {
                     </Link>
                 )}
 
-                {Number(userRole) !== 1 && (
+                {userRole !== 1 && (
                     <Link
                         to="/contacto"
                         className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-full shadow"

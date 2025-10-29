@@ -1714,11 +1714,32 @@ router.post('/notificacion-contacto', verificarToken, async (req, res) => {
     }
 });
 
+// GET listado notificaciones sin leer por usuario
+router.get('/listado-notificacion-usuario-sin-leer', verificarToken, async (req, res) => {
+    try {
+        const queryNotificacionesUsuario = `SELECT * FROM Notificaciones 
+                                            WHERE socio = $1 AND estado_lectura = FALSE 
+                                            ORDER BY fecha DESC;`;
+        const resultNotificionesUsuario = await pool.query(queryNotificacionesUsuario, [req.usuario.id])
+
+        res.status(200).json({
+            message: 'Listado de notificaciones del usuario.',
+            notificaciones: {
+                listadoNotificaciones: resultNotificionesUsuario.rows
+            }
+        });
+    }
+    catch (error) {
+        console.error("Error al listar notificaciones por usuario: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
 // GET listado notificaciones por usuario
 router.get('/listado-notificacion-usuario', verificarToken, async (req, res) => {
     try {
         const queryNotificacionesUsuario = `SELECT * FROM Notificaciones 
-                                            WHERE socio = $1 AND leida = FALSE 
+                                            WHERE socio = $1 
                                             ORDER BY fecha DESC;`;
         const resultNotificionesUsuario = await pool.query(queryNotificacionesUsuario, [req.usuario.id])
 
