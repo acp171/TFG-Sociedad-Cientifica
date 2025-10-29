@@ -1719,7 +1719,7 @@ router.get('/listado-notificacion-usuario-sin-leer', verificarToken, async (req,
     try {
         const queryNotificacionesUsuario = `SELECT * FROM Notificaciones 
                                             WHERE socio = $1 AND estado_lectura = FALSE 
-                                            ORDER BY fecha DESC;`;
+                                            ORDER BY fecha_envio DESC;`;
         const resultNotificionesUsuario = await pool.query(queryNotificacionesUsuario, [req.usuario.id])
 
         res.status(200).json({
@@ -1740,7 +1740,7 @@ router.get('/listado-notificacion-usuario', verificarToken, async (req, res) => 
     try {
         const queryNotificacionesUsuario = `SELECT * FROM Notificaciones 
                                             WHERE socio = $1 
-                                            ORDER BY fecha DESC;`;
+                                            ORDER BY fecha_envio DESC;`;
         const resultNotificionesUsuario = await pool.query(queryNotificacionesUsuario, [req.usuario.id])
 
         res.status(200).json({

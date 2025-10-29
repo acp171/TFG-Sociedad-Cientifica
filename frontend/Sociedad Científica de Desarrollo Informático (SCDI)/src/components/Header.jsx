@@ -101,7 +101,7 @@ const Header = () => {
                 }
 
                 const data = await res.json();
-                setNotificaciones(data); // data = array de notificaciones
+                setNotificaciones(data);
             } catch (error) {
                 console.error("Error al cargar notificaciones:", error);
                 setNotificaciones([]);
