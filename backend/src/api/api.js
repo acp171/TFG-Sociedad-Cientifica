@@ -1781,8 +1781,8 @@ router.get('/listado-notificaciones', verificarToken, async (req, res) => {
     }
 });
 
-// PUT marcar una notificación como leída
-router.put('/notificaciones/:id/leida', async (req, res) => {
+// PATCH marcar una notificación como leída
+router.patch('/notificaciones/:id/leida', async (req, res) => {
     const idNotificacion = req.params.id;
   
     try {

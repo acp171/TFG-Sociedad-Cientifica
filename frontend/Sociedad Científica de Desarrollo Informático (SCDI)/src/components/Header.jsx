@@ -16,6 +16,7 @@ const Header = () => {
     const [isSearching, setIsSearching] = useState(false);
     const [notificaciones, setNotificaciones] = useState([]);
     const [mostrarNotificaciones, setMostrarNotificaciones] = useState(false);
+    const [notificacionSeleccionada, setNotificacionSeleccionada] = useState(null);
 
     const filtrarEventos = (eventos) =>
         eventos.filter((evento) =>
@@ -47,6 +48,35 @@ const Header = () => {
         }
     ));
 
+    const abrirNotificacion = (n) => {
+        marcarComoLeidaNotificacion(n.id_notificacion);
+        setNotificacionSeleccionada(n);
+        setMostrarNotificaciones(false);
+    };
+
+    const marcarComoLeidaNotificacion = async (id) => {
+        try {
+            const res = await fetch(
+                `https://tfg-sociedad-cientifica-production.up.railway.app/notificaciones/${id}/leida`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                }
+            );
+            if (!res.ok) {
+                throw new Error("Error al marcar como leída");
+            }
+            
+            setNotificaciones(prev =>
+                prev.filter(n => n.id_notificacion !== id)
+            );
+        }
+        catch (error) {
+            console.error(error);
+        }
+    };
       
     useEffect(() => {
         const fetchDatos = async () => {
@@ -101,7 +131,7 @@ const Header = () => {
                 }
 
                 const data = await res.json();
-                setNotificaciones(data);
+                setNotificaciones(data.notificaciones.listadoNotificaciones || []);
             } catch (error) {
                 console.error("Error al cargar notificaciones:", error);
                 setNotificaciones([]);
@@ -226,42 +256,36 @@ const Header = () => {
                 <div className="relative">
                     <button
                         onClick={() => setMostrarNotificaciones(!mostrarNotificaciones)}
-                        className="p-2 rounded-full shadow text-black hover:text-yellow-600 transition relative"
+                        className="p-2 rounded-full shadow text-black hover:text-blue-600 transition relative"
                         title="Notificaciones"
                     >
                         <Inbox className="w-5 h-5" />
-                        {notificaciones.some(n => !n.leido) && (
-                        <span className="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full px-1">
-                            {notificaciones.filter(n => !n.leido).length}
+                        {notificaciones.length > 0 && (
+                        <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1">
+                            {notificaciones.length}
                         </span>
                         )}
                     </button>
 
                     {mostrarNotificaciones && (
-                        <div className="absolute right-0 mt-2 w-64 bg-white border shadow-lg rounded-lg z-50">
-                        {notificaciones.length > 0 ? (
-                            <ul>
-                            {notificaciones.map((n) => (
-                                <li
-                                key={n.id}
-                                className={`px-4 py-2 border-b last:border-none ${
-                                    n.leido ? "bg-gray-50" : "bg-blue-50"
-                                } hover:bg-gray-100 cursor-pointer`}
-                                onClick={() =>
-                                    setNotificaciones(prev =>
-                                    prev.map(item =>
-                                        item.id === n.id ? { ...item, leido: true } : item
-                                    )
-                                    )
-                                }
-                                >
-                                {n.mensaje}
-                                </li>
-                            ))}
-                            </ul>
-                        ) : (
-                            <p className="px-4 py-2 text-sm text-gray-500">No hay notificaciones</p>
-                        )}
+                        <div className="absolute right-0 mt-2 w-72 bg-white border shadow-lg rounded-lg z-50 max-h-80 overflow-auto">
+                            {notificaciones.length > 0 ? (
+                                <ul>
+                                    {notificaciones.map((n) => (
+                                        <li
+                                            key={n.id_notificacion}
+                                            className="px-4 py-2 border-b last:border-none hover:bg-gray-100 cursor-pointer"
+                                            onClick={() => abrirNotificacion(n)}
+                                        >
+                                            <p className="font-semibold">{n.titulo}</p>
+                                            <p className="text-sm text-gray-600">{n.mensaje.substring(0, 50)}...</p>
+                                        </li>
+                                    ))}
+                                </ul>
+
+                            ) : (
+                                <p className="px-4 py-2 text-sm text-gray-500">No hay notificaciones</p>
+                            )}
                         </div>
                     )}
                 </div>
@@ -303,6 +327,24 @@ const Header = () => {
                     </Link>
                 )}
             </div>
+
+            {notificacionSeleccionada && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
+                        <h2 className="text-xl font-bold mb-2">{notificacionSeleccionada.titulo}</h2>
+                        <p className="text-gray-700">{notificacionSeleccionada.mensaje}</p>
+
+                        <div className="mt-4 text-right">
+                            <button
+                                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                onClick={() => setNotificacionSeleccionada(null)}
+                            >
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </header>
     );
 };
