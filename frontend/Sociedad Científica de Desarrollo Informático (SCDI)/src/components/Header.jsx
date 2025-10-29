@@ -281,21 +281,32 @@ const Header = () => {
                         {mostrarNotificaciones && (
                             <div className="absolute right-0 mt-2 w-72 bg-white border shadow-lg rounded-lg z-50 max-h-80 overflow-auto">
                                 {notificaciones.length > 0 ? (
-                                    <ul>
-                                        {notificaciones.map((n) => (
-                                            <li
-                                                key={n.id_notificacion}
-                                                className="px-4 py-2 border-b last:border-none hover:bg-gray-100 cursor-pointer"
-                                                onClick={() => abrirNotificacion(n)}
-                                            >
-                                                <p className="font-semibold">{n.titulo}</p>
-                                                <p className="text-sm text-gray-600">{n.mensaje.substring(0, 50)}...</p>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    <>
+                                        <ul>
+                                            {notificaciones.map((n) => (
+                                                <li
+                                                    key={n.id_notificacion}
+                                                    className="px-4 py-2 border-b last:border-none hover:bg-gray-100 cursor-pointer"
+                                                    onClick={() => abrirNotificacion(n)}
+                                                >
+                                                    <p className="font-semibold">{n.titulo}</p>
+                                                    <p className="text-sm text-gray-600">{n.mensaje.substring(0, 50)}...</p>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </>
                                 ) : (
                                     <p className="px-4 py-2 text-sm text-gray-500">No hay notificaciones</p>
                                 )}
+                                <div className="border-t px-4 py-2 text-center">
+                                    <Link
+                                        to="/notificaciones"
+                                        className="text-blue-600 hover:underline text-sm font-medium"
+                                        onClick={() => setMostrarNotificaciones(false)}
+                                    >
+                                        Mostrar todas las notificaciones
+                                    </Link>
+                                </div>
                             </div>
                         )}
                     </div>
