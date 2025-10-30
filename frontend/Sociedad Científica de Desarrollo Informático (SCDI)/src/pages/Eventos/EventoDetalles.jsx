@@ -314,7 +314,7 @@ const EventoDetalles = () => {
                     )
                 ) : (
                     <p className="mt-4 text-red-600 font-medium">
-                        Plazo de inscripción expridao
+                        Plazo de inscripción expirado
                     </p>
                 )}
             </article>

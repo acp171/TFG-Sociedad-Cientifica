@@ -23,7 +23,7 @@ const transporter = nodemailer.createTransport({
     tls: {
         rejectUnauthorized: false
     },
-    connectionTimeout: 10000
+    connectionTimeout: 20000
 });
 
 // UTIL: hash token con SHA256
