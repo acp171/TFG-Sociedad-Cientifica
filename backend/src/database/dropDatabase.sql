@@ -16,5 +16,6 @@ DROP TABLE IF EXISTS
     Direccion,
     Socio,
     Tipo_Socio,
-    Socio_Rol
+    Socio_Rol,
+    PasswordResetTokens
 CASCADE;

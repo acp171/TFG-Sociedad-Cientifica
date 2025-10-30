@@ -196,7 +196,6 @@ CREATE TABLE IF NOT EXISTS PasswordResetTokens (
     CONSTRAINT fk_reset_usuario FOREIGN KEY (socio) REFERENCES Socio(id_socio) ON DELETE CASCADE
 );
 
-
 -- Insertar valores en la tabla Socio_Rol
 INSERT INTO Socio_Rol (nombre) 
 VALUES 
