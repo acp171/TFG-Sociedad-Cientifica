@@ -1,22 +1,11 @@
-import { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Lock } from "lucide-react";
 
 export default function ResetPassword() {
-    const [searchParams] = useSearchParams();
-    const token = searchParams.get('token');
-    const navigate = useNavigate();
-
-    const [password, setPassword] = useState('');
-    const [confirm, setConfirm] = useState('');
+    const [password, setPassword] = useState("");
+    const [confirm, setConfirm] = useState("");
     const [status, setStatus] = useState(null);
-    const [msg, setMsg] = useState('');
-
-    useEffect(() => {
-        if (!token) {
-            setStatus('error');
-            setMsg('Token no proporcionado');
-        }
-    }, [token]);
+    const [msg, setMsg] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -50,19 +39,67 @@ export default function ResetPassword() {
     };
 
     return (
-        <div className="max-w-md mx-auto p-6">
-            <h1 className="text-2xl font-bold mb-4">Restablecer contraseña</h1>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <input type="password" required value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Nueva contraseña" className="w-full border px-3 py-2 rounded" />
-                <input type="password" required value={confirm} onChange={(e)=>setConfirm(e.target.value)} placeholder="Confirmar contraseña" className="w-full border px-3 py-2 rounded" />
-                <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Cambiar contraseña</button>
-            </form>
-
-            {status && (
-                <div className={`mt-4 p-3 rounded ${status === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
-                    {msg}
+        <div className="min-h-[80vh] flex items-center justify-center bg-gradient-to-b from-blue-200 to-white">
+            <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+                <div className="text-center mb-6">
+                    <div className="mx-auto bg-blue-100 w-16 h-16 flex items-center justify-center rounded-full mb-4">
+                        <Lock className="w-8 h-8 text-blue-600" />
+                    </div>
+                    <h1 className="text-2xl font-bold text-gray-800 mb-2">Restablecer contraseña</h1>
+                    <p className="text-gray-600">Introduce tu nueva contraseña y confírmala para actualizarla.</p>
                 </div>
-            )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Nueva contraseña</label>
+                        <input
+                            type="password"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="********"
+                            className="w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-4 py-2 rounded-lg transition"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Confirmar contraseña</label>
+                        <input
+                            type="password"
+                            required
+                            value={confirm}
+                            onChange={(e) => setConfirm(e.target.value)}
+                            placeholder="********"
+                            className="w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-4 py-2 rounded-lg transition"
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg font-semibold transition-all duration-200 shadow-md"
+                    >
+                        Cambiar contraseña
+                    </button>
+                </form>
+
+                {status && (
+                    <div
+                        className={`mt-6 p-3 rounded-lg text-sm font-medium ${
+                            status === "success"
+                                ? "bg-green-50 text-green-800 border border-green-200"
+                                : "bg-red-50 text-red-800 border border-red-200"
+                        }`}
+                    >
+                        {msg}
+                    </div>
+                )}
+
+                <div className="mt-6 text-center">
+                    <a href="/login" className="text-blue-600 hover:text-blue-700 font-medium text-sm">
+                        ← Volver a iniciar sesión
+                    </a>
+                </div>
+            </div>
         </div>
     );
 }

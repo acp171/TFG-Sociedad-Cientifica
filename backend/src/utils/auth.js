@@ -57,7 +57,7 @@ router.post('/forgot-password', async (req, res) => {
         );
 
         // Construir URL
-        const resetUrl = `https://scdi.vercel.app/reset-password?token=${token}`;
+        const resetUrl = `https://scdi.vercel.app/restablecer-contrasena?token=${token}`;
         console.log(resetUrl);
 
         // Enviar email
