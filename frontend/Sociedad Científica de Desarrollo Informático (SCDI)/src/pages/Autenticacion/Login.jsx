@@ -70,13 +70,23 @@ const Login = () => {
                         className="w-full mb-4 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
 
-                    <Link
-                        to="/register/seleccionar-plan"
-                        title="Registrate"
-                        className="w-full mb-10 text-blue-600 hover:text-blue-700"
-                    >
-                        ¿Aún no tienes una cuenta?
-                    </Link>
+                    <div className="flex flex-col items-center mb-6 space-y-2">
+                        <Link
+                            to="/register/seleccionar-plan"
+                            title="Registrate"
+                            className="text-blue-600 hover:text-blue-700 text-sm"
+                        >
+                            ¿Aún no tienes una cuenta?
+                        </Link>
+
+                        <Link
+                            to="/recuperar-contrasena"
+                            title="Recuperar contraseña"
+                            className="text-blue-600 hover:text-blue-700 text-sm"
+                        >
+                            ¿Olvidó su contraseña?
+                        </Link>
+                    </div>
 
                     {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
 

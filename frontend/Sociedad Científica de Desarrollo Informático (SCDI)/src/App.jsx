@@ -22,6 +22,8 @@ import AvisoLegal from './pages/Aviso-Legal';
 import PanelAdmin from './pages/Administrador/PanelAdmin';
 import Contacto from './pages/Contacto';
 import Notificaciones from './pages/Notificaciones';
+import ForgotPassword from './pages/Autenticacion/ForgotPassword';
+import ResetPassword from './pages/Autenticacion/ResetPassword';
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
           <Route path="/unete" element={<Unete />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/recuperar-contrasena" element={<ForgotPassword />} />
+          <Route path="/restablecer-contrasena" element={<ResetPassword />} />
           <Route path="/register/seleccionar-plan" element={<SeleccionarPlan />} />
           <Route path="/registro-exitoso" element={<RegistroExitoso />} />
           <Route path="/quienes-somos" element={<QuienesSomos />} />
