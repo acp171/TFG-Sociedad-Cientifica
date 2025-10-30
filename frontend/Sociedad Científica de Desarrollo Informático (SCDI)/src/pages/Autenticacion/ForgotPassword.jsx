@@ -3,7 +3,7 @@ import { Mail } from "lucide-react";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState('');
-    const [status, setStatus] = useState(null); // success | error | null
+    const [status, setStatus] = useState(null);
     const [msg, setMsg] = useState('');
 
     const handleSubmit = async (e) => {
@@ -12,34 +12,35 @@ export default function ForgotPassword() {
 
         try {
             const res = await fetch(
-            "https://tfg-sociedad-cientifica-production.up.railway.app/forgot-password",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email }),
-            }
+                "https://tfg-sociedad-cientifica-production.up.railway.app/forgot-password",
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email }),
+                }
             );
 
-            // Leemos el cuerpo como texto primero
             const text = await res.text();
-
             let data;
+
             try {
-            // Intentamos convertir a JSON si es posible
-            data = JSON.parse(text);
-            } catch {
-            // Si no es JSON, mostramos el texto crudo
-            console.error("Respuesta no es JSON:", text);
-            throw new Error("Error inesperado del servidor");
+                data = JSON.parse(text);
+            }
+            catch {
+                console.error("Respuesta no es JSON:", text);
+                throw new Error("Error inesperado del servidor");
             }
 
-            if (!res.ok) throw new Error(data.message || "Error");
+            if (!res.ok) {
+                throw new Error(data.message || "Error");
+            }
 
             setStatus("success");
             setMsg(
-            "Si existe una cuenta asociada, recibirás un email con instrucciones."
+                "Si existe una cuenta asociada, recibirás un email con instrucciones."
             );
-        } catch (err) {
+        }
+        catch (err) {
             setStatus("error");
             setMsg(err.message || "Error al solicitar restablecimiento");
         }
@@ -60,7 +61,6 @@ export default function ForgotPassword() {
                     </p>
                     </div>
 
-                    {/* Formulario */}
                     <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">

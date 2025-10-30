@@ -68,7 +68,7 @@ router.post('/forgot-password', async (req, res) => {
         `;
 
         await transporter.sendMail({
-            from: process.env.EMAIL_FROM,
+            from: `"Sociedad Científica" <${process.env.EMAIL_USER}>`,
             to: user.email,
             subject: 'Restablecer contraseña',
             html,
