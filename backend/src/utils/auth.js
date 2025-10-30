@@ -58,6 +58,7 @@ router.post('/forgot-password', async (req, res) => {
 
         // Construir URL
         const resetUrl = `https://scdi.vercel.app/reset-password?token=${token}`;
+        console.log(resetUrl);
 
         // Enviar email
         const html = `
@@ -96,7 +97,7 @@ router.post('/reset-password', async (req, res) => {
         const tokenHash = hashToken(token);
 
         // Busca token válido y no usado y no expirado
-        const q = `SELECT id, usuario, expires_at, usado FROM PasswordResetTokens
+        const q = `SELECT id, socio, expires_at, usado FROM PasswordResetTokens
                 WHERE token_hash = $1`;
         const r = await pool.query(q, [tokenHash]);
 
@@ -114,7 +115,7 @@ router.post('/reset-password', async (req, res) => {
         const passHash = await bcrypt.hash(password, salt);
 
         // Actualizar contraseña del usuario
-        await pool.query('UPDATE Socio SET password = $1 WHERE id_socio = $2', [passHash, tokenRow.usuario]);
+        await pool.query('UPDATE Socio SET password = $1 WHERE id_socio = $2', [passHash, tokenRow.socio]);
 
         // Marcar token como usado
         await pool.query('UPDATE PasswordResetTokens SET usado = TRUE WHERE id = $1', [tokenRow.id]);

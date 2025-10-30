@@ -59,9 +59,9 @@ export default function ForgotPassword() {
                     <p className="text-gray-600">
                         Introduce tu correo electrónico y te enviaremos un enlace para restablecerla.
                     </p>
-                    </div>
+                </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                         Correo electrónico
@@ -82,9 +82,9 @@ export default function ForgotPassword() {
                     >
                         Enviar enlace de recuperación
                     </button>
-                    </form>
+                </form>
 
-                    {status && (
+                {status && (
                     <div
                         className={`mt-6 p-3 rounded-lg text-sm font-medium ${
                         status === "success"
@@ -94,16 +94,16 @@ export default function ForgotPassword() {
                     >
                         {msg}
                     </div>
-                    )}
+                )}
 
-                    <div className="mt-6 text-center">
+                <div className="mt-6 text-center">
                     <a
                         href="/login"
                         className="text-blue-600 hover:text-blue-700 font-medium text-sm"
                     >
                         ← Volver a iniciar sesión
                     </a>
-                    </div>
+                </div>
             </div>
         </div>
     );

@@ -51,18 +51,18 @@ export default function ResetPassword() {
 
     return (
         <div className="max-w-md mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-4">Restablecer contraseña</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <input type="password" required value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Nueva contraseña" className="w-full border px-3 py-2 rounded" />
-            <input type="password" required value={confirm} onChange={(e)=>setConfirm(e.target.value)} placeholder="Confirmar contraseña" className="w-full border px-3 py-2 rounded" />
-            <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Cambiar contraseña</button>
-        </form>
+            <h1 className="text-2xl font-bold mb-4">Restablecer contraseña</h1>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <input type="password" required value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Nueva contraseña" className="w-full border px-3 py-2 rounded" />
+                <input type="password" required value={confirm} onChange={(e)=>setConfirm(e.target.value)} placeholder="Confirmar contraseña" className="w-full border px-3 py-2 rounded" />
+                <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Cambiar contraseña</button>
+            </form>
 
-        {status && (
-            <div className={`mt-4 p-3 rounded ${status === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
-                {msg}
-            </div>
-        )}
+            {status && (
+                <div className={`mt-4 p-3 rounded ${status === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
+                    {msg}
+                </div>
+            )}
         </div>
     );
 }
