@@ -12,7 +12,7 @@ export default function ForgotPassword() {
 
         try {
             const res = await fetch(
-                "https://tfg-sociedad-cientifica-production.up.railway.app/forgot-password",
+                "https://tfg-sociedad-cientifica-production.up.railway.app/auth/forgot-password",
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
