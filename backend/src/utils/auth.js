@@ -51,7 +51,7 @@ router.post('/forgot-password', async (req, res) => {
 
         // Guardar token hashed
         await pool.query(
-            `INSERT INTO PasswordResetTokens (usuario, token_hash, expires_at, usado)
+            `INSERT INTO PasswordResetTokens (socio, token_hash, expires_at, usado)
             VALUES ($1, $2, $3, FALSE)`,
             [user.id_socio, tokenHash, expiresAt]
         );
