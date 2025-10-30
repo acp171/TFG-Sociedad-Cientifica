@@ -1,21 +1,8 @@
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail')
 const pool = require('../database');
 const { obtenerSocio, obtenerSocios } = require('./socioUtils');
 
-// Configuración
-const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    secure: false,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    },
-    tls: {
-        rejectUnauthorized: false
-    },
-    connectionTimeout: 20000
-});
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 async function crearNotificacion(socioId, titulo, mensaje) {
     const values = [
@@ -71,16 +58,21 @@ async function crearNotificacionEvento(titulo, mensaje) {
 }
 
 async function enviarEmail(destinatario, asunto, mensaje) {
-    try {
-        await transporter.sendMail({
-            from: `"Sociedad Científica" <${process.env.EMAIL_USER}>`,
-            to: destinatario,
-            subject: asunto,
-            html: `<p>${mensaje}</p>`
-        });
-    } catch (error) {
-        console.error('Error al enviar email:', error.message);
+    const msg = {
+        to: destinatario,
+        from: `"Sociedad Científica" <${process.env.EMAIL_USER}>`,
+        subject: asunto,
+        html: `<p>${mensaje}</p>`
     }
+    
+    sgMail
+    .send(msg)
+    .then(() => {
+        console.log('Email sent')
+    })
+    .catch((error) => {
+        console.error(error)
+    })
 }
 
 module.exports = {

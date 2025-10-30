@@ -11,10 +11,7 @@ const RATE_LIMITER = new RateLimiterMemory({
     duration: 60 * 60, // 5 intentos por hora
 });
 
-
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-//sgMail.setDataResidency('eu'); 
-// uncomment the above line if you are sending mail using a regional EU subuser
 
 // UTIL: hash token con SHA256
 function hashToken(token) {
@@ -64,7 +61,7 @@ router.post('/forgot-password', async (req, res) => {
 
         const msg = {
             to: user.email,
-            from: `"Sociedad Científica" <${process.env.EMAIL_USER}>`, // Change to your verified sender
+            from: `"Sociedad Científica" <${process.env.EMAIL_USER}>`,
             subject: 'Restablecer contraseña',
             html
         }
