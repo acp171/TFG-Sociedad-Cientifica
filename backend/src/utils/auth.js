@@ -13,7 +13,7 @@ const RATE_LIMITER = new RateLimiterMemory({
 
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-sgMail.setDataResidency('eu'); 
+//sgMail.setDataResidency('eu'); 
 // uncomment the above line if you are sending mail using a regional EU subuser
 
 // UTIL: hash token con SHA256
