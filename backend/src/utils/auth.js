@@ -3,7 +3,7 @@ const router = express.Router();
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const pool = require('../database');
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail')
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 
 const RATE_LIMITER = new RateLimiterMemory({
@@ -11,20 +11,10 @@ const RATE_LIMITER = new RateLimiterMemory({
     duration: 60 * 60, // 5 intentos por hora
 });
 
-// transport nodemailer
-const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    secure: false,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    },
-    tls: {
-        rejectUnauthorized: false
-    },
-    connectionTimeout: 20000
-});
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+sgMail.setDataResidency('eu'); 
+// uncomment the above line if you are sending mail using a regional EU subuser
 
 // UTIL: hash token con SHA256
 function hashToken(token) {
@@ -72,12 +62,21 @@ router.post('/forgot-password', async (req, res) => {
             <p>Si no pediste esto, ignora este correo. El enlace expirará en 1 hora.</p>
         `;
 
-        await transporter.sendMail({
-            from: `"Sociedad Científica" <${process.env.EMAIL_USER}>`,
+        const msg = {
             to: user.email,
+            from: `"Sociedad Científica" <${process.env.EMAIL_USER}>`, // Change to your verified sender
             subject: 'Restablecer contraseña',
-            html,
-        });
+            html
+        }
+        
+        sgMail
+        .send(msg)
+        .then(() => {
+            console.log('Email sent')
+        })
+        .catch((error) => {
+            console.error(error)
+        })
 
         return res.status(200).json({ message: 'Si existe una cuenta con ese correo, recibirás instrucciones.' });
     }
