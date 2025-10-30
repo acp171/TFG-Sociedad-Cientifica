@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
-const pool = require('../db'); // tu pool pg
+const pool = require('../database');
 const nodemailer = require('nodemailer');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 
