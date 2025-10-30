@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS Socio (
 -- DIRECCION TABLE --
 CREATE TABLE IF NOT EXISTS Direccion (
     id_direccion SERIAL PRIMARY KEY,
-    calle VARCHAR(100) NOT NULL,
+    calle VARCHAR(1000) NOT NULL,
     ciudad VARCHAR(50) NOT NULL,
     codigo_postal VARCHAR(10) NOT NULL,
     provincia VARCHAR(50) NOT NULL,

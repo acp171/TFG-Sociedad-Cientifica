@@ -71,7 +71,7 @@ const Login = () => {
                     />
 
                     <Link
-                        to="/register"
+                        to="/register/seleccionar-plan"
                         title="Registrate"
                         className="w-full mb-10 text-blue-600 hover:text-blue-700"
                     >

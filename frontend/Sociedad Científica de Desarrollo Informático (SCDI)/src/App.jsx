@@ -21,6 +21,7 @@ import EventoExito from './pages/Eventos/EventoExito';
 import AvisoLegal from './pages/Aviso-Legal';
 import PanelAdmin from './pages/Administrador/PanelAdmin';
 import Contacto from './pages/Contacto';
+import Notificaciones from './pages/Notificaciones';
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
           <Route path="/politica-privacidad" element={<AvisoLegal />} />
           <Route path="/panel-administrador" element={<PanelAdmin />} />
           <Route path="/contacto" element={<Contacto />} />
+          <Route path="/notificaciones" element={<Notificaciones />} />
         </Routes>
       </main>
 
