@@ -29,6 +29,7 @@ app.use(cors({
 app.use('/webhook', require('./api/webhook'));
 app.use(express.json());
 app.use('/', require('./api/api'));
+app.use('/auth/', require('./utils/auth'));
 
 
 // Static files

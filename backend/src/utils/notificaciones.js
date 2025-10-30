@@ -6,7 +6,7 @@ const { obtenerSocio, obtenerSocios } = require('./socioUtils');
 const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
-    secure: false, // true si usas 465, false para 587
+    secure: false,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
