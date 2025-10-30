@@ -13,16 +13,16 @@ const RATE_LIMITER = new RateLimiterMemory({
 
 // transport nodemailer
 const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
     secure: false,
     auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-    },
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
 });
 
-// UTIL: hash token con SHA256 (guardamos solo hash)
+// UTIL: hash token con SHA256
 function hashToken(token) {
     return crypto.createHash('sha256').update(token).digest('hex');
 }
@@ -44,7 +44,7 @@ router.post('/forgot-password', async (req, res) => {
         }
 
         const user = userRes.rows[0];
-        // Generar token seguro (no guardar token en claro)
+        // Generar token seguro
         const token = crypto.randomBytes(32).toString('hex'); // 64 chars
         const tokenHash = hashToken(token);
         const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // 1 hora expiración
