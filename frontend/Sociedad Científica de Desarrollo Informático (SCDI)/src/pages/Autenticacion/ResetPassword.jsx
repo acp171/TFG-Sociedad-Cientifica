@@ -1,11 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { Lock } from "lucide-react";
 
 export default function ResetPassword() {
+    const [searchParams] = useSearchParams();
+    const token = searchParams.get('token');
+    const navigate = useNavigate();
+
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
     const [status, setStatus] = useState(null);
     const [msg, setMsg] = useState("");
+
+    useEffect(() => {
+        if (!token) {
+            setStatus('error');
+            setMsg('Token no proporcionado');
+        }
+    }, [token]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
