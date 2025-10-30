@@ -35,7 +35,7 @@ router.post('/forgot-password', async (req, res) => {
     try {
         await RATE_LIMITER.consume(ip);
 
-        // Busca usuario por email (ajusta campo si usas otro)
+        // Busca usuario por email
         const userRes = await pool.query('SELECT id_socio, email FROM Socio WHERE email = $1', [email]);
         
         if (userRes.rowCount === 0) {
@@ -56,10 +56,10 @@ router.post('/forgot-password', async (req, res) => {
             [user.id_socio, tokenHash, expiresAt]
         );
 
-        // Construir URL (ajusta FRONTEND_URL en env)
-        const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+        // Construir URL
+        const resetUrl = `https://scdi.vercel.app/reset-password?token=${token}`;
 
-        // Enviar email (plantilla simple)
+        // Enviar email
         const html = `
             <p>Hola,</p>
             <p>Solicitaste restablecer tu contraseña. Haz clic en el enlace para continuar:</p>
@@ -106,7 +106,7 @@ router.post('/reset-password', async (req, res) => {
         if (tokenRow.usado) return res.status(400).json({ message: 'Token ya usado' });
         if (new Date(tokenRow.expires_at) < new Date()) return res.status(400).json({ message: 'Token expirado' });
 
-        // Validaciones de contraseña (mínimo, complejidad...)
+        // Validaciones de contraseña
         if (password.length < 8) return res.status(400).json({ message: 'La contraseña debe tener al menos 8 caracteres' });
 
         // Hashear nueva contraseña
