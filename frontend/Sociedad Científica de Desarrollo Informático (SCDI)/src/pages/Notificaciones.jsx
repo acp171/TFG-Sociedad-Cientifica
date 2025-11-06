@@ -82,7 +82,7 @@ const Notificaciones = () => {
     }
 
     return (
-        <div className="max-w-4xl mx-auto p-6">
+        <div className="max-w-4xl mx-auto p-6 bg-gradient-to-b from-blue-200 to-white">
             <h1 className="text-3xl font-bold mb-6 text-gray-800 flex items-center gap-2">
                 📬 Tus notificaciones
             </h1>

@@ -40,7 +40,7 @@ const PanelAdmin = () => {
     };
 
     return (
-        <div className="min-h-screen flex bg-gray-100">
+        <div className="min-h-screen flex bg-gray-150">
             <aside className="w-80 bg-white shadow-md p-6 space-y-4">
                 <h2 className="text-xl font-bold mb-8 text-indigo-700">PANEL ADMINISTRADOR</h2>
                 {tabs.map((tab) => (
