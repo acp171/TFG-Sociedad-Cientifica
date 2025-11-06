@@ -40,6 +40,23 @@ const Notificaciones = () => {
         if (isLoggedIn) fetchNotificaciones();
     }, [isLoggedIn]);
 
+    useEffect(() => {
+        document.body.classList.add(
+            "bg-gradient-to-b",
+            "from-blue-200",
+            "to-white"
+        );
+
+        return () => {
+            document.body.classList.remove(
+                "bg-gradient-to-b",
+                "from-blue-200",
+                "to-white"
+            );
+        };
+    }, []);
+
+
     const marcarComoLeidaNotificacion = async (id) => {
         try {
             await fetch(
@@ -82,7 +99,7 @@ const Notificaciones = () => {
     }
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-gradient-to-b from-blue-200 to-white">
+        <div className="max-w-4xl mx-auto p-6">
             <h1 className="text-3xl font-bold mb-6 text-gray-800 flex items-center gap-2">
                 📬 Tus notificaciones
             </h1>
