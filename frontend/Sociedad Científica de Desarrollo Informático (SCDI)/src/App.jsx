@@ -24,6 +24,7 @@ import Contacto from './pages/Contacto';
 import Notificaciones from './pages/Notificaciones';
 import ForgotPassword from './pages/Autenticacion/ForgotPassword';
 import ResetPassword from './pages/Autenticacion/ResetPassword';
+import PerfilUsuario from './pages/Autenticacion/PerfilUsuario';
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
           <Route path="/panel-administrador" element={<PanelAdmin />} />
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/notificaciones" element={<Notificaciones />} />
+          <Route path="/perfil" element={<PerfilUsuario />} />
         </Routes>
       </main>
 
