@@ -144,30 +144,38 @@ router.post('/register', async (req, res) => {
 // GET perfil
 router.get('/perfil', verificarToken, async (req, res) => {
     try {
-        const querySocio = 'SELECT nombre, apellidos, email, telefono, fecha_nacimiento, socio_rol, tipo_socio FROM SOCIO WHERE email = $1;';
+        const query = `
+            SELECT 
+                s.nombre,
+                s.apellidos,
+                s.email,
+                s.telefono,
+                s.fecha_nacimiento,
+                r.nombre AS socio_rol,
+                t.nombre_tipo AS tipo_socio
+            FROM SOCIO s
+            LEFT JOIN Socio_Rol r ON s.socio_rol = r.id_socio_rol
+            LEFT JOIN Tipo_Socio t ON s.tipo_socio = t.id_tipo_socio
+            WHERE s.email = $1;
+        `;
         const resultSocio = await pool.query(querySocio, [req.usuario.email]);
         const socio = resultSocio.rows[0];
 
-        const queryRol = 'SELECT * FROM Socio_Rol WHERE id_socio_rol = $1;';
-        const resultRol = await pool.query(queryRol, [socio.socio_rol]);
+        if (!socio) {
+            return res.status(404).json({ message: "El usuario no existe." });
+        }
 
-        const queryTipo = 'SELECT * FROM Tipo_Socio WHERE id_tipo_socio = $1;';
-        const resultTipo = await pool.query(queryTipo, [socio.tipo_socio]);
-
-        const rol = resultRol.rows[0];
-        const tipo = resultTipo.rows[0];
 
         res.status(200).json({
             message: 'Acceso a perfil.',
             socio: {
-                id: socio.id_socio,
                 nombre: socio.nombre,
                 apellidos: socio.apellidos,
                 email: socio.email,
                 telefono: socio.telefono,
                 fecha_nacimiento: socio.fecha_nacimiento,
-                socio_rol: rol.nombre,
-                tipo_socio: tipo.nombre_tipo
+                socio_rol: socio.socio_rol,
+                tipo_socio: socio.tipo_socio
             }
         });
     } catch (error) {
