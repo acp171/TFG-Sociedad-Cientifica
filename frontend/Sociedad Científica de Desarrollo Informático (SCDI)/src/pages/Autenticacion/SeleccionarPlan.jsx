@@ -31,8 +31,8 @@ const planes = [
         id_tipo_socio: 2,
         nombre_tipo: "Estudiante / Junior",
         cuota: 10,
-        icon: <FaGraduationCap className="text-4xl text-blue-600" />,
-        bg: "from-blue-100 to-blue-200",
+        icon: <FaGraduationCap className="text-4xl text-black-600" />,
+        bg: "from-blue-300 to-blue-400",
         price_stripe: "price_1RaHU2PbMwKwBYLWo0AaCRmB",
         descripcion: (
             <>
@@ -47,8 +47,8 @@ const planes = [
         id_tipo_socio: 1,
         nombre_tipo: "Socio / Titular",
         cuota: 20,
-        icon: <FaUser className="text-4xl text-indigo-600" />,
-        bg: "from-indigo-100 to-indigo-200",
+        icon: <FaUser className="text-4xl text-indigo-800" />,
+        bg: "from-indigo-200 to-indigo-300",
         price_stripe: "price_1RaGzAPbMwKwBYLWadUDiRZT",
         descripcion: baseDescripcion,
     },
@@ -109,49 +109,49 @@ const SeleccionarPlan = () => {
     };
 
     return (
-        <div className="min-h-[80vh] bg-gradient-to-br from-white to-blue-50 py-16 px-4 relative">
-        <h1 className="text-5xl font-bold text-center text-indigo-800 mb-16">Elige tu plan de membresía</h1>
+        <div className="min-h-[80vh] bg-gradient-to-b from-blue-200 to-white  py-16 px-4">
+            <h1 className="text-5xl font-bold text-center text-indigo-800 mb-16">Elige tu plan de membresía</h1>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-            {planes.slice(0, 3).map((plan) => (
-                <CardPlan
-                    key={plan.id_tipo_socio}
-                    plan={plan}
-                    onSelect={seleccionarPlan}
-                    onHover={handleHover}
-                    onLeave={handleLeave}
-                />
-            ))}
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-12 flex flex-col sm:flex-row justify-center gap-10">
-            {planes.slice(3, 5).map((plan) => (
-                <div className="w-full sm:w-1/2 lg:w-1/3" key={plan.id_tipo_socio}>
+            <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                {planes.slice(0, 3).map((plan) => (
                     <CardPlan
+                        key={plan.id_tipo_socio}
                         plan={plan}
                         onSelect={seleccionarPlan}
                         onHover={handleHover}
                         onLeave={handleLeave}
                     />
-                </div>
-            ))}
-        </div>
-
-        {hoveredPlan && (
-            <div
-                className={`fixed top-0 left-0 h-full w-80 bg-white shadow-2xl p-6 z-50 border-r-4 border-indigo-600 transform ${
-                isPanelVisible ? "slide-in-left" : "slide-out-left"
-            }`}
-            >
-                <h2 className="text-2xl font-bold text-indigo-800 mb-4">{hoveredPlan.nombre_tipo}</h2>
-                <div className="text-sm text-gray-800 leading-relaxed whitespace-pre-line">
-                    {hoveredPlan.descripcion}
-                </div>
-                <p className="text-lg font-semibold">
-                    Cuota: {hoveredPlan.cuota === 0 ? "Gratis" : `${hoveredPlan.cuota} €/mes`}
-                </p>
+                ))}
             </div>
-        )}
+
+            <div className="max-w-7xl mx-auto mt-12 flex flex-col sm:flex-row justify-center gap-10">
+                {planes.slice(3, 5).map((plan) => (
+                    <div className="w-full sm:w-1/2 lg:w-1/3" key={plan.id_tipo_socio}>
+                        <CardPlan
+                            plan={plan}
+                            onSelect={seleccionarPlan}
+                            onHover={handleHover}
+                            onLeave={handleLeave}
+                        />
+                    </div>
+                ))}
+            </div>
+
+            {hoveredPlan && (
+                <div
+                    className={`fixed top-0 left-0 h-full w-80 bg-white shadow-2xl p-6 z-50 border-r-4 border-indigo-600 transform ${
+                        isPanelVisible ? "slide-in-left" : "slide-out-left"
+                    }`}
+                >
+                    <h2 className="text-2xl font-bold text-indigo-800 mb-4">{hoveredPlan.nombre_tipo}</h2>
+                    <div className="text-sm text-gray-800 leading-relaxed whitespace-pre-line">
+                        {hoveredPlan.descripcion}
+                    </div>
+                    <p className="text-lg font-semibold">
+                        Cuota: {hoveredPlan.cuota === 0 ? "Gratis" : `${hoveredPlan.cuota} €/mes`}
+                    </p>
+                </div>
+            )}
         </div>
     );
 };
