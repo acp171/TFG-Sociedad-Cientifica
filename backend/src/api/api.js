@@ -186,70 +186,6 @@ router.get('/perfil', verificarToken, async (req, res) => {
     }
 });
 
-// GET Listado solo para administradores
-router.get('/socios/listado-socios', verificarToken, async (req, res) => {
-    const adminRol = await obtenernRol(req.usuario);
-    if (!adminRol || adminRol.nombre !== 'Administrador') {
-        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-    }
-
-    try {
-        const listaSocios = await obtenerSocios();
-        res.status(200).json({
-            message: 'Lista de proyectos de investigación.',
-            socios: {
-                listaSocios: listaSocios
-            }
-        });
-
-    }
-    catch (error) {
-        console.error("Error al intentar listar los socios: ", error.message);
-        res.status(500).json({ message: 'Error interno del servidor.' });
-    }
-});
-
-// POST Añadir usuarios solo para administradores
-router.post('/socios/crear-socios', verificarToken, async (req,res) => {            
-    const adminRol = await obtenernRol(req.usuario);
-    if (!adminRol || adminRol.nombre !== 'Administrador') {
-        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
-    }
-
-    const { nombre, apellidos, email, password, telefono, fecha_nacimiento, id_plan } = req.body;
-
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const query = `INSERT INTO Socio(nombre, apellidos, email, password, telefono, 
-                    fecha_nacimiento, fecha_alta, socio_rol, tipo_socio)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id_socio, nombre, email;`;
-
-    const values = [
-        nombre,
-        apellidos,
-        email,
-        hashedPassword,
-        telefono,
-        fecha_nacimiento,
-        new Date(),
-        8,
-        id_plan,
-    ];
-
-    try {
-        const result = await pool.query(query, values);
-        console.log("Socio insertado con ID: ", result.rows[0].id_socio);
-
-        await crearNotificacion(
-            result.rows[0].id_socio,
-            'Bienvenido a la Sociedad Científica',
-            'Gracias por registrarte. Esperamos que disfrutes tu experiencia.'
-        );
-    } catch (error) {
-        console.error("Error insertando socio: ", error.message);
-        res.status(500).json({ message: 'Error interno del servidor.' });
-    }        
-});
-
 // PATCH editar perfil
 router.patch('/perfil', verificarToken, async (req, res) => {
     const { nombre, apellidos, telefono } = req.body;
@@ -322,6 +258,70 @@ router.delete('/perfil', verificarToken, async (req, res) => {
         console.error("Error al eliminar cuenta:", error);
         res.status(500).json({ message: "Error interno del servidor." });
     }
+});
+
+// GET Listado solo para administradores
+router.get('/socios/listado-socios', verificarToken, async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
+    try {
+        const listaSocios = await obtenerSocios();
+        res.status(200).json({
+            message: 'Lista de proyectos de investigación.',
+            socios: {
+                listaSocios: listaSocios
+            }
+        });
+
+    }
+    catch (error) {
+        console.error("Error al intentar listar los socios: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// POST Añadir usuarios solo para administradores
+router.post('/socios/crear-socios', verificarToken, async (req,res) => {            
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
+    }
+
+    const { nombre, apellidos, email, password, telefono, fecha_nacimiento, id_plan } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const query = `INSERT INTO Socio(nombre, apellidos, email, password, telefono, 
+                    fecha_nacimiento, fecha_alta, socio_rol, tipo_socio)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id_socio, nombre, email;`;
+
+    const values = [
+        nombre,
+        apellidos,
+        email,
+        hashedPassword,
+        telefono,
+        fecha_nacimiento,
+        new Date(),
+        8,
+        id_plan,
+    ];
+
+    try {
+        const result = await pool.query(query, values);
+        console.log("Socio insertado con ID: ", result.rows[0].id_socio);
+
+        await crearNotificacion(
+            result.rows[0].id_socio,
+            'Bienvenido a la Sociedad Científica',
+            'Gracias por registrarte. Esperamos que disfrutes tu experiencia.'
+        );
+    } catch (error) {
+        console.error("Error insertando socio: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }        
 });
 
 // GET listado de roles
