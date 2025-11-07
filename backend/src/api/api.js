@@ -267,16 +267,29 @@ router.put('/perfil', verificarToken, async (req, res) => {
 
     try {
         const query = 'UPDATE Socio SET nombre = $1, apellidos = $2, telefono = $3 WHERE email = $4;';
-        const result = await pool.query(query, values);
+        await pool.query(query, values);
 
-        const querySocio = 'SELECT * FROM SOCIO WHERE email = $1;';
+        const querySocio = `
+            SELECT 
+                s.nombre,
+                s.apellidos,
+                s.email,
+                s.telefono,
+                s.fecha_nacimiento,
+                s.fecha_alta,
+                r.nombre AS socio_rol,
+                t.nombre_tipo AS tipo_socio
+            FROM SOCIO s
+            LEFT JOIN Socio_Rol r ON s.socio_rol = r.id_socio_rol
+            LEFT JOIN Tipo_Socio t ON s.tipo_socio = t.id_tipo_socio
+            WHERE s.email = $1;
+        `;
         const resultSocio = await pool.query(querySocio, [req.usuario.email]);
         const socio = resultSocio.rows[0];
 
         res.status(200).json({
             message: 'Perfil actualizado.',
             socio: {
-                id: socio.id_socio,
                 nombre: socio.nombre,
                 apellidos: socio.apellidos,
                 email: socio.email,
@@ -286,7 +299,8 @@ router.put('/perfil', verificarToken, async (req, res) => {
                 tipo_socio: socio.tipo_socio
             }
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Error al actualizar perfil: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
