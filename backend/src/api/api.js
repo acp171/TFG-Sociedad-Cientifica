@@ -174,6 +174,7 @@ router.get('/perfil', verificarToken, async (req, res) => {
                 email: socio.email,
                 telefono: socio.telefono,
                 fecha_nacimiento: socio.fecha_nacimiento,
+                fecha_registro: socio.fecha_alta,
                 socio_rol: socio.socio_rol,
                 tipo_socio: socio.tipo_socio
             }
@@ -295,6 +296,7 @@ router.put('/perfil', verificarToken, async (req, res) => {
                 email: socio.email,
                 telefono: socio.telefono,
                 fecha_nacimiento: socio.fecha_nacimiento,
+                fecha_registro: socio.fecha_alta,
                 socio_rol: socio.socio_rol,
                 tipo_socio: socio.tipo_socio
             }
