@@ -1874,7 +1874,7 @@ router.post('/pagar-suscripcion', async (req, res) => {
 });
 
 // GET listado de inscripciones a eventos
-router.get('/incripciones/listado-incripciones-usuario', async (req, res) => {
+router.get('/incripciones/listado-incripciones-usuario', verificarToken, async (req, res) => {
     try {
         const query = `
             SELECT 
