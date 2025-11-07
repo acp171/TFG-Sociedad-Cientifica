@@ -144,7 +144,7 @@ router.post('/register', async (req, res) => {
 // GET perfil
 router.get('/perfil', verificarToken, async (req, res) => {
     try {
-        const query = `
+        const querySocio = `
             SELECT 
                 s.nombre,
                 s.apellidos,
@@ -165,7 +165,6 @@ router.get('/perfil', verificarToken, async (req, res) => {
             return res.status(404).json({ message: "El usuario no existe." });
         }
 
-
         res.status(200).json({
             message: 'Acceso a perfil.',
             socio: {
@@ -178,7 +177,8 @@ router.get('/perfil', verificarToken, async (req, res) => {
                 tipo_socio: socio.tipo_socio
             }
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Error al entrar al perfil: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }

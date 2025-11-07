@@ -15,11 +15,14 @@ const PerfilUsuario = () => {
                     }
                 );
 
-                if (!res.ok) throw new Error("No se pudo cargar el perfil");
+                if (!res.ok) {
+                    throw new Error("No se pudo cargar el perfil");
+                }
 
                 const data = await res.json();
                 setUsuario(data.usuario);
-            } catch (error) {
+            }
+            catch (error) {
                 console.error(error);
             }
         };
@@ -54,7 +57,7 @@ const PerfilUsuario = () => {
                 <div>
                     <h2 className="text-lg font-semibold text-gray-700">Fecha de registro</h2>
                     <p className="text-gray-900">
-                        {new Date(usuario.fecha_registro).toLocaleDateString()}
+                        {new Date(usuario.fecha_nacimiento).toLocaleDateString()}
                     </p>
                 </div>
             </div>
