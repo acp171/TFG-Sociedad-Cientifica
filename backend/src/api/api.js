@@ -1205,6 +1205,35 @@ router.post('/eventos-cientificos/:id/inscribirse', verificarToken, async (req, 
     }
 });
 
+// GET listado de inscripciones a eventos
+router.get('/incripciones/listado-incripciones-usuario', verificarToken, async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                e.id_evento,
+                e.nombre_evento,
+                e.fecha_evento_inicio,
+                e.fecha_evento_fin,
+                e.descripcion_evento,
+                i.estado_inscripcion
+            FROM Inscripciones i
+            INNER JOIN Evento e ON i.evento = e.id_evento
+            WHERE i.socio = $1;
+        `;
+
+        const result = await pool.query(query, [req.usuario.id]);
+
+        res.status(200).json({
+            inscripciones: result.rows
+        });
+
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al obtener inscripciones" });
+    }
+});
+
 // DELETE Borrar inscripción
 router.delete('/eventos-cientificos/:id/cancelar-inscripcion', verificarToken, async (req, res) => {
     const id_evento = req.params.id;
@@ -1871,62 +1900,6 @@ router.post('/pagar-suscripcion', async (req, res) => {
         console.error("Error al pagar suscripcion: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }  
-});
-
-// GET listado de inscripciones a eventos
-router.get('/incripciones/listado-incripciones-usuario', verificarToken, async (req, res) => {
-    try {
-        const query = `
-            SELECT 
-                e.id_evento,
-                e.nombre_evento,
-                e.fecha_evento_inicio,
-                e.fecha_evento_fin,
-                e.descripcion_evento,
-                i.estado_inscripcion
-            FROM Inscripciones i
-            INNER JOIN Evento e ON i.evento = e.id_evento
-            WHERE i.socio = $1;
-        `;
-
-        const result = await pool.query(query, [req.usuario.id]);
-
-        res.status(200).json({
-            inscripciones: result.rows
-        });
-
-    }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Error al obtener inscripciones" });
-    }
-});
-
-// DELETE dar de baja inscripciones a eventos
-router.delete("/incripciones/listado-incripciones-usuario/:id_evento", verificarToken, async (req, res) => {
-    try {
-        const { id_evento } = req.params;
-
-        const query = `
-            DELETE FROM Inscripciones
-            WHERE socio = $1 AND evento = $2;
-        `;
-
-        const result = await pool.query(query, [
-            req.usuario.id,
-            id_evento
-        ]);
-
-        if (result.rowCount === 0) {
-            return res.status(404).json({ message: "Inscripción no encontrada" });
-        }
-
-        res.status(200).json({ message: "Inscripción cancelada correctamente" });
-    }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Error al cancelar inscripción" });
-    }
 });
 
 // GET obtenr calles via NOMINATIM OPEN STRET MAP

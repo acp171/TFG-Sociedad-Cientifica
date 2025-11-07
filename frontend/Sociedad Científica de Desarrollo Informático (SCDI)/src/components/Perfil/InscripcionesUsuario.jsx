@@ -43,7 +43,7 @@ const InscripcionesUsuario = () => {
 
         try {
             const res = await fetch(
-                `https://tfg-sociedad-cientifica-production.up.railway.app/incripciones/listado-incripciones-usuario/${id_evento}`,
+                `https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id_evento}/cancelar-inscripcion`,
                 {
                     method: "DELETE",
                     headers: {
