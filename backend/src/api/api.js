@@ -144,35 +144,119 @@ router.post('/register', async (req, res) => {
 // GET perfil
 router.get('/perfil', verificarToken, async (req, res) => {
     try {
-        const querySocio = 'SELECT nombre, apellidos, email, telefono, fecha_nacimiento, socio_rol, tipo_socio FROM SOCIO WHERE email = $1;';
+        const querySocio = `
+            SELECT 
+                s.nombre,
+                s.apellidos,
+                s.email,
+                s.telefono,
+                s.fecha_nacimiento,
+                s.fecha_alta,
+                r.nombre AS socio_rol,
+                t.nombre_tipo AS tipo_socio
+            FROM Socio s
+            LEFT JOIN Socio_Rol r ON s.socio_rol = r.id_socio_rol
+            LEFT JOIN Tipo_Socio t ON s.tipo_socio = t.id_tipo_socio
+            WHERE s.email = $1;
+        `;
         const resultSocio = await pool.query(querySocio, [req.usuario.email]);
         const socio = resultSocio.rows[0];
 
-        const queryRol = 'SELECT * FROM Socio_Rol WHERE id_socio_rol = $1;';
-        const resultRol = await pool.query(queryRol, [socio.socio_rol]);
-
-        const queryTipo = 'SELECT * FROM Tipo_Socio WHERE id_tipo_socio = $1;';
-        const resultTipo = await pool.query(queryTipo, [socio.tipo_socio]);
-
-        const rol = resultRol.rows[0];
-        const tipo = resultTipo.rows[0];
+        if (!socio) {
+            return res.status(404).json({ message: "El usuario no existe." });
+        }
 
         res.status(200).json({
             message: 'Acceso a perfil.',
             socio: {
-                id: socio.id_socio,
                 nombre: socio.nombre,
                 apellidos: socio.apellidos,
                 email: socio.email,
                 telefono: socio.telefono,
                 fecha_nacimiento: socio.fecha_nacimiento,
-                socio_rol: rol.nombre,
-                tipo_socio: tipo.nombre_tipo
+                fecha_registro: socio.fecha_alta,
+                socio_rol: socio.socio_rol,
+                tipo_socio: socio.tipo_socio
             }
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Error al entrar al perfil: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// PATCH editar perfil
+router.patch('/perfil', verificarToken, async (req, res) => {
+    const { nombre, apellidos, telefono } = req.body;
+    
+    // Validar que todos los campos necesarios no estén vacíos
+    if (!nombre || !apellidos || !telefono) {
+        return res.status(400).json({ message: 'Todos los campos son obligatorios y no pueden estar vacíos.' });
+    }
+
+    const values = [
+        nombre,
+        apellidos,
+        telefono,
+        req.usuario.email
+    ];
+
+    try {
+        const query = 'UPDATE Socio SET nombre = $1, apellidos = $2, telefono = $3 WHERE email = $4;';
+        await pool.query(query, values);
+
+        const querySocio = `
+            SELECT 
+                s.nombre,
+                s.apellidos,
+                s.email,
+                s.telefono,
+                s.fecha_nacimiento,
+                s.fecha_alta,
+                r.nombre AS socio_rol,
+                t.nombre_tipo AS tipo_socio
+            FROM Socio s
+            LEFT JOIN Socio_Rol r ON s.socio_rol = r.id_socio_rol
+            LEFT JOIN Tipo_Socio t ON s.tipo_socio = t.id_tipo_socio
+            WHERE s.email = $1;
+        `;
+        const resultSocio = await pool.query(querySocio, [req.usuario.email]);
+        const socio = resultSocio.rows[0];
+
+        res.status(200).json({
+            message: 'Perfil actualizado.',
+            socio: {
+                nombre: socio.nombre,
+                apellidos: socio.apellidos,
+                email: socio.email,
+                telefono: socio.telefono,
+                fecha_nacimiento: socio.fecha_nacimiento,
+                fecha_registro: socio.fecha_alta,
+                socio_rol: socio.socio_rol,
+                tipo_socio: socio.tipo_socio
+            }
+        });
+    }
+    catch (error) {
+        console.error("Error al actualizar perfil: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// DELETE perfil usuario
+router.delete('/perfil', verificarToken, async (req, res) => {
+    try {
+        const query = `
+            DELETE FROM Socio
+            WHERE email = $1;
+        `;
+        await pool.query(query, [req.usuario.email]);
+
+        res.status(200).json({ message: "Cuenta eliminada correctamente." });
+    } catch (error) {
+        console.error("Error al eliminar cuenta:", error);
+        res.status(500).json({ message: "Error interno del servidor." });
     }
 });
 
@@ -238,49 +322,6 @@ router.post('/socios/crear-socios', verificarToken, async (req,res) => {
         console.error("Error insertando socio: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }        
-});
-
-// PUT editar perfil
-router.put('/perfil', verificarToken, async (req, res) => {
-    const { nombre, apellidos, telefono } = req.body;
-    
-    // Validar que todos los campos necesarios no estén vacíos
-    if (!nombre || !apellidos || !telefono) {
-        return res.status(400).json({ message: 'Todos los campos son obligatorios y no pueden estar vacíos.' });
-    }
-
-    const values = [
-        nombre,
-        apellidos,
-        telefono,
-        req.usuario.email
-    ];
-
-    try {
-        const query = 'UPDATE Socio SET nombre = $1, apellidos = $2, telefono = $3 WHERE email = $4;';
-        const result = await pool.query(query, values);
-
-        const querySocio = 'SELECT * FROM SOCIO WHERE email = $1;';
-        const resultSocio = await pool.query(querySocio, [req.usuario.email]);
-        const socio = resultSocio.rows[0];
-
-        res.status(200).json({
-            message: 'Perfil actualizado.',
-            socio: {
-                id: socio.id_socio,
-                nombre: socio.nombre,
-                apellidos: socio.apellidos,
-                email: socio.email,
-                telefono: socio.telefono,
-                fecha_nacimiento: socio.fecha_nacimiento,
-                socio_rol: socio.socio_rol,
-                tipo_socio: socio.tipo_socio
-            }
-        });
-    } catch (error) {
-        console.error("Error al actualizar perfil: ", error.message);
-        res.status(500).json({ message: 'Error interno del servidor.' });
-    }
 });
 
 // GET listado de roles
@@ -1164,6 +1205,35 @@ router.post('/eventos-cientificos/:id/inscribirse', verificarToken, async (req, 
     }
 });
 
+// GET listado de inscripciones a eventos
+router.get('/incripciones/listado-incripciones-usuario', verificarToken, async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                e.id_evento,
+                e.nombre_evento,
+                e.fecha_evento_inicio,
+                e.fecha_evento_fin,
+                e.descripcion_evento,
+                i.estado_inscripcion
+            FROM Inscripciones i
+            INNER JOIN Evento e ON i.evento = e.id_evento
+            WHERE i.socio = $1;
+        `;
+
+        const result = await pool.query(query, [req.usuario.id]);
+
+        res.status(200).json({
+            inscripciones: result.rows
+        });
+
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al obtener inscripciones" });
+    }
+});
+
 // DELETE Borrar inscripción
 router.delete('/eventos-cientificos/:id/cancelar-inscripcion', verificarToken, async (req, res) => {
     const id_evento = req.params.id;
@@ -1797,6 +1867,7 @@ router.patch('/notificaciones/:id/leida', async (req, res) => {
     }
 });
 
+// POST pagar suscripcion via STRIPE
 router.post('/pagar-suscripcion', async (req, res) => {
     const { tipo_socio } = req.body; // viene del frontend, según el plan que elija
 
@@ -1831,6 +1902,7 @@ router.post('/pagar-suscripcion', async (req, res) => {
     }  
 });
 
+// GET obtenr calles via NOMINATIM OPEN STRET MAP
 router.get('/buscar-calles', async (req, res) => {
     const { provincia, query } = req.query;
   

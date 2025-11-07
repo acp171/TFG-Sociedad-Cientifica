@@ -24,6 +24,8 @@ import Contacto from './pages/Contacto';
 import Notificaciones from './pages/Notificaciones';
 import ForgotPassword from './pages/Autenticacion/ForgotPassword';
 import ResetPassword from './pages/Autenticacion/ResetPassword';
+import PanelPerfil from './pages/Autenticacion/PanelPerfil';
+import PrivateRoute from './components/Perfil/PrivateRoute';
 
 function App() {
   return (
@@ -54,7 +56,8 @@ function App() {
           <Route path="/politica-privacidad" element={<AvisoLegal />} />
           <Route path="/panel-administrador" element={<PanelAdmin />} />
           <Route path="/contacto" element={<Contacto />} />
-          <Route path="/notificaciones" element={<Notificaciones />} />
+          <Route path="/notificaciones" element={<PrivateRoute><Notificaciones /></PrivateRoute>} />
+          <Route path="/perfil" element={<PrivateRoute><PanelPerfil /></PrivateRoute>} />
         </Routes>
       </main>
 
