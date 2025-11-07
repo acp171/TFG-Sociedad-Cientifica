@@ -151,6 +151,7 @@ router.get('/perfil', verificarToken, async (req, res) => {
                 s.email,
                 s.telefono,
                 s.fecha_nacimiento,
+                s.fecha_alta,
                 r.nombre AS socio_rol,
                 t.nombre_tipo AS tipo_socio
             FROM SOCIO s

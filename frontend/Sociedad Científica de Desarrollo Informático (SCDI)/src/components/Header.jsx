@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Search, User, LogOut, Settings, Inbox } from "lucide-react";
+import { FaUser } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/AuthContext";
 
@@ -262,6 +263,7 @@ const Header = () => {
                         <Settings className="w-5 h-5" />
                     </Link>
                 )}
+                
 
                 {isLoggedIn && (
                     <div className="relative">
@@ -270,7 +272,7 @@ const Header = () => {
                             className="p-2 rounded-full shadow text-black hover:text-blue-600 transition relative"
                             title="Notificaciones"
                         >
-                        <Inbox className="w-5 h-5" />
+                            <Inbox className="w-5 h-5" />
                             {notificaciones.length > 0 && (
                                 <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1">
                                     {notificaciones.length}
@@ -312,6 +314,15 @@ const Header = () => {
                     </div>
                 )}
 
+                {isLoggedIn && (
+                    <Link
+                        to="/perfil"
+                        className="p-2 rounded-full shadow text-black hover:text-blue-600 transition"
+                        title="Perfil"
+                    >
+                        <FaUser className="w-5 h-5" />
+                    </Link>
+                )}
 
                 {isLoggedIn ? (
                     <button
