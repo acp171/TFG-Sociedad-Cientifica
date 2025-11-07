@@ -24,7 +24,7 @@ import Contacto from './pages/Contacto';
 import Notificaciones from './pages/Notificaciones';
 import ForgotPassword from './pages/Autenticacion/ForgotPassword';
 import ResetPassword from './pages/Autenticacion/ResetPassword';
-import PerfilUsuario from './pages/Autenticacion/PerfilUsuario';
+import PanelPerfil from './pages/Autenticacion/PanelPerfil';
 import PrivateRoute from './components/Perfil/PrivateRoute';
 
 function App() {
@@ -57,7 +57,7 @@ function App() {
           <Route path="/panel-administrador" element={<PanelAdmin />} />
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/notificaciones" element={<PrivateRoute><Notificaciones /></PrivateRoute>} />
-          <Route path="/perfil" element={<PrivateRoute><PerfilUsuario /></PrivateRoute>} />
+          <Route path="/perfil" element={<PrivateRoute><PanelPerfil /></PrivateRoute>} />
         </Routes>
       </main>
 
