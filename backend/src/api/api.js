@@ -1889,7 +1889,7 @@ router.get('/incripciones/listado-incripciones-usuario', verificarToken, async (
             WHERE i.socio = $1;
         `;
 
-        const result = await pool.query(query, [req.usuario.id_socio]);
+        const result = await pool.query(query, [req.usuario.id]);
 
         res.status(200).json({
             inscripciones: result.rows
@@ -1909,11 +1909,11 @@ router.delete("/incripciones/listado-incripciones-usuario/:id_evento", verificar
 
         const query = `
             DELETE FROM Inscripciones
-            WHERE socio = $1 AND evento = $2
+            WHERE socio = $1 AND evento = $2;
         `;
 
         const result = await pool.query(query, [
-            req.usuario.id_socio,
+            req.usuario.id,
             id_evento
         ]);
 
