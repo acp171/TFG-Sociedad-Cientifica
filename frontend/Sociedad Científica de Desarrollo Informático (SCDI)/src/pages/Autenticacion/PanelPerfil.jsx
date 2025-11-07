@@ -2,12 +2,12 @@ import { useState } from "react";
 
 import PerfilUsuario from "../../components/Perfil/PerfilUsuario";
 import Notificaciones from "../Notificaciones";
-import SuscripcionesUsuario from "../../components/Perfil/SuscripcionesUsuario";
+import InscripcionesUsuario from "../../components/Perfil/InscripcionesUsuario";
 
 const tabs = [
     { id: "perfil", label: "Perfil" },
     { id: "notificaciones", label: "Notificaciones" },
-    { id: "suscripciones", label: "Suscripciones" },
+    { id: "inscripciones", label: "Inscripciones" },
 ];
 
 const PanelAdmin = () => {
@@ -19,8 +19,8 @@ const PanelAdmin = () => {
             return <PerfilUsuario />;
         case "notificaciones":
             return <Notificaciones />;
-        case "suscripciones":
-            return <SuscripcionesUsuario />;
+        case "inscripciones":
+            return <InscripcionesUsuario />;
         default:
             return null;
         }
@@ -29,7 +29,7 @@ const PanelAdmin = () => {
     return (
         <div className="min-h-screen flex bg-gradient-to-b from-blue-200 to-white">
             <aside className="w-80 bg-white shadow-md p-6 space-y-4">
-                <h2 className="text-xl font-bold mb-8 text-indigo-700">PANEL</h2>
+                <h2 className="text-xl font-bold mb-8 text-indigo-700">PANEL DE USUARIO</h2>
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
