@@ -154,7 +154,7 @@ router.get('/perfil', verificarToken, async (req, res) => {
                 s.fecha_alta,
                 r.nombre AS socio_rol,
                 t.nombre_tipo AS tipo_socio
-            FROM SOCIO s
+            FROM Socio s
             LEFT JOIN Socio_Rol r ON s.socio_rol = r.id_socio_rol
             LEFT JOIN Tipo_Socio t ON s.tipo_socio = t.id_tipo_socio
             WHERE s.email = $1;
@@ -250,8 +250,8 @@ router.post('/socios/crear-socios', verificarToken, async (req,res) => {
     }        
 });
 
-// PUT editar perfil
-router.put('/perfil', verificarToken, async (req, res) => {
+// PATCH editar perfil
+router.patch('/perfil', verificarToken, async (req, res) => {
     const { nombre, apellidos, telefono } = req.body;
     
     // Validar que todos los campos necesarios no estén vacíos
@@ -280,7 +280,7 @@ router.put('/perfil', verificarToken, async (req, res) => {
                 s.fecha_alta,
                 r.nombre AS socio_rol,
                 t.nombre_tipo AS tipo_socio
-            FROM SOCIO s
+            FROM Socio s
             LEFT JOIN Socio_Rol r ON s.socio_rol = r.id_socio_rol
             LEFT JOIN Tipo_Socio t ON s.tipo_socio = t.id_tipo_socio
             WHERE s.email = $1;
@@ -305,6 +305,22 @@ router.put('/perfil', verificarToken, async (req, res) => {
     catch (error) {
         console.error("Error al actualizar perfil: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// DELETE perfil usuario
+router.delete('/perfil', verificarToken, async (req, res) => {
+    try {
+        const query = `
+            DELETE FROM Socio
+            WHERE email = $1;
+        `;
+        await pool.query(query, [req.usuario.email]);
+
+        res.status(200).json({ message: "Cuenta eliminada correctamente." });
+    } catch (error) {
+        console.error("Error al eliminar cuenta:", error);
+        res.status(500).json({ message: "Error interno del servidor." });
     }
 });
 
