@@ -401,8 +401,6 @@ router.delete("/corporacion/miembros/:id", verificarToken, async (req, res) => {
     }
 });
 
-export default router;
-
 // GET listado de roles
 router.get('/roles', verificarToken, async (req, res) => {
     const adminRol = await obtenernRol(req.usuario);
