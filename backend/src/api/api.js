@@ -82,7 +82,8 @@ router.post('/login', async (req, res) => {
                 id: socio.id_socio,
                 nombre: socio.nombre,
                 email: socio.email,
-                rol: socio.socio_rol
+                rol: socio.socio_rol,
+                tipo: socio.tipo_socio
             },
             token
         });
