@@ -326,6 +326,83 @@ router.post('/socios/crear-socios', verificarToken, async (req,res) => {
     }        
 });
 
+// GET Obtener miembros de la corporación del usuario
+router.get("/corporacion/miembros", verificarToken, async (req, res) => {
+    try {
+        // Solo corporaciones
+        if (req.usuario.tipo_socio !== 6) {
+            return res.status(403).json({ message: "No autorizado" });
+        }
+
+        const query = `
+            SELECT id_socio, nombre, apellidos, email, telefono, fecha_nacimiento, tipo_socio
+            FROM Socio
+            WHERE corporacion_id = $1;
+        `;
+        const result = await pool.query(query, [req.usuario.id_socio]);
+        res.status(200).json({ miembros: result.rows });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error al obtener miembros" });
+    }
+});
+
+// POST Añadir un miembro a la corporación
+router.post("/corporacion/miembros", verificarToken, async (req, res) => {
+    const { nombre, apellidos, email, password, telefono, fecha_nacimiento } = req.body;
+
+    try {
+        if (req.usuario.tipo_socio !== 6) {
+            return res.status(403).json({ message: "No autorizado" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        const query = `
+            INSERT INTO Socio (nombre, apellidos, email, password, telefono, fecha_nacimiento, socio_rol, tipo_socio, corporacion_id)
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id_socio, nombre, apellidos, email, telefono, fecha_nacimiento, tipo_socio;
+        `;
+        const values = [nombre, apellidos, email, hashedPassword, telefono, fecha_nacimiento, 8, 3, req.usuario.id_socio];
+        const result = await pool.query(query, values);
+
+        res.status(201).json({ miembro: result.rows[0] });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error al añadir miembro" });
+    }
+});
+
+// DELETE Eliminar un miembro de la corporación
+router.delete("/corporacion/miembros/:id", verificarToken, async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        if (req.usuario.tipo_socio !== 6) {
+            return res.status(403).json({ message: "No autorizado" });
+        }
+
+        // Asegurarse que el miembro pertenece a la corporación
+        const checkQuery = `
+            SELECT id_socio FROM Socio WHERE id_socio = $1 AND corporacion_id = $2;
+        `;
+        const check = await pool.query(checkQuery, [id, req.usuario.id_socio]);
+        if (check.rows.length === 0) return res.status(404).json({ message: "Miembro no encontrado" });
+
+        const deleteQuery = `DELETE FROM Socio WHERE id_socio = $1;`;
+        await pool.query(deleteQuery, [id]);
+
+        res.status(200).json({ message: "Miembro eliminado correctamente" });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error al eliminar miembro" });
+    }
+});
+
+export default router;
+
 // GET listado de roles
 router.get('/roles', verificarToken, async (req, res) => {
     const adminRol = await obtenernRol(req.usuario);

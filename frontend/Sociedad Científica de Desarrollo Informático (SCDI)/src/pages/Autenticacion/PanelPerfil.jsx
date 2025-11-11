@@ -1,28 +1,37 @@
 import { useState } from "react";
+import { useAuth } from "../../hooks/AuthContext";
 
 import PerfilUsuario from "../../components/Perfil/PerfilUsuario";
 import Notificaciones from "../Notificaciones";
 import InscripcionesUsuario from "../../components/Perfil/InscripcionesUsuario";
+import GestionMiembros from "../../components/Perfil/GestionMiembros"; 
 
-const tabs = [
+const tabsBase = [
     { id: "perfil", label: "Perfil" },
     { id: "notificaciones", label: "Notificaciones" },
     { id: "inscripciones", label: "Inscripciones" },
 ];
 
-const PanelAdmin = () => {
+const PanelPerfil = () => {
     const [selectedTab, setSelectedTab] = useState("socios");
+    const { userTipoSocio } = useAuth();
+
+    const tabs = userTipoSocio === 6 
+        ? [...tabsBase, { id: "miembros", label: "Miembros" }]
+        : tabsBase;
 
     const renderContent = () => {
         switch (selectedTab) {
-        case "perfil":
-            return <PerfilUsuario />;
-        case "notificaciones":
-            return <Notificaciones />;
-        case "inscripciones":
-            return <InscripcionesUsuario />;
-        default:
-            return null;
+            case "perfil":
+                return <PerfilUsuario />;
+            case "notificaciones":
+                return <Notificaciones />;
+            case "inscripciones":
+                return <InscripcionesUsuario />;
+            case "miembros":
+                    return <GestionMiembros />;
+            default:
+                return null;
         }
     };
 
@@ -50,4 +59,4 @@ const PanelAdmin = () => {
     );
 };
 
-export default PanelAdmin;
+export default PanelPerfil;

@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS Socio (
     fecha_alta TIMESTAMP NOT NULL,
     socio_rol INT NOT NULL,
     tipo_socio INT NOT NULL,
+    corporacion INT REFERENCES Socio(id_socio),
     CONSTRAINT FK_SOCIO_ROL_SOCIO FOREIGN KEY (socio_rol) REFERENCES Socio_Rol(id_socio_rol) ON DELETE CASCADE,
     CONSTRAINT FK_SOCIO_TIPO_SOCIO FOREIGN KEY (tipo_socio) REFERENCES Tipo_Socio(id_tipo_socio) ON DELETE CASCADE
 );
