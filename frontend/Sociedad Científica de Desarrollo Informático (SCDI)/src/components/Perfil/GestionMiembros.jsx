@@ -67,7 +67,7 @@ const GestionMiembros = () => {
             if (!res.ok) throw new Error(data.message || "Error al añadir miembro");
 
             setMiembros((prev) => [...prev, data.miembro]);
-            setNuevoMiembro({ nombre: "", apellidos: "", email: "", tipo_socio: 1 });
+            setNuevoMiembro({ nombre: "", apellidos: "", email: "", password: "", telefono: "", fecha_nacimiento: "",});
             setSuccess("Miembro añadido correctamente");
         }
         catch (err) {
