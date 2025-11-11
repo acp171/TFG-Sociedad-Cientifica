@@ -24,7 +24,7 @@ const GestionMiembros = () => {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 );
-                
+
                 if (!res.ok) {
                     throw new Error("Error al cargar miembros");
                 }
@@ -51,6 +51,7 @@ const GestionMiembros = () => {
 
         try {
             const token = localStorage.getItem("token");
+            console.log(token);
             const res = await fetch(
                 "https://tfg-sociedad-cientifica-production.up.railway.app/corporacion/miembros",
                 {

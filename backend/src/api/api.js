@@ -353,7 +353,7 @@ router.post("/corporacion/miembros", verificarToken, async (req, res) => {
     const { nombre, apellidos, email, password, telefono, fecha_nacimiento } = req.body;
 
     try {
-        if (req.usuario.tipo_socio !== 6) {
+        if (req.usuario.tipo !== 6) {
             return res.status(403).json({ message: "No autorizado" });
         }
 
@@ -379,7 +379,7 @@ router.delete("/corporacion/miembros/:id", verificarToken, async (req, res) => {
     const { id } = req.params;
 
     try {
-        if (req.usuario.tipo_socio !== 6) {
+        if (req.usuario.tipo !== 6) {
             return res.status(403).json({ message: "No autorizado" });
         }
 
