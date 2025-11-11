@@ -6,7 +6,7 @@ const Eventos = () => {
     const [eventos, setEventos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchParams, setSearchParams] = useSearchParams();
-    const { userTipoSocio } = useAuth();
+    const { userRole, userTipoSocio } = useAuth();
 
     const eventosPorPagina = 6;
     const currentPage = parseInt(searchParams.get("page")) || 1;
@@ -42,7 +42,7 @@ const Eventos = () => {
                     <h2 className="text-4xl font-extrabold text-gray-900 mb-6 md:mb-0">
                         EVENTOS CIENTÍFICOS
                     </h2>
-                    {userTipoSocio !== 2 && (
+                    {(userTipoSocio !== 2 || userRole === 1) && (
                         <Link
                             to="/eventos-cientificos/crear-evento-cientifico"
                             className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold"

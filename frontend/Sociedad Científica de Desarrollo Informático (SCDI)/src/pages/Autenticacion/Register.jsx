@@ -13,6 +13,9 @@ const Register = () => {
         fecha_nacimiento: "",
     });
 
+    const [universidad, setUniversidad] = useState("");
+    const [empresa, setEmpresa] = useState("");
+
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -38,7 +41,11 @@ const Register = () => {
 
         try {
             const dataToSend = {
-                formData: formData,
+                formData: {
+                    ...formData,
+                    universidad: selectedPlan.id_tipo_socio === 2 ? universidad : null,
+                    empresa: selectedPlan.id_tipo_socio === 6 ? empresa : null,
+                },
                 plan: selectedPlan,
             };
 
@@ -75,12 +82,32 @@ const Register = () => {
                 {error && <p className="text-red-600 font-medium">{error}</p>}
                 {success && <p className="text-green-600 font-medium">{success}</p>}
 
+                <>Nombre</>
                 <input type="text" name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} required className="w-full border p-3 rounded" />
+                <>Apellidos</>
                 <input type="text" name="apellidos" placeholder="Apellidos" value={formData.apellidos} onChange={handleChange} required className="w-full border p-3 rounded" />
+                <>Correo electrónico</>
                 <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required className="w-full border p-3 rounded" />
+                <>Contraseña</>
                 <input type="password" name="password" placeholder="Contraseña" value={formData.password} onChange={handleChange} required className="w-full border p-3 rounded" />
+                <>Teléfono</>
                 <input type="tel" name="telefono" placeholder="Teléfono" value={formData.telefono} onChange={handleChange} required className="w-full border p-3 rounded" />
+                <>Fecha nacimiento</>
                 <input type="date" name="fecha_nacimiento" value={formData.fecha_nacimiento} onChange={handleChange} required className="w-full border p-3 rounded" />
+                
+                {selectedPlan?.id_tipo_socio === 2 && (
+                    <>
+                        <label>Universidad</label>
+                        <input type="text" placeholder="Universidad" value={universidad} onChange={(e) => setUniversidad(e.target.value)} required className="w-full border p-3 rounded"/>
+                    </>
+                )}
+
+                {selectedPlan?.id_tipo_socio === 6 && (
+                    <>
+                        <label>Nombre de la empresa</label>
+                        <input type="text" placeholder="Nombre de la empresa" value={empresa} onChange={(e) => setEmpresa(e.target.value)} required className="w-full border p-3 rounded"/>
+                    </>
+                )}
 
                 <Link
                     to="/login"
