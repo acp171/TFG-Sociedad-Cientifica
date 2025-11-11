@@ -15,15 +15,20 @@ const GestionMiembros = () => {
     const [success, setSuccess] = useState("");
 
     useEffect(() => {
-        /*const fetchMiembros = async () => {
+        const fetchMiembros = async () => {
             try {
+                const token = localStorage.getItem("token");
                 const res = await fetch(
                     "https://tfg-sociedad-cientifica-production.up.railway.app/corporacion/miembros",
                     {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 );
-                if (!res.ok) throw new Error("Error al cargar miembros");
+                
+                if (!res.ok) {
+                    throw new Error("Error al cargar miembros");
+                }
+                
                 const data = await res.json();
                 setMiembros(data.miembros || []);
             } catch (err) {
@@ -32,7 +37,7 @@ const GestionMiembros = () => {
                 setLoading(false);
             }
         };
-        fetchMiembros();*/
+        fetchMiembros();
     }, []);
 
     const handleChange = (e) => {
@@ -45,6 +50,7 @@ const GestionMiembros = () => {
         setError(""); setSuccess("");
 
         try {
+            const token = localStorage.getItem("token");
             const res = await fetch(
                 "https://tfg-sociedad-cientifica-production.up.railway.app/corporacion/miembros",
                 {
@@ -62,7 +68,8 @@ const GestionMiembros = () => {
             setMiembros((prev) => [...prev, data.miembro]);
             setNuevoMiembro({ nombre: "", apellidos: "", email: "", tipo_socio: 1 });
             setSuccess("Miembro añadido correctamente");
-        } catch (err) {
+        }
+        catch (err) {
             console.error(err);
             setError(err.message);
         }
@@ -71,6 +78,7 @@ const GestionMiembros = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("¿Deseas eliminar este miembro?")) return;
         try {
+            const token = localStorage.getItem("token");
             const res = await fetch(
                 `https://tfg-sociedad-cientifica-production.up.railway.app/corporacion/miembros/${id}`,
                 {
@@ -78,9 +86,13 @@ const GestionMiembros = () => {
                     headers: { Authorization: `Bearer ${token}` },
                 }
             );
-            if (!res.ok) throw new Error("Error al eliminar miembro");
+            if (!res.ok) {
+                throw new Error("Error al eliminar miembro");
+            }
+
             setMiembros((prev) => prev.filter((m) => m.id_socio !== id));
-        } catch (err) {
+        }
+        catch (err) {
             console.error(err);
             alert(err.message);
         }

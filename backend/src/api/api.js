@@ -330,7 +330,7 @@ router.post('/socios/crear-socios', verificarToken, async (req,res) => {
 router.get("/corporacion/miembros", verificarToken, async (req, res) => {
     try {
         // Solo corporaciones
-        if (req.usuario.tipo_socio !== 6) {
+        if (req.usuario.tipo !== 6) {
             return res.status(403).json({ message: "No autorizado" });
         }
 
