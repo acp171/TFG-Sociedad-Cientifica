@@ -337,7 +337,7 @@ router.get("/corporacion/miembros", verificarToken, async (req, res) => {
         const query = `
             SELECT id_socio, nombre, apellidos, email, telefono, fecha_nacimiento, tipo_socio
             FROM Socio
-            WHERE corporacion_id = $1;
+            WHERE corporacion = $1;
         `;
         const result = await pool.query(query, [req.usuario.id_socio]);
         res.status(200).json({ miembros: result.rows });
