@@ -360,7 +360,7 @@ router.post("/corporacion/miembros", verificarToken, async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const query = `
-            INSERT INTO Socio (nombre, apellidos, email, password, telefono, fecha_nacimiento, socio_rol, tipo_socio, corporacion_id)
+            INSERT INTO Socio (nombre, apellidos, email, password, telefono, fecha_nacimiento, socio_rol, tipo_socio, corporacion)
             VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id_socio, nombre, apellidos, email, telefono, fecha_nacimiento, tipo_socio;
         `;
         const values = [nombre, apellidos, email, hashedPassword, telefono, fecha_nacimiento, 8, 3, req.usuario.id_socio];
@@ -385,7 +385,7 @@ router.delete("/corporacion/miembros/:id", verificarToken, async (req, res) => {
 
         // Asegurarse que el miembro pertenece a la corporación
         const checkQuery = `
-            SELECT id_socio FROM Socio WHERE id_socio = $1 AND corporacion_id = $2;
+            SELECT id_socio FROM Socio WHERE id_socio = $1 AND corporacion = $2;
         `;
         const check = await pool.query(checkQuery, [id, req.usuario.id_socio]);
         if (check.rows.length === 0) return res.status(404).json({ message: "Miembro no encontrado" });
