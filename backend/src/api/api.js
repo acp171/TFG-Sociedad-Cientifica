@@ -339,7 +339,7 @@ router.get("/corporacion/miembros", verificarToken, async (req, res) => {
             FROM Socio
             WHERE corporacion = $1;
         `;
-        const result = await pool.query(query, [req.usuario.id_socio]);
+        const result = await pool.query(query, [req.usuario.id]);
         res.status(200).json({ miembros: result.rows });
     }
     catch (err) {
@@ -387,7 +387,7 @@ router.delete("/corporacion/miembros/:id", verificarToken, async (req, res) => {
         const checkQuery = `
             SELECT id_socio FROM Socio WHERE id_socio = $1 AND corporacion = $2;
         `;
-        const check = await pool.query(checkQuery, [id, req.usuario.id_socio]);
+        const check = await pool.query(checkQuery, [id, req.usuario.id]);
         if (check.rows.length === 0) return res.status(404).json({ message: "Miembro no encontrado" });
 
         const deleteQuery = `DELETE FROM Socio WHERE id_socio = $1;`;
