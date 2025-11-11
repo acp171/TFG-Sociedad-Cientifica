@@ -69,7 +69,8 @@ router.post('/login', async (req, res) => {
               id: socio.id_socio,
               email: socio.email,
               nombre: socio.nombre,
-              rol: socio.socio_rol
+              rol: socio.socio_rol,
+              tipo: socio.tipo_socio
             },
             SECRET_KEY,
             { expiresIn: '1h' } // Token expira en 1 hora
