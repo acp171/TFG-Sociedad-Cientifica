@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
     const parseTokenTipoSocio = (token) => {
         try {
             const payload = JSON.parse(atob(token.split(".")[1]));
-            return payload.tipo_socio || null;  // Cambia "rol" si en el token se llama distinto
+            return payload.tipo || null;  // Cambia "rol" si en el token se llama distinto
         } catch {
             return null;
         }

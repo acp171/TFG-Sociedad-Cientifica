@@ -19,7 +19,7 @@ app.set('port', process.env.PORT || 4000);
 
 // Middlewares
 app.use(cors({
-  origin: 'https://scdi.vercel.app',
+  //origin: 'https://scdi.vercel.app',
   methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
