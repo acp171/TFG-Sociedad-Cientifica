@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
     const parseTokenRole = (token) => {
         try {
             const payload = JSON.parse(atob(token.split(".")[1]));
-            return payload.rol || null;  // Cambia "rol" si en el token se llama distinto
+            return payload.rol || null;
         } catch {
             return null;
         }
@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
     const parseTokenTipoSocio = (token) => {
         try {
             const payload = JSON.parse(atob(token.split(".")[1]));
-            return payload.tipo || null;  // Cambia "rol" si en el token se llama distinto
+            return payload.tipo || null;
         } catch {
             return null;
         }
@@ -51,10 +51,10 @@ export const AuthProvider = ({ children }) => {
         };
         window.addEventListener("storage", handleStorageChange);
 
-        // Inicializar userRole al cargar
+        // Inicializar userRole y userTipoSocio al cargar
         const token = localStorage.getItem("token");
         setUserRole(token ? parseTokenRole(token) : null);
-        setUserTipoSocio(token ? parseTokenRole(token) : null);
+        setUserTipoSocio(token ? parseTokenTipoSocio(token) : null);
 
         return () => window.removeEventListener("storage", handleStorageChange);
     }, []);

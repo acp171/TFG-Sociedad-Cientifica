@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { useAuth } from "../../hooks/AuthContext";
 
 const Proyectos = () => {
     const [proyectos, setProyectos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchParams, setSearchParams] = useSearchParams();
+    const { userTipoSocio } = useAuth();
 
     // Filtros
     const [filtroEstado, setFiltroEstado] = useState("");
@@ -61,12 +63,14 @@ const Proyectos = () => {
             <div className="flex flex-col flex-grow">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-12">
                     <h1 className="text-4xl font-extrabold text-gray-900 mb-6 md:mb-0">PROYECTOS DE INVESTIGACIÓN</h1>
-                    <Link
-                            to="/proyectos-investigacion/crear-proyecto"
-                            className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold"
-                        >
-                            Nuevo proyecto
-                    </Link>
+                    {userTipoSocio > 2 && (
+                        <Link
+                                to="/proyectos-investigacion/crear-proyecto"
+                                className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold"
+                            >
+                                Nuevo proyecto
+                        </Link>
+                    )}
                 </div>
 
                 {/* Filtros */}
