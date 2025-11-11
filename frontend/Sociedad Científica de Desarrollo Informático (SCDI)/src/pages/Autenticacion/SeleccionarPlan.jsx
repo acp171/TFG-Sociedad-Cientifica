@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FaGraduationCap, FaUserTie, FaGlobe, FaUsers, FaUser } from "react-icons/fa";
 
-const baseDescripcion = (
+const baseDescripcion = (userTipoSocio) => (
     <>
         <p><strong>Perfil y gestión personal</strong></p>
         <ul className="list-disc pl-6 mb-3">
@@ -21,8 +21,34 @@ const baseDescripcion = (
         <ul className="list-disc pl-6 mb-3">
             <li>Pueden publicar artículos científicos para su difusión dentro de la sociedad.</li>
             <li>Pueden comentar publicaciones de otros socios.</li>
-            <li>Pueden acceder a un repositorio de artículos y materiales compartidos.</li>
         </ul>
+
+        {userTipoSocio === 6 && (
+            <>
+                <p><strong>Gestión corporativa</strong></p>
+                <ul className="list-disc pl-6 mb-3">
+                    <li>Pueden añadir y gestionar miembros de su corporación.</li>
+                </ul>
+            </>
+        )}
+
+        {userTipoSocio === 1 && (
+            <>
+                <p><strong>Limitaciones</strong></p>
+                <ul className="list-disc pl-6 mb-3">
+                    <li>No pueden crear eventos científicos.</li>
+                </ul>
+            </>
+        )}
+
+        {userTipoSocio === 2 && (
+            <>
+                <p><strong>Limitaciones</strong></p>
+                <ul className="list-disc pl-6 mb-3">
+                    <li>No pueden crear ni proyectos ni eventos científicos.</li>
+                </ul>
+            </>
+        )}
     </>
 );
 
@@ -39,7 +65,7 @@ const planes = [
                 <p className="mb-2">
                     Menores de 18 años o emprendedores.
                 </p>
-                {baseDescripcion}
+                {baseDescripcion(2)}
             </>
           ),
     },
@@ -50,7 +76,7 @@ const planes = [
         icon: <FaUser className="text-4xl text-indigo-800" />,
         bg: "from-indigo-200 to-indigo-300",
         price_stripe: "price_1RaGzAPbMwKwBYLWadUDiRZT",
-        descripcion: baseDescripcion,
+        descripcion: baseDescripcion(1),
     },
     {
         id_tipo_socio: 3,
@@ -59,7 +85,7 @@ const planes = [
         icon: <FaUserTie className="text-4xl text-purple-600" />,
         bg: "from-purple-100 to-purple-200",
         price_stripe: "price_1RaaIcPbMwKwBYLW145DYXpp",
-        descripcion: baseDescripcion,
+        descripcion: baseDescripcion(3),
     },
     {
         id_tipo_socio: 5,
@@ -68,7 +94,7 @@ const planes = [
         icon: <FaGlobe className="text-4xl text-green-600" />,
         bg: "from-green-100 to-green-200",
         price_stripe: "price_1RaHVqPbMwKwBYLWK7Uqmj3J",
-        descripcion: baseDescripcion,
+        descripcion: baseDescripcion(5),
     },
     {
         id_tipo_socio: 6,
@@ -82,7 +108,7 @@ const planes = [
                 <p className="mb-2">
                     Permite registrar y gestionar múltiples usuarios bajo una sola membresía.
                 </p>
-                {baseDescripcion}
+                {baseDescripcion(6)}
             </>
         ),
     },
