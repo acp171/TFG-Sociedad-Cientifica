@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { HiArrowLeft, HiTrash } from "react-icons/hi";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
+import PasarelaPago from "../../components/Pago/PasarelaPago";
 
 const EventoDetalles = () => {
     const { id } = useParams();
@@ -13,6 +14,11 @@ const EventoDetalles = () => {
     const [modoEdicion, setModoEdicion] = useState(false);
     const navigate = useNavigate();
     const usuario = JSON.parse(localStorage.getItem("socio"));
+
+    // Estado pasarela de pago
+    const [clientSecret, setClientSecret] = useState(null);
+    const [mostrarPago, setMostrarPago] = useState(false);
+    const [precioPago, setPrecioPago] = useState(0);
 
     useEffect(() => {
         fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}`)
@@ -86,8 +92,10 @@ const EventoDetalles = () => {
             });
         
             const data = await res.json();
-            if (res.ok && data.url) {
-                window.location.href = data.url;
+            if (res.ok && data.clientSecret) {
+                setClientSecret(data.clientSecret);
+                setPrecioPago(evento?.precio ?? 0);
+                setMostrarPago(true);
             } else {
                 alert(data.message || "No se pudo iniciar el pago");
             }
@@ -97,6 +105,10 @@ const EventoDetalles = () => {
                 state: { from: location.pathname }
             });
         }
+    };
+
+    const handlePagoExito = () => {
+        navigate(`/eventos-cientificos/${id}/inscribirse/evento-exito`);
     };
 
     const cancelarInscripcion = async () => {
@@ -318,6 +330,17 @@ const EventoDetalles = () => {
                     </p>
                 )}
             </article>
+
+            {/* Pasarela de pago embebida */}
+            {mostrarPago && clientSecret && (
+                <PasarelaPago
+                    clientSecret={clientSecret}
+                    importe={precioPago}
+                    descripcion={`Inscripción: ${evento?.nombre_evento}`}
+                    onSuccess={handlePagoExito}
+                    onCancel={() => setMostrarPago(false)}
+                />
+            )}
         </section>
     );
 };

@@ -109,21 +109,10 @@ router.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(formData.password, saltRounds);
 
     try {
-        const session = await stripe.checkout.sessions.create({
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: plan.cuota * 100,
+            currency: 'eur',
             payment_method_types: ['card'],
-            line_items: [{
-                price_data: {
-                    currency: 'eur',
-                    product_data: {
-                        name: `Registro plan: ${plan.nombre_tipo}`,
-                    },
-                    unit_amount: plan.cuota * 100,
-                },
-                quantity: 1,
-            }],
-            mode: 'payment',
-            success_url: `https://scdi.vercel.app/registro-exitoso?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `https://scdi.vercel.app/register`,
             metadata: {
                 tipo_pago: 'registro_socio',
                 id_plan: plan.id_tipo_socio.toString(),
@@ -136,9 +125,9 @@ router.post('/register', async (req, res) => {
             },
         });
 
-        res.json({ url: session.url });
+        res.json({ clientSecret: paymentIntent.client_secret });
     } catch (error) {
-        console.error('Error creando sesión de Stripe:', error);
+        console.error('Error creando PaymentIntent:', error);
         res.status(500).json({ message: 'Error creando sesión de pago.' });
     }
 });
@@ -1254,30 +1243,30 @@ router.post('/eventos-cientificos/:id/inscribirse', verificarToken, async (req, 
     const socio_id = req.usuario.id;
 
     try {
-        const session = await stripe.checkout.sessions.create({
+        // Obtener precio del evento desde la BD
+        const eventoResult = await pool.query('SELECT precio FROM Evento WHERE id_evento = $1', [id_evento]);
+        const precio = eventoResult.rows[0]?.precio ?? 0;
+
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: Math.round(precio * 100),
+            currency: 'eur',
             payment_method_types: ['card'],
-            line_items: [{
-                price: 'price_1RaH0WPbMwKwBYLWKDv1KpaX',
-                quantity: 1,
-            }],
-            mode: 'payment',
             metadata: {
                 tipo_pago: 'inscripcion_evento',
-                id_evento,
-                socio_id,
+                id_evento: id_evento.toString(),
+                socio_id: socio_id.toString(),
             },
-            success_url: `https://scdi.vercel.app/eventos-cientificos/${id_evento}/inscribirse/evento-exito?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `https://scdi.vercel.app/eventos-cientificos/${id_evento}`,
         });
 
+        // Registrar inscripción como pendiente
         pool.query("INSERT INTO Inscripciones (estado_inscripcion, evento, socio) VALUES ($1, $2, $3)", ["pendiente", id_evento, socio_id])
             .then(() => console.log("✅ Inscripción registrada"))
             .catch(err => console.error("Error registrando inscripción:", err.message));
 
-        res.status(200).json({ url: session.url });
+        res.status(200).json({ clientSecret: paymentIntent.client_secret });
     }
     catch (error) {
-        console.error("Error creando sesión de pago Stripe:", error.message);
+        console.error("Error creando PaymentIntent:", error.message);
         res.status(500).json({ message: 'Error al iniciar el pago' });
     }
 });

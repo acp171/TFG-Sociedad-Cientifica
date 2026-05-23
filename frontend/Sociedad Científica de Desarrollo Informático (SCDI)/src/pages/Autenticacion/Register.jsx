@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import PasarelaPago from "../../components/Pago/PasarelaPago";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -18,7 +19,11 @@ const Register = () => {
 
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
+    const [cargando, setCargando] = useState(false);
+
+    // Estado pasarela de pago
+    const [clientSecret, setClientSecret] = useState(null);
+    const [mostrarPago, setMostrarPago] = useState(false);
 
     useEffect(() => {
         const plan = JSON.parse(localStorage.getItem("planSeleccionado"));
@@ -34,10 +39,11 @@ const Register = () => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    // Fase 1: Enviar formulario → obtener clientSecret del backend
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
-        setSuccess("");
+        setCargando(true);
 
         try {
             const dataToSend = {
@@ -57,15 +63,24 @@ const Register = () => {
 
             const data = await res.json();
 
-            if (res.ok && data.url) {
-                window.location.href = data.url;
+            if (res.ok && data.clientSecret) {
+                setClientSecret(data.clientSecret);
+                setMostrarPago(true);
             } else {
                 setError(data.message || "Error en el registro.");
             }
         } catch (err) {
             console.error("Error en registro:", err);
             setError("Error en el servidor.");
+        } finally {
+            setCargando(false);
         }
+    };
+
+    // Fase 2: Pago completado → navegar al éxito
+    const handlePagoExito = () => {
+        localStorage.removeItem("planSeleccionado");
+        navigate("/registro-exitoso");
     };
 
     return (
@@ -80,7 +95,6 @@ const Register = () => {
 
             <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-xl p-8 max-w-md w-full space-y-5">
                 {error && <p className="text-red-600 font-medium">{error}</p>}
-                {success && <p className="text-green-600 font-medium">{success}</p>}
 
                 <>Nombre</>
                 <input type="text" name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} required className="w-full border p-3 rounded" />
@@ -94,7 +108,7 @@ const Register = () => {
                 <input type="tel" name="telefono" placeholder="Teléfono" value={formData.telefono} onChange={handleChange} required className="w-full border p-3 rounded" />
                 <>Fecha nacimiento</>
                 <input type="date" name="fecha_nacimiento" value={formData.fecha_nacimiento} onChange={handleChange} required className="w-full border p-3 rounded" />
-                
+
                 {selectedPlan?.id_tipo_socio === 2 && (
                     <>
                         <label>Universidad</label>
@@ -117,10 +131,25 @@ const Register = () => {
                     ¿Ya tienes una cuenta?
                 </Link>
 
-                <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition">
-                    Registrarse
+                <button
+                    type="submit"
+                    disabled={cargando}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition disabled:opacity-60"
+                >
+                    {cargando ? "Preparando pago..." : "Registrarse"}
                 </button>
             </form>
+
+            {/* Pasarela de pago embebida */}
+            {mostrarPago && clientSecret && (
+                <PasarelaPago
+                    clientSecret={clientSecret}
+                    importe={selectedPlan?.cuota}
+                    descripcion={`Plan ${selectedPlan?.nombre_tipo}`}
+                    onSuccess={handlePagoExito}
+                    onCancel={() => setMostrarPago(false)}
+                />
+            )}
         </section>
     );
 };

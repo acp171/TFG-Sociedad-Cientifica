@@ -1,19 +1,8 @@
-import { useEffect } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const EventoExito = () => {
     const { id } = useParams();
-    const [params] = useSearchParams();
     const navigate = useNavigate();
-    const sessionId = params.get("session_id");
-
-    useEffect(() => {
-        if (sessionId) {
-            // Aquí podrías mostrar algún estado cargando si quieres validar la sesión con Stripe
-            localStorage.removeItem("planSeleccionado");
-            console.log("Sesión de Stripe confirmada.");
-        }
-    }, [sessionId]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-green-50">

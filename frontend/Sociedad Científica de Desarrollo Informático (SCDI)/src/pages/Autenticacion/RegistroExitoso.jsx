@@ -1,18 +1,7 @@
-import { useEffect } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const RegistroExitoso = () => {
-    const { id } = useParams();
-    const [params] = useSearchParams();
     const navigate = useNavigate();
-    const sessionId = params.get("session_id");
-
-    useEffect(() => {
-        if (sessionId) {
-            // Aquí podrías mostrar algún estado cargando si quieres validar la sesión con Stripe
-            console.log("Sesión de Stripe confirmada.");
-        }
-    }, [sessionId]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-green-50">
@@ -20,7 +9,7 @@ const RegistroExitoso = () => {
                 <h1 className="text-3xl font-bold text-green-600 mb-4">¡Pago exitoso!</h1>
                 <p className="text-gray-700 mb-6">Tu registro se ha completado correctamente.</p>
                 <button
-                    onClick={() => navigate(`/login`)}
+                    onClick={() => navigate("/login")}
                     className="px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700"
                 >
                     Iniciar sesión

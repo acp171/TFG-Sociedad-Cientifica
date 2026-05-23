@@ -22,14 +22,14 @@ router.post('/', express.raw({ type: 'application/json' }), async (request, resp
         return response.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    if (event.type === 'checkout.session.completed') {
-        const session = event.data.object;
-        const id_evento = session.metadata.id_evento;
-        const socio_id = session.metadata.socio_id;
+    if (event.type === 'payment_intent.succeeded') {
+        const paymentIntent = event.data.object;
+        const id_evento = paymentIntent.metadata.id_evento;
+        const socio_id = paymentIntent.metadata.socio_id;
 
-        const tipoPago = session.metadata.tipo_pago;
+        const tipoPago = paymentIntent.metadata.tipo_pago;
         if (tipoPago === 'registro_socio') {
-            const { nombre, apellidos, email, password, telefono, fecha_nacimiento, id_plan } = session.metadata;
+            const { nombre, apellidos, email, password, telefono, fecha_nacimiento, id_plan } = paymentIntent.metadata;
             
             const query = `INSERT INTO Socio(nombre, apellidos, email, password, telefono, 
                             fecha_nacimiento, fecha_alta, socio_rol, tipo_socio)
