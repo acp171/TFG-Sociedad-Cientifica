@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "dotenv -e .env.production -- node src/app.js",
+    "start": "node src/app.js",
     "dev": "dotenv -e .env.development -- node src/app.js"
   },
   "keywords": [],
