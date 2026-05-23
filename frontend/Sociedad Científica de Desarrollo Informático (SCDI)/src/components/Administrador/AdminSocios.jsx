@@ -123,30 +123,32 @@ const AdminSocios = () => {
             {loading ? (
                 <p>Cargando socios...</p>
             ) : (
-                <table className="w-full border">
-                    <thead>
-                        <tr className="bg-indigo-100">
-                        <th className="border px-2 py-1">ID</th>
-                        <th className="border px-2 py-1">Nombre</th>
-                        <th className="border px-2 py-1">Email</th>
-                        <th className="border px-2 py-1">Rol</th>
-                        <th className="border px-2 py-1">Plan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {socios.map((socio) => (
-                            <tr key={socio.id_socio}>
-                                <th className="border px-2 py-1">{socio.id_socio}</th>
-                                <td className="border px-2 py-1">
-                                    {socio.nombre} {socio.apellidos}
-                                </td>
-                                <td className="border px-2 py-1">{socio.email}</td>
-                                <td className="border px-2 py-1">{socio.socio_rol}</td>
-                                <td className="border px-2 py-1">{socio.plan}</td>
+                <div className="overflow-x-auto">
+                    <table className="w-full border min-w-[600px]">
+                        <thead>
+                            <tr className="bg-indigo-100">
+                            <th className="border px-2 py-1 text-left">ID</th>
+                            <th className="border px-2 py-1 text-left">Nombre</th>
+                            <th className="border px-2 py-1 text-left">Email</th>
+                            <th className="border px-2 py-1 text-left">Rol</th>
+                            <th className="border px-2 py-1 text-left">Plan</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {socios.map((socio) => (
+                                <tr key={socio.id_socio} className="hover:bg-gray-50">
+                                    <th className="border px-2 py-1">{socio.id_socio}</th>
+                                    <td className="border px-2 py-1 whitespace-nowrap">
+                                        {socio.nombre} {socio.apellidos}
+                                    </td>
+                                    <td className="border px-2 py-1">{socio.email}</td>
+                                    <td className="border px-2 py-1 whitespace-nowrap">{socio.socio_rol}</td>
+                                    <td className="border px-2 py-1 whitespace-nowrap">{socio.plan}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
 
             {showForm && (

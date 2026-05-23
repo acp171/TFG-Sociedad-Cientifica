@@ -148,50 +148,52 @@ const AdminRoles = () => {
       {loading ? (
         <p>Cargando roles...</p>
       ) : (
-        <table className="w-full border border-gray-300 rounded overflow-hidden">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border px-3 py-2">ID</th>
-              <th className="border px-3 py-2">Nombre</th>
-              <th className="border px-3 py-2">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {roles.map((role) => (
-              <tr key={role.id}>
-                <td className="border px-3 py-2">{role.id}</td>
-                <td className="border px-3 py-2">{role.nombre}</td>
-                <th className="border px-3 py-2 space-x-2">
-                  {role.nombre === "Administrador" ? (
-                    <span className="text-gray-500 italic">Protegido</span>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => openEditForm(role)}
-                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded cursor-pointer"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => handleDelete(role)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded cursor-pointer"
-                      >
-                        Eliminar
-                      </button>
-                    </>
-                  )}
-                </th>
-              </tr>
-            ))}
-            {roles.length === 0 && (
+        <div className="overflow-x-auto">
+          <table className="w-full border border-gray-300 rounded overflow-hidden min-w-[500px]">
+            <thead className="bg-gray-100">
               <tr>
-                <td colSpan="3" className="text-center py-4 text-gray-600 italic">
-                  No hay roles registrados.
-                </td>
+                <th className="border px-3 py-2 text-left">ID</th>
+                <th className="border px-3 py-2 text-left">Nombre</th>
+                <th className="border px-3 py-2 text-left">Acciones</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {roles.map((role) => (
+                <tr key={role.id} className="hover:bg-gray-50">
+                  <td className="border px-3 py-2">{role.id}</td>
+                  <td className="border px-3 py-2">{role.nombre}</td>
+                  <th className="border px-3 py-2 space-x-2 whitespace-nowrap text-left font-normal">
+                    {role.nombre === "Administrador" ? (
+                      <span className="text-gray-500 italic">Protegido</span>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => openEditForm(role)}
+                          className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded cursor-pointer"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          onClick={() => handleDelete(role)}
+                          className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded cursor-pointer"
+                        >
+                          Eliminar
+                        </button>
+                      </>
+                    )}
+                  </th>
+                </tr>
+              ))}
+              {roles.length === 0 && (
+                <tr>
+                  <td colSpan="3" className="text-center py-4 text-gray-600 italic">
+                    No hay roles registrados.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {/* Formulario modal */}

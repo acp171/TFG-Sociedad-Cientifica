@@ -166,60 +166,62 @@ const AdminProyectos = () => {
             {loading ? (
                 <p>Cargando proyectos...</p>
             ) : (
-                <table className="w-full border-collapse border border-gray-300">
-                    <thead>
-                        <tr className="bg-indigo-100">
-                            <th className="border border-gray-300 px-3 py-1">ID</th>
-                            <th className="border border-gray-300 px-3 py-1">Título</th>
-                            <th className="border border-gray-300 px-3 py-1">Descripción</th>
-                            <th className="border border-gray-300 px-3 py-1">Fecha inicio</th>
-                            <th className="border border-gray-300 px-3 py-1">Fecha fin</th>
-                            <th className="border border-gray-300 px-3 py-1">Estado</th>
-                            <th className="border border-gray-300 px-3 py-1">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {proyectos.map((proyecto) => (
-                            <tr key={proyecto.id_proyecto}>
-                                <th className="border border-gray-300 px-3 py-1">{proyecto.id_proyecto}</th>
-                                <td className="border border-gray-300 px-3 py-1">{proyecto.nombre_proyecto}</td>
-                                <td className="border border-gray-300 px-3 py-1">{proyecto.descripcion}</td>
-                                <td className="border border-gray-300 px-3 py-1">
-                                    {proyecto.fecha_inicio
-                                        ? new Date(proyecto.fecha_inicio).toLocaleDateString()
-                                        : ""}
-                                </td>
-                                <td className="border border-gray-300 px-3 py-1">
-                                    {proyecto.fecha_fin
-                                        ? new Date(proyecto.fecha_fin).toLocaleDateString()
-                                        : ""}
-                                </td>
-                                <td className="border border-gray-300 px-3 py-1">{proyecto.estado}</td>
-                                <th className="border border-gray-300 px-3 py-1 space-x-2">
-                                    <button
-                                        onClick={() => openEditForm(proyecto)}
-                                        className="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded"
-                                    >
-                                        Editar
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(proyecto)}
-                                        className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
-                                    >
-                                        Eliminar
-                                    </button>
-                                </th>
+                <div className="overflow-x-auto">
+                    <table className="w-full border-collapse border border-gray-300 min-w-[800px]">
+                        <thead>
+                            <tr className="bg-indigo-100 uppercase text-xs">
+                                <th className="border border-gray-300 px-3 py-2 text-left">ID</th>
+                                <th className="border border-gray-300 px-3 py-2 text-left">Título</th>
+                                <th className="border border-gray-300 px-3 py-2 text-left">Descripción</th>
+                                <th className="border border-gray-300 px-3 py-2 text-left">Fecha inicio</th>
+                                <th className="border border-gray-300 px-3 py-2 text-left">Fecha fin</th>
+                                <th className="border border-gray-300 px-3 py-2 text-left">Estado</th>
+                                <th className="border border-gray-300 px-3 py-2 text-left">Acciones</th>
                             </tr>
-                        ))}
-                        {proyectos.length === 0 && (
-                            <tr>
-                                <td colSpan="7" className="text-center py-4 text-gray-600 italic">
-                                No hay proyectos.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="text-sm">
+                            {proyectos.map((proyecto) => (
+                                <tr key={proyecto.id_proyecto} className="hover:bg-gray-50">
+                                    <th className="border border-gray-300 px-3 py-2 text-left">{proyecto.id_proyecto}</th>
+                                    <td className="border border-gray-300 px-3 py-2 whitespace-nowrap">{proyecto.nombre_proyecto}</td>
+                                    <td className="border border-gray-300 px-3 py-2 max-w-[200px] truncate">{proyecto.descripcion}</td>
+                                    <td className="border border-gray-300 px-3 py-2 whitespace-nowrap">
+                                        {proyecto.fecha_inicio
+                                            ? new Date(proyecto.fecha_inicio).toLocaleDateString()
+                                            : ""}
+                                    </td>
+                                    <td className="border border-gray-300 px-3 py-2 whitespace-nowrap">
+                                        {proyecto.fecha_fin
+                                            ? new Date(proyecto.fecha_fin).toLocaleDateString()
+                                            : ""}
+                                    </td>
+                                    <td className="border border-gray-300 px-3 py-2 whitespace-nowrap">{proyecto.estado}</td>
+                                    <th className="border border-gray-300 px-3 py-2 space-x-2 whitespace-nowrap text-left font-normal">
+                                        <button
+                                            onClick={() => openEditForm(proyecto)}
+                                            className="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded"
+                                        >
+                                            Editar
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(proyecto)}
+                                            className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </th>
+                                </tr>
+                            ))}
+                            {proyectos.length === 0 && (
+                                <tr>
+                                    <td colSpan="7" className="text-center py-4 text-gray-600 italic">
+                                    No hay proyectos.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             )}
 
             {showForm && (

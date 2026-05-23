@@ -283,76 +283,78 @@ const AdminEventos = () => {
             {loading ? (
                 <p>Cargando eventos...</p>
             ) : (
-                <table className="w-full border-collapse border border-gray-300">
-                    <thead className="bg-gray-100">
-                        <tr>
-                            <th className="border border-gray-300 px-3 py-2">ID</th>
-                            <th className="border border-gray-300 px-3 py-2">Nombre evento</th>
-                            <th className="border border-gray-300 px-3 py-2">Fecha</th>
-                            <th className="border border-gray-300 px-3 py-2">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {eventos.map((evento) => (
-                            <tr key={evento.id_evento}>
-                                <th className="border border-gray-300 px-3 py-2">{evento.id_evento}</th>
-                                <td className="border border-gray-300 px-3 py-2">{evento.nombre_evento}</td>
-                                <td className="border border-gray-300 px-3 py-2 text-center">
-                                    <span>
-                                        {(() => {
-                                        const fechaInicio = new Date(evento.fecha_evento_inicio);
-                                        const fechaFin = new Date(evento.fecha_evento_fin);
-
-                                        const fecha = fechaInicio.toLocaleDateString("es-ES", {
-                                            day: "numeric",
-                                            month: "long",
-                                            year: "numeric",
-                                            timeZone: "UTC",
-                                        });
-
-                                        const horaInicio = fechaInicio.toLocaleTimeString("es-ES", {
-                                            hour: "2-digit",
-                                            minute: "2-digit",
-                                            hour12: false,
-                                            timeZone: "UTC",
-                                        });
-
-                                        const horaFin = fechaFin.toLocaleTimeString("es-ES", {
-                                            hour: "2-digit",
-                                            minute: "2-digit",
-                                            hour12: false,
-                                            timeZone: "UTC",
-                                        });
-
-                                        return `${fecha}, ${horaInicio} - ${horaFin}`;
-                                        })()}
-                                    </span>
-                                </td>
-                                <th className="border border-gray-300 px-3 py-2 space-x-2">
-                                    <button
-                                        onClick={() => openEditForm(evento)}
-                                        className="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded cursor-pointer"
-                                    >
-                                        Editar
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(evento)}
-                                        className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded cursor-pointer"
-                                    >
-                                        Eliminar
-                                    </button>
-                                </th>
-                            </tr>
-                        ))}
-                        {eventos.length === 0 && (
+                <div className="overflow-x-auto">
+                    <table className="w-full border-collapse border border-gray-300 min-w-[600px]">
+                        <thead className="bg-gray-100 uppercase text-xs">
                             <tr>
-                                <td colSpan="4" className="text-center py-4 text-gray-600 italic">
-                                    No hay eventos.
-                                </td>
+                                <th className="border border-gray-300 px-3 py-2 text-left">ID</th>
+                                <th className="border border-gray-300 px-3 py-2 text-left">Nombre evento</th>
+                                <th className="border border-gray-300 px-3 py-2 text-left">Fecha</th>
+                                <th className="border border-gray-300 px-3 py-2 text-left">Acciones</th>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="text-sm">
+                            {eventos.map((evento) => (
+                                <tr key={evento.id_evento} className="hover:bg-gray-50">
+                                    <th className="border border-gray-300 px-3 py-2 text-left">{evento.id_evento}</th>
+                                    <td className="border border-gray-300 px-3 py-2">{evento.nombre_evento}</td>
+                                    <td className="border border-gray-300 px-3 py-2 text-center whitespace-nowrap">
+                                        <span>
+                                            {(() => {
+                                            const fechaInicio = new Date(evento.fecha_evento_inicio);
+                                            const fechaFin = new Date(evento.fecha_evento_fin);
+
+                                            const fecha = fechaInicio.toLocaleDateString("es-ES", {
+                                                day: "numeric",
+                                                month: "long",
+                                                year: "numeric",
+                                                timeZone: "UTC",
+                                            });
+
+                                            const horaInicio = fechaInicio.toLocaleTimeString("es-ES", {
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                                hour12: false,
+                                                timeZone: "UTC",
+                                            });
+
+                                            const horaFin = fechaFin.toLocaleTimeString("es-ES", {
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                                hour12: false,
+                                                timeZone: "UTC",
+                                            });
+
+                                            return `${fecha}, ${horaInicio} - ${horaFin}`;
+                                            })()}
+                                        </span>
+                                    </td>
+                                    <th className="border border-gray-300 px-3 py-2 space-x-2 whitespace-nowrap text-left font-normal">
+                                        <button
+                                            onClick={() => openEditForm(evento)}
+                                            className="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded cursor-pointer"
+                                        >
+                                            Editar
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(evento)}
+                                            className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded cursor-pointer"
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </th>
+                                </tr>
+                            ))}
+                            {eventos.length === 0 && (
+                                <tr>
+                                    <td colSpan="4" className="text-center py-4 text-gray-600 italic">
+                                        No hay eventos.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             )}
 
             {showForm && (

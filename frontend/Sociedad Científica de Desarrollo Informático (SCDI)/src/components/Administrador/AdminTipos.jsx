@@ -200,43 +200,45 @@ const AdminTipos = () => {
             {loading ? (
                 <p>Cargando tipos de socio...</p>
             ) : (
-                <table className="w-full border">
-                    <thead>
-                        <tr className="bg-indigo-100">
-                            <th className="border px-2 py-1">ID</th>
-                            <th className="border px-2 py-1">Nombre</th>
-                            <th className="border px-2 py-1">Descripción</th>
-                            <th className="border px-2 py-1">Cuota (€)</th>
-                            <th className="border px-2 py-1">Stripe</th>
-                            <th className="border px-2 py-1">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tipos.map((tipo) => (
-                            <tr key={tipo.id_tipo_socio}>
-                                <th className="border px-2 py-1">{tipo.id_tipo_socio}</th>
-                                <td className="border px-2 py-1">{tipo.nombre_tipo}</td>
-                                <td className="border px-2 py-1">{tipo.descripcion}</td>
-                                <td className="border px-2 py-1">{tipo.cuota}</td>
-                                <td className="border px-2 py-1">{tipo.price_stripe}</td>
-                                <th className="border px-2 py-1 space-x-2">
-                                    <button
-                                        onClick={() => handleEdit(tipo)}
-                                        className="bg-yellow-500 text-white px-2 py-1 rounded cursor-pointer"
-                                    >
-                                        Editar
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(tipo.id_tipo_socio)}
-                                        className="bg-red-600 text-white px-2 py-1 rounded cursor-pointer"
-                                    >
-                                        Eliminar
-                                    </button>
-                                </th>
+                <div className="overflow-x-auto">
+                    <table className="w-full border min-w-[700px]">
+                        <thead>
+                            <tr className="bg-indigo-100">
+                                <th className="border px-2 py-1 text-left">ID</th>
+                                <th className="border px-2 py-1 text-left">Nombre</th>
+                                <th className="border px-2 py-1 text-left">Descripción</th>
+                                <th className="border px-2 py-1 text-left">Cuota (€)</th>
+                                <th className="border px-2 py-1 text-left">Stripe</th>
+                                <th className="border px-2 py-1 text-left">Acciones</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {tipos.map((tipo) => (
+                                <tr key={tipo.id_tipo_socio} className="hover:bg-gray-50">
+                                    <th className="border px-2 py-1 text-left">{tipo.id_tipo_socio}</th>
+                                    <td className="border px-2 py-1 whitespace-nowrap">{tipo.nombre_tipo}</td>
+                                    <td className="border px-2 py-1 max-w-[250px] truncate">{tipo.descripcion}</td>
+                                    <td className="border px-2 py-1">{tipo.cuota}</td>
+                                    <td className="border px-2 py-1 whitespace-nowrap font-mono text-xs">{tipo.price_stripe}</td>
+                                    <th className="border px-2 py-1 space-x-2 whitespace-nowrap text-left">
+                                        <button
+                                            onClick={() => handleEdit(tipo)}
+                                            className="bg-yellow-500 text-white px-2 py-1 rounded cursor-pointer"
+                                        >
+                                            Editar
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(tipo.id_tipo_socio)}
+                                            className="bg-red-600 text-white px-2 py-1 rounded cursor-pointer"
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </th>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </div>
     );
