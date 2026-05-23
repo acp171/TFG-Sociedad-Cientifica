@@ -108,33 +108,35 @@ const GestionMiembros = () => {
             ) : miembros.length === 0 ? (
                 <p>No hay miembros registrados.</p>
             ) : (
-                <table className="w-full mb-6 border-collapse">
-                    <thead>
-                        <tr className="bg-gray-200">
-                            <th className="border px-4 py-2 text-left">Nombre completo</th>
-                            <th className="border px-4 py-2 text-left">Email</th>
-                            <th className="border px-4 py-2 text-left">Tipo de socio</th>
-                            <th className="border px-4 py-2 text-left">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {miembros.map((m) => (
-                            <tr key={m.id_socio} className="hover:bg-gray-100">
-                                <td className="border px-4 py-2">{m.nombre} {m.apellidos}</td>
-                                <td className="border px-4 py-2">{m.email}</td>
-                                <td className="border px-4 py-2">Profesional</td>
-                                <td className="border px-4 py-2">
-                                    <button
-                                        onClick={() => handleDelete(m.id_socio)}
-                                        className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 transition"
-                                    >
-                                        Eliminar
-                                    </button>
-                                </td>
+                <div className="overflow-x-auto">
+                    <table className="w-full mb-6 border-collapse">
+                        <thead>
+                            <tr className="bg-gray-200">
+                                <th className="border px-4 py-2 text-left">Nombre completo</th>
+                                <th className="border px-4 py-2 text-left">Email</th>
+                                <th className="border px-4 py-2 text-left">Tipo de socio</th>
+                                <th className="border px-4 py-2 text-left">Acciones</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {miembros.map((m) => (
+                                <tr key={m.id_socio} className="hover:bg-gray-100">
+                                    <td className="border px-4 py-2 whitespace-nowrap">{m.nombre} {m.apellidos}</td>
+                                    <td className="border px-4 py-2">{m.email}</td>
+                                    <td className="border px-4 py-2">Profesional</td>
+                                    <td className="border px-4 py-2">
+                                        <button
+                                            onClick={() => handleDelete(m.id_socio)}
+                                            className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 transition"
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
 
             {/* Formulario para añadir miembro */}

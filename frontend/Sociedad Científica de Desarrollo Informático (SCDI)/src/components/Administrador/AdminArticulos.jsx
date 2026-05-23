@@ -154,44 +154,46 @@ const AdminArticulos = () => {
             {loading ? (
                 <p>Cargando artículos...</p>
             ) : (
-                <table className="w-full border-collapse border border-gray-300">
-                    <thead className="bg-gray-100">
-                        <tr>
-                            <th className="border border-gray-300 px-3 py-2">ID</th>
-                            <th className="border border-gray-300 px-3 py-2">Título</th>
-                            <th className="border border-gray-300 px-3 py-2">Fecha publicación</th>
-                            <th className="border border-gray-300 px-3 py-2">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {articulos.map((art) => (
-                            <tr key={art.id_publicacion}>
-                                <td className="border border-gray-300 px-3 py-2">{art.id_publicacion}</td>
-                                <td className="border border-gray-300 px-3 py-2">{art.titulo}</td>
-                                <td className="border border-gray-300 px-3 py-2 text-center">
-                                    {art.fecha_publicacion
-                                        ? new Date(art.fecha_publicacion).toLocaleDateString()
-                                        : "-"}
-                                </td>
-                                <td className="border border-gray-300 px-3 py-2">
-                                    <button
-                                        onClick={() => handleDelete(art)}
-                                        className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
-                                    >
-                                        Eliminar
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                        {articulos.length === 0 && (
+                <div className="overflow-x-auto">
+                    <table className="w-full border-collapse border border-gray-300">
+                        <thead className="bg-gray-100">
                             <tr>
-                                <td colSpan="4" className="text-center py-4 text-gray-600 italic">
-                                    No hay artículos.
-                                </td>
+                                <th className="border border-gray-300 px-3 py-2 text-left">ID</th>
+                                <th className="border border-gray-300 px-3 py-2 text-left">Título</th>
+                                <th className="border border-gray-300 px-3 py-2 text-left">Fecha publicación</th>
+                                <th className="border border-gray-300 px-3 py-2 text-left">Acciones</th>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {articulos.map((art) => (
+                                <tr key={art.id_publicacion}>
+                                    <td className="border border-gray-300 px-3 py-2">{art.id_publicacion}</td>
+                                    <td className="border border-gray-300 px-3 py-2 min-w-[200px]">{art.titulo}</td>
+                                    <td className="border border-gray-300 px-3 py-2 text-center whitespace-nowrap">
+                                        {art.fecha_publicacion
+                                            ? new Date(art.fecha_publicacion).toLocaleDateString()
+                                            : "-"}
+                                    </td>
+                                    <td className="border border-gray-300 px-3 py-2 whitespace-nowrap">
+                                        <button
+                                            onClick={() => handleDelete(art)}
+                                            className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            {articulos.length === 0 && (
+                                <tr>
+                                    <td colSpan="4" className="text-center py-4 text-gray-600 italic">
+                                        No hay artículos.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             )}
 
             {showForm && (

@@ -36,24 +36,26 @@ const PanelPerfil = () => {
     };
 
     return (
-        <div className="min-h-screen flex bg-gradient-to-b from-blue-200 to-white">
-            <aside className="w-80 bg-white shadow-md p-6 space-y-4">
-                <h2 className="text-xl font-bold mb-8 text-indigo-700">PANEL DE USUARIO</h2>
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setSelectedTab(tab.id)}
-                        className={`flex items-center gap-3 px-4 py-2 rounded-lg w-full text-left hover:bg-indigo-100 transition ${
-                            selectedTab === tab.id ? "bg-indigo-200 font-semibold" : ""
-                        }`}
-                    >
-                        {tab.label}
-                    </button>
-                ))}
+        <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-b from-blue-200 to-white">
+            <aside className="w-full md:w-80 bg-white shadow-md p-4 md:p-6 space-y-4">
+                <h2 className="text-xl font-bold mb-4 md:mb-8 text-indigo-700 text-center md:text-left">PANEL DE USUARIO</h2>
+                <div className="flex md:flex-col overflow-x-auto md:overflow-x-visible pb-2 md:pb-0 gap-2 md:gap-4 no-scrollbar">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setSelectedTab(tab.id)}
+                            className={`flex-shrink-0 flex items-center gap-3 px-4 py-2 rounded-lg text-sm md:text-base text-left hover:bg-indigo-100 transition whitespace-nowrap ${
+                                selectedTab === tab.id ? "bg-indigo-200 font-semibold" : ""
+                            } md:w-full`}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
             </aside>
 
-            <main className="flex-1 p-8">
-                <div>{renderContent()}</div>
+            <main className="flex-1 p-4 md:p-8 overflow-hidden">
+                <div className="max-w-full">{renderContent()}</div>
             </main>
         </div>
     );

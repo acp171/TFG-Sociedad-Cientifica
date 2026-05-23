@@ -59,11 +59,11 @@ const ProyectoDetalles = () => {
                 Volver
             </button>
 
-            <h1 className="text-4xl font-extrabold text-gray-900 mb-8">{proyecto.nombre_proyecto}</h1>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-8">{proyecto.nombre_proyecto}</h1>
 
-            <nav className="flex gap-4 mb-12">
+            <nav className="flex flex-wrap gap-3 md:gap-4 mb-8 md:mb-12">
                 <button
-                    className={`px-4 py-2 rounded-md font-semibold ${
+                    className={`flex-1 md:flex-none px-4 py-2 rounded-md font-semibold text-sm md:text-base ${
                     activeTab === "datos" ? "bg-indigo-600 text-white" : "bg-gray-200 text-gray-700"
                     }`}
                     onClick={() => setActiveTab("datos")}
@@ -71,7 +71,7 @@ const ProyectoDetalles = () => {
                     Datos del Proyecto
                 </button>
                 <button
-                    className={`px-4 py-2 rounded-md font-semibold ${
+                    className={`flex-1 md:flex-none px-4 py-2 rounded-md font-semibold text-sm md:text-base ${
                     activeTab === "miembros" ? "bg-indigo-600 text-white" : "bg-gray-200 text-gray-700"
                     }`}
                     onClick={() => setActiveTab("miembros")}

@@ -6,8 +6,7 @@ const QuienesSomos = () => {
                 <img
                     src="/quienes-somos.webp"
                     alt="Portada Sociedad Científica Quienes Somos"
-                    className="w-full"
-                    style={{ height: '550px' }}
+                    className="w-full h-[250px] md:h-[550px] object-cover"
                 />
             </div>
             <div className="py-16 px-6 max-w-5xl mx-auto text-gray-800 space-y-8">

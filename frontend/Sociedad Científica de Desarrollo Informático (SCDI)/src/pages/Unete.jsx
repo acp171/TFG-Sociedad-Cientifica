@@ -4,11 +4,11 @@ const Unete = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-[83.7vh] flex">
+    <div className="min-h-[83.7vh] flex flex-col md:flex-row">
       {/* Lado Izquierdo: Beneficios */}
-      <div className="w-1/2 bg-indigo-600 text-white flex flex-col justify-center px-12 py-16">
-        <h1 className="text-4xl font-extrabold mb-8">Únete a la plataforma</h1>
-        <ul className="space-y-5 text-lg">
+      <div className="w-full md:w-1/2 bg-indigo-600 text-white flex flex-col justify-center px-8 md:px-12 py-12 md:py-16">
+        <h1 className="text-3xl md:text-4xl font-extrabold mb-8">Únete a la plataforma</h1>
+        <ul className="space-y-5 text-base md:text-lg">
           <li>✔️ Colabora en proyectos de investigación</li>
           <li>✔️ Administra miembros y roles fácilmente</li>
           <li>✔️ Centraliza la información de tus investigaciones</li>
@@ -17,8 +17,8 @@ const Unete = () => {
       </div>
 
       {/* Lado Derecho: Botones de acción */}
-      <div className="w-1/2 flex flex-col items-center justify-center bg-white px-10">
-        <h2 className="text-3xl font-bold mb-10 text-gray-800">
+      <div className="w-full md:w-1/2 flex flex-col items-center justify-center bg-white px-8 md:px-10 py-12 md:py-0">
+        <h2 className="text-2xl md:text-3xl font-bold mb-10 text-gray-800">
           ¡Empieza ahora!
         </h2>
 

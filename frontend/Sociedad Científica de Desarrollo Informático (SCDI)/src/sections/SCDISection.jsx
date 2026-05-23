@@ -29,7 +29,7 @@ const SCDISection = () => {
                     <img
                         src="/home.webp"
                         alt="Ilustración SCDI"
-                        className="w-[320px] md:w-[400px]"
+                        className="w-full max-w-[320px] md:max-w-[400px]"
                     />
                 </div>
             </div>

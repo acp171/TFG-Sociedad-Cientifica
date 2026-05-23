@@ -29,7 +29,7 @@ const ProyectosSection = () => {
         ) : proyectos.length === 0 ? (
             <p className="text-center">No hay proyectos disponibles.</p>
         ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-40">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {proyectos.slice(0, 4).map(proyecto => (
                     <div
                     key={proyecto.id_proyecto}

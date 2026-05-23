@@ -79,8 +79,8 @@ const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, tok
     };
 
     return (
-        <div className="bg-white rounded-xl shadow-md p-6 max-w-5xl mx-auto">
-            <div className="flex gap-4 mb-6">
+        <div className="bg-white rounded-xl shadow-md p-4 md:p-6 max-w-5xl mx-auto">
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
                 <input
                     className="border rounded-md px-3 py-2 flex-grow"
                     type="number"
@@ -108,51 +108,53 @@ const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, tok
                 </button>
             </div>
         
-            <table className="w-full border-collapse table-auto">
-                <thead>
-                    <tr className="bg-indigo-100">
-                        <th className="border px-3 py-2 text-left">ID Socio</th>
-                        <th className="border px-3 py-2 text-left">Nombre</th>
-                        <th className="border px-3 py-2 text-left">Rol</th>
-                        <th className="border px-3 py-2 text-left">Fecha Registro</th>
-                        <th className="border px-3 py-2 text-left">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {miembros.map((m) => (
-                        <tr key={m.id_socio} className="hover:bg-indigo-50">
-                        <td className="border px-3 py-2">{m.id_socio}</td>
-                        <td className="border px-3 py-2">{m.nombre} {m.apellidos}</td>
-                        <td className="border px-3 py-2">
-                            {esPresidente ? (
-                                <select
-                                    className="border rounded-md px-2 py-1"
-                                    value={roles.find(r => r.nombre_rol === m.rol)?.id || ""}
-                                    onChange={(e) => cambiarRol(m.id_socio, e.target.value)}
-                                >
-                                    {roles.map((r) => (
-                                        <option key={r.id} value={r.id}>{r.nombre_rol}</option>
-                                    ))}
-                                </select>
-                            ) : (
-                                m.rol
-                            )}
-                        </td>
-                        <td className="border px-3 py-2">{new Date(m.fecha_registro).toLocaleDateString()}</td>
-                        <td className="border px-3 py-2">
-                            {esPresidente && (
-                            <button
-                                className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition"
-                                onClick={() => eliminarMiembro(m.id_socio)}
-                            >
-                                Eliminar
-                            </button>
-                            )}
-                        </td>
+            <div className="overflow-x-auto">
+                <table className="w-full border-collapse table-auto">
+                    <thead>
+                        <tr className="bg-indigo-100 uppercase text-xs text-left">
+                            <th className="border px-3 py-2 whitespace-nowrap">ID Socio</th>
+                            <th className="border px-3 py-2 whitespace-nowrap">Nombre</th>
+                            <th className="border px-3 py-2 whitespace-nowrap">Rol</th>
+                            <th className="border px-3 py-2 whitespace-nowrap">Fecha Registro</th>
+                            <th className="border px-3 py-2 whitespace-nowrap">Acciones</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody className="text-sm">
+                        {miembros.map((m) => (
+                            <tr key={m.id_socio} className="hover:bg-indigo-50">
+                            <td className="border px-3 py-2">{m.id_socio}</td>
+                            <td className="border px-3 py-2 min-w-[150px]">{m.nombre} {m.apellidos}</td>
+                            <td className="border px-3 py-2">
+                                {esPresidente ? (
+                                    <select
+                                        className="border rounded-md px-2 py-1 bg-white"
+                                        value={roles.find(r => r.nombre_rol === m.rol)?.id || ""}
+                                        onChange={(e) => cambiarRol(m.id_socio, e.target.value)}
+                                    >
+                                        {roles.map((r) => (
+                                            <option key={r.id} value={r.id}>{r.nombre_rol}</option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    m.rol
+                                )}
+                            </td>
+                            <td className="border px-3 py-2 whitespace-nowrap">{new Date(m.fecha_registro).toLocaleDateString()}</td>
+                            <td className="border px-3 py-2">
+                                {esPresidente && (
+                                <button
+                                    className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition text-xs"
+                                    onClick={() => eliminarMiembro(m.id_socio)}
+                                >
+                                    Eliminar
+                                </button>
+                                )}
+                            </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

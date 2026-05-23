@@ -118,17 +118,17 @@ const ArticuloDetalles = () => {
                 <HiArrowLeft className="mr-2 text-xl" /> Volver
             </button>
 
-            <article className="bg-gradient-to-b from-blue-50 to-white shadow-xl rounded-xl p-10 max-w-4xl w-full">
-                <h1 className="text-center text-5xl font-extrabold mb-8 text-gray-900 tracking-wide drop-shadow-sm">
+            <article className="bg-gradient-to-b from-blue-50 to-white shadow-xl rounded-xl p-6 md:p-10 max-w-4xl w-full">
+                <h1 className="text-center text-3xl md:text-5xl font-extrabold mb-8 text-gray-900 tracking-wide drop-shadow-sm">
                     {articulo.titulo}
                 </h1>
 
-                <p className="text-gray-800 whitespace-pre-wrap leading-relaxed text-lg mb-12 border-l-4 border-blue-600 pl-6">
+                <p className="text-gray-800 whitespace-pre-wrap leading-relaxed text-base md:text-lg mb-8 md:mb-12 border-l-4 border-blue-600 pl-4 md:pl-6">
                     {articulo.contenido}
                 </p>
 
                 <div className="flex justify-between items-center mb-10 flex-wrap gap-4">
-                    <p className="text-sm text-gray-500 italic">
+                    <p className="text-xs md:text-sm text-gray-500 italic">
                         Publicado por:{" "}
                         <span className="font-semibold text-gray-700">
                             {articulo.nombre} {articulo.apellidos}
@@ -142,7 +142,7 @@ const ArticuloDetalles = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                             download
-                            className="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-3 rounded-md hover:bg-blue-700 transition shadow-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                            className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 md:px-5 md:py-3 rounded-md hover:bg-blue-700 transition shadow-md focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm md:text-base"
                         >
                             <HiDownload className="text-xl" /> Descargar PDF
                         </a>
@@ -153,7 +153,7 @@ const ArticuloDetalles = () => {
                     <div className="flex justify-end">
                         <button
                             onClick={eliminar}
-                            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
+                            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 md:px-6 md:py-3 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-red-600 text-sm md:text-base"
                             aria-label="Eliminar artículo"
                         >
                             <HiTrash className="text-xl" /> Eliminar artículo

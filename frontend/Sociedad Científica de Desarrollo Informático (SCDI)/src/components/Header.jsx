@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Search, User, LogOut, Settings, Inbox } from "lucide-react";
+import { Search, User, LogOut, Settings, Inbox, Menu, X } from "lucide-react";
 import { FaUser } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/AuthContext";
@@ -18,6 +18,7 @@ const Header = () => {
     const [notificaciones, setNotificaciones] = useState([]);
     const [mostrarNotificaciones, setMostrarNotificaciones] = useState(false);
     const [notificacionSeleccionada, setNotificacionSeleccionada] = useState(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const filtrarEventos = (eventos) =>
         eventos.filter((evento) =>
@@ -144,6 +145,7 @@ const Header = () => {
 
     const handleLogout = () => {
         logout();
+        setIsMenuOpen(false);
     };
 
     // En caso de que el login ocurra desde otra parte
@@ -157,18 +159,18 @@ const Header = () => {
     }, []);
 
     return (
-        <header className="flex items-center justify-between h-16 bg-gray-100 shadow px-10">
+        <header className="flex items-center justify-between h-16 bg-gray-100 shadow px-4 md:px-10 sticky top-0 z-50">
             {/* Logo + Nombre */}
-            <Link to="/" className="flex items-center space-x-3">
-                <img src="/scdi.webp" alt="Logo" className="max-w-[64px] max-h-[64px]" />
-                <div className="text-sm leading-tight">
+            <Link to="/" className="flex items-center space-x-3 z-50">
+                <img src="/scdi.webp" alt="Logo" className="max-w-[48px] md:max-w-[64px]" />
+                <div className="text-xs md:text-sm leading-tight">
                     <span className="block font-semibold">Sociedad Científica de</span>
                     <span className="block font-semibold">Desarrollo Informático</span>
                 </div>
             </Link>
 
-            {/* Navegación */}
-            <nav>
+            {/* Navegación Desktop */}
+            <nav className="hidden lg:block">
                 <ul className="flex space-x-6 font-medium">
                     <li><a href="/quienes-somos" className="hover:text-purple-400">QUIÉNES SOMOS</a></li>
                     <li><a href="/eventos-cientificos" className="hover:text-purple-400">ACTIVIDADES</a></li>
@@ -177,8 +179,8 @@ const Header = () => {
                 </ul>
             </nav>
 
-            {/* Iconos */}
-            <div className="flex items-center space-x-4 relative">
+            {/* Iconos Desktop */}
+            <div className="hidden lg:flex items-center space-x-4 relative">
                 {!isSearching ? (
                     <button
                         onClick={() => setIsSearching(true)}
@@ -349,6 +351,92 @@ const Header = () => {
                     CONTÁCTANOS
                 </Link>
             </div>
+
+            {/* Mobile Menu Button */}
+            <button
+                className="lg:hidden p-2 rounded-md hover:bg-gray-200 transition z-50"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+
+            {/* Mobile Menu Overlay */}
+            {isMenuOpen && (
+                <div className="fixed inset-0 bg-white z-40 lg:hidden flex flex-col p-6 pt-24 space-y-6 overflow-y-auto slide-in-left">
+                    <nav>
+                        <ul className="flex flex-col space-y-4 text-lg font-semibold">
+                            <li><a href="/quienes-somos" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600">QUIÉNES SOMOS</a></li>
+                            <li><a href="/eventos-cientificos" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600">ACTIVIDADES</a></li>
+                            <li><a href="/proyectos-investigacion" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600">PROYECTOS</a></li>
+                            <li><a href="/articulos-cientificos" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600">ARTÍCULOS</a></li>
+                        </ul>
+                    </nav>
+
+                    <div className="border-t pt-6 space-y-4">
+                        <div className="flex flex-wrap gap-4">
+                            {isLoggedIn && userRole === 1 && (
+                                <Link
+                                    to="/panel-administrador"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="flex items-center space-x-2 p-2 bg-gray-100 rounded-lg w-full"
+                                >
+                                    <Settings className="w-5 h-5" />
+                                    <span>Administración</span>
+                                </Link>
+                            )}
+
+                            {isLoggedIn && (
+                                <Link
+                                    to="/notificaciones"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="flex items-center space-x-2 p-2 bg-gray-100 rounded-lg w-full"
+                                >
+                                    <Inbox className="w-5 h-5" />
+                                    <span>Notificaciones ({notificaciones.length})</span>
+                                </Link>
+                            )}
+
+                            {isLoggedIn && (
+                                <Link
+                                    to="/perfil"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="flex items-center space-x-2 p-2 bg-gray-100 rounded-lg w-full"
+                                >
+                                    <FaUser className="w-5 h-5" />
+                                    <span>Mi Perfil</span>
+                                </Link>
+                            )}
+
+                            {isLoggedIn ? (
+                                <button
+                                    onClick={handleLogout}
+                                    className="flex items-center space-x-2 p-2 bg-red-50 text-red-600 rounded-lg w-full"
+                                >
+                                    <LogOut className="w-5 h-5" />
+                                    <span>Cerrar Sesión</span>
+                                </button>
+                            ) : (
+                                <Link
+                                    to="/unete"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="flex items-center space-x-2 p-2 bg-blue-50 text-blue-600 rounded-lg w-full"
+                                >
+                                    <User className="w-5 h-5" />
+                                    <span>Iniciar Sesión</span>
+                                </Link>
+                            )}
+                        </div>
+
+                        <Link
+                            to="/contacto"
+                            onClick={() => setIsMenuOpen(false)}
+                            className="block text-center bg-blue-600 text-white font-bold py-3 rounded-lg shadow-lg"
+                        >
+                            CONTÁCTANOS
+                        </Link>
+                    </div>
+                </div>
+            )}
 
             {notificacionSeleccionada && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
