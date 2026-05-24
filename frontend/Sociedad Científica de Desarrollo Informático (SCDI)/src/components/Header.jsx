@@ -159,13 +159,16 @@ const Header = () => {
     }, []);
 
     return (
-        <header className="flex items-center justify-between h-16 bg-gray-100 shadow px-4 md:px-10 sticky top-0 z-50">
+        <header className="flex items-center justify-between h-20 bg-gray-100 shadow px-3 md:px-10 sticky top-0 z-50">
+            {/* Espacio invisible en móvil para equilibrar el botón de menú y forzar centrado */}
+            <div className="w-10 lg:hidden flex-shrink-0"></div>
+
             {/* Logo + Nombre */}
-            <Link to="/" className="flex items-center space-x-3 z-50">
-                <img src="/scdi.webp" alt="Logo" className="max-w-[48px] md:max-w-[64px]" />
-                <div className="text-xs md:text-sm leading-tight">
-                    <span className="block font-semibold">Sociedad Científica de</span>
-                    <span className="block font-semibold">Desarrollo Informático</span>
+            <Link to="/" className="flex items-center justify-center space-x-3 z-50 flex-grow lg:flex-grow-0">
+                <img src="/scdi.webp" alt="Logo" className="w-12 h-12 xs:w-14 xs:h-14 md:w-16 md:h-16 object-contain flex-shrink-0" />
+                <div className="text-sm xs:text-base md:text-lg leading-tight text-slate-800 text-left">
+                    <span className="block font-extrabold tracking-tight">Sociedad Científica de</span>
+                    <span className="block font-extrabold tracking-tight">Desarrollo Informático</span>
                 </div>
             </Link>
 
@@ -354,10 +357,10 @@ const Header = () => {
 
             {/* Mobile Menu Button */}
             <button
-                className="lg:hidden p-2 rounded-md hover:bg-gray-200 transition z-50"
+                className="lg:hidden p-1 rounded-md text-gray-700 hover:bg-gray-200 transition z-50 w-10 h-10 flex items-center justify-center flex-shrink-0 ml-auto"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {isMenuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
             </button>
 
             {/* Mobile Menu Overlay */}
