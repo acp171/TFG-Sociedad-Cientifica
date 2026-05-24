@@ -116,88 +116,81 @@ const planes = [
 
 const SeleccionarPlan = () => {
     const navigate = useNavigate();
-    const [hoveredPlan, setHoveredPlan] = useState(null);
-    const [isPanelVisible, setPanelVisible] = useState(false);
 
     const seleccionarPlan = (plan) => {
         localStorage.setItem("planSeleccionado", JSON.stringify(plan));
         navigate("/register");
     };
 
-    const handleHover = (plan) => {
-        setHoveredPlan(plan);
-        setPanelVisible(true);
-    };
-
-    const handleLeave = () => {
-        setPanelVisible(false);
-        setTimeout(() => setHoveredPlan(null), 200); // coincide con slide-out
-    };
-
     return (
-        <div className="min-h-[80vh] bg-gradient-to-b from-blue-200 to-white py-16 px-4">
-            <h1 className="text-5xl font-bold text-center text-indigo-800 mb-16">Elige tu plan de membresía</h1>
+        <div className="min-h-[80vh] bg-gradient-to-b from-slate-50 to-blue-100 py-16 px-4">
+            <div className="max-w-7xl mx-auto text-center mb-16">
+                <h1 className="text-5xl font-extrabold text-blue-900 mb-4 tracking-tight">Elige tu plan de membresía</h1>
+                <p className="text-lg text-blue-700 max-w-2xl mx-auto">Selecciona la modalidad que mejor se adapte a tu perfil y empieza a disfrutar de las ventajas de nuestra sociedad científica.</p>
+            </div>
 
-            <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 {planes.slice(0, 3).map((plan) => (
                     <CardPlan
                         key={plan.id_tipo_socio}
                         plan={plan}
                         onSelect={seleccionarPlan}
-                        onHover={handleHover}
-                        onLeave={handleLeave}
                     />
                 ))}
             </div>
 
-            <div className="max-w-7xl mx-auto mt-12 flex flex-col sm:flex-row justify-center gap-10">
+            <div className="max-w-7xl mx-auto mt-12 flex flex-col md:flex-row justify-center gap-10">
                 {planes.slice(3, 5).map((plan) => (
-                    <div className="w-full sm:w-1/2 lg:w-1/3" key={plan.id_tipo_socio}>
+                    <div className="w-full md:w-1/2 lg:w-1/3" key={plan.id_tipo_socio}>
                         <CardPlan
                             plan={plan}
                             onSelect={seleccionarPlan}
-                            onHover={handleHover}
-                            onLeave={handleLeave}
                         />
                     </div>
                 ))}
             </div>
-
-            {hoveredPlan && (
-                <div
-                    className={`fixed top-0 left-0 h-full w-80 bg-white shadow-2xl p-6 z-50 border-r-4 border-indigo-600 transform ${
-                        isPanelVisible ? "slide-in-left" : "slide-out-left"
-                    }`}
-                >
-                    <h2 className="text-2xl font-bold text-indigo-800 mb-4">{hoveredPlan.nombre_tipo}</h2>
-                    <div className="text-sm text-gray-800 leading-relaxed whitespace-pre-line">
-                        {hoveredPlan.descripcion}
-                    </div>
-                    <p className="text-lg font-semibold">
-                        Cuota: {hoveredPlan.cuota === 0 ? "Gratis" : `${hoveredPlan.cuota} €/mes`}
-                    </p>
-                </div>
-            )}
         </div>
     );
 };
   
-const CardPlan = ({ plan, onSelect, onHover, onLeave }) => (
+const CardPlan = ({ plan, onSelect }) => (
     <div
-        className={`bg-gradient-to-br ${plan.bg} rounded-3xl shadow-2xl p-8 flex flex-col items-center justify-between hover:scale-105 transition-transform duration-300 cursor-pointer`}
+        className={`relative bg-gradient-to-br ${plan.bg} rounded-3xl shadow-xl hover:shadow-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 h-[420px] md:h-[450px] group cursor-pointer border border-white/40 ring-1 ring-black/5`}
         onClick={() => onSelect(plan)}
-        onMouseEnter={() => onHover(plan)}
-        onMouseLeave={onLeave}
     >
-        <div className="flex flex-col items-center">
-            {plan.icon}
-            <h2 className="text-2xl font-bold mt-4 text-gray-800">{plan.nombre_tipo}</h2>
+        {/* Vista Frontal */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-8 transition-opacity duration-300 group-hover:opacity-0">
+            <div className="bg-white/40 p-5 rounded-full shadow-inner mb-6 backdrop-blur-sm">
+                {plan.icon}
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900 text-center mb-4">{plan.nombre_tipo}</h2>
+            <div className="text-center">
+                <p className="text-5xl font-black text-gray-900 drop-shadow-sm flex items-end justify-center gap-1">
+                    {plan.cuota === 0 ? "Gratis" : `${plan.cuota}€`}
+                    {plan.cuota !== 0 && <span className="text-lg font-medium text-gray-700 mb-1">/mes</span>}
+                </p>
+            </div>
+            
+            <div className="absolute bottom-8 text-blue-900 font-bold text-sm tracking-widest flex flex-col items-center gap-2 opacity-70 animate-pulse">
+                <span>VER VENTAJAS</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
         </div>
 
-        <div className="mt-8 text-center">
-            <p className="text-3xl font-extrabold text-gray-900">
-                {plan.cuota === 0 ? "Gratis" : `${plan.cuota} €/mes`}
-            </p>
+        {/* Vista Trasera (Overlay en Hover) */}
+        <div className="absolute inset-0 bg-white/95 backdrop-blur-md p-6 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out z-20 flex flex-col">
+            <h3 className="text-xl font-bold text-indigo-900 mb-3 text-center border-b-2 border-indigo-100 pb-2 flex-shrink-0">
+                ¿Qué incluye el plan {plan.nombre_tipo}?
+            </h3>
+            
+            {/* Scrollable content container */}
+            <div className="flex-grow overflow-y-auto text-sm text-gray-700 pr-2 custom-scrollbar space-y-2">
+                {plan.descripcion}
+            </div>
+            
+            <button className="mt-4 flex-shrink-0 w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-800 transition-all transform hover:scale-[1.02]">
+                Seleccionar {plan.nombre_tipo}
+            </button>
         </div>
     </div>
 );
