@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 
 const EventoDetalles = () => {
     const { id } = useParams();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [evento, setEvento] = useState(null);
     const [miembrosComite, setMiembrosComite] = useState([]);
     const [miembrosInscritos, setMiembrosInscritos] = useState([]);
@@ -141,7 +141,7 @@ const EventoDetalles = () => {
         );
     }
 
-    const fechaInicioFormateada = new Date(evento.fecha_evento_inicio).toLocaleDateString("es-ES", {
+    const fechaInicioFormateada = new Date(evento.fecha_evento_inicio).toLocaleDateString(i18n.language, {
         year: "numeric",
         month: "long",
         day: "numeric",
@@ -149,7 +149,7 @@ const EventoDetalles = () => {
         minute: "2-digit"
     });
 
-    const fechaFinFormateada = new Date(evento.fecha_evento_fin).toLocaleTimeString("es-ES", {
+    const fechaFinFormateada = new Date(evento.fecha_evento_fin).toLocaleTimeString(i18n.language, {
         hour: "2-digit",
         minute: "2-digit"
     });

@@ -211,7 +211,7 @@
   "detalle_evento": {
     "cargando": "Loading event...",
     "empieza": "Starts on",
-    "hasta": "until",
+    "hasta": "to",
     "direccion": "Event address",
     "mapa": "Location on map",
     "comite": "Committee members",
