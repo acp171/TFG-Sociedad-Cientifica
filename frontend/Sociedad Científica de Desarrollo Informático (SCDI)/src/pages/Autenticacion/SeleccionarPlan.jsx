@@ -153,46 +153,58 @@ const SeleccionarPlan = () => {
     );
 };
   
-const CardPlan = ({ plan, onSelect }) => (
-    <div
-        className={`relative bg-gradient-to-br ${plan.bg} rounded-3xl shadow-xl hover:shadow-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 h-[420px] md:h-[450px] group cursor-pointer border border-white/40 ring-1 ring-black/5`}
-        onClick={() => onSelect(plan)}
-    >
-        {/* Vista Frontal */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-8 transition-opacity duration-300 group-hover:opacity-0">
-            <div className="bg-white/40 p-5 rounded-full shadow-inner mb-6 backdrop-blur-sm">
-                {plan.icon}
-            </div>
-            <h2 className="text-3xl font-bold text-gray-900 text-center mb-4">{plan.nombre_tipo}</h2>
-            <div className="text-center">
-                <p className="text-5xl font-black text-gray-900 drop-shadow-sm flex items-end justify-center gap-1">
-                    {plan.cuota === 0 ? "Gratis" : `${plan.cuota}€`}
-                    {plan.cuota !== 0 && <span className="text-lg font-medium text-gray-700 mb-1">/mes</span>}
-                </p>
-            </div>
-            
-            <div className="absolute bottom-8 text-blue-900 font-bold text-sm tracking-widest flex flex-col items-center gap-2 opacity-70 animate-pulse">
-                <span>VER VENTAJAS</span>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-            </div>
-        </div>
+const CardPlan = ({ plan, onSelect }) => {
+    const [isRevealed, setIsRevealed] = useState(false);
 
-        {/* Vista Trasera (Overlay en Hover) */}
-        <div className="absolute inset-0 bg-white/95 backdrop-blur-md p-6 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out z-20 flex flex-col">
-            <h3 className="text-xl font-bold text-indigo-900 mb-3 text-center border-b-2 border-indigo-100 pb-2 flex-shrink-0">
-                ¿Qué incluye el plan {plan.nombre_tipo}?
-            </h3>
-            
-            {/* Scrollable content container */}
-            <div className="flex-grow overflow-y-auto text-sm text-gray-700 pr-2 custom-scrollbar space-y-2">
-                {plan.descripcion}
+    return (
+        <div
+            className="relative rounded-3xl shadow-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 h-[440px] md:h-[450px] border border-white/40 ring-1 ring-black/5"
+            onMouseEnter={() => setIsRevealed(true)}
+            onMouseLeave={() => setIsRevealed(false)}
+            onClick={() => setIsRevealed(true)}
+        >
+            {/* Vista Frontal */}
+            <div className={`absolute inset-0 flex flex-col items-center justify-center p-8 bg-gradient-to-br ${plan.bg} transition-opacity duration-500 ease-in-out ${isRevealed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+                <div className="bg-white/40 p-5 rounded-full shadow-inner mb-6 backdrop-blur-sm">
+                    {plan.icon}
+                </div>
+                <h2 className="text-3xl font-bold text-gray-900 text-center mb-4">{plan.nombre_tipo}</h2>
+                <div className="text-center">
+                    <p className="text-5xl font-black text-gray-900 drop-shadow-sm flex items-end justify-center gap-1">
+                        {plan.cuota === 0 ? "Gratis" : `${plan.cuota}€`}
+                        {plan.cuota !== 0 && <span className="text-lg font-medium text-gray-700 mb-1">/mes</span>}
+                    </p>
+                </div>
+                
+                <div className="absolute bottom-8 text-blue-900 font-bold text-xs sm:text-sm tracking-widest flex flex-col items-center gap-2 opacity-70 animate-pulse text-center">
+                    <span>TOCA PARA VER VENTAJAS</span>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
             </div>
-            
-            <button className="mt-4 flex-shrink-0 w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-800 transition-all transform hover:scale-[1.02]">
-                Seleccionar {plan.nombre_tipo}
-            </button>
+
+            {/* Vista Trasera (Overlay) */}
+            <div className={`absolute inset-0 bg-white p-6 md:p-8 transform transition-transform duration-500 ease-in-out flex flex-col ${isRevealed ? 'translate-y-0' : 'translate-y-full'}`}>
+                <h3 className="text-xl font-bold text-indigo-900 mb-3 text-center border-b-2 border-indigo-50 pb-2 flex-shrink-0">
+                    Ventajas: {plan.nombre_tipo}
+                </h3>
+                
+                {/* Scrollable content container */}
+                <div className="flex-grow overflow-y-auto text-sm text-gray-700 pr-2 custom-scrollbar space-y-2 mb-4">
+                    {plan.descripcion}
+                </div>
+                
+                <button 
+                    onClick={(e) => {
+                        e.stopPropagation(); // Evitar que el clic cierre el plan accidentalmente
+                        onSelect(plan);
+                    }}
+                    className="mt-auto flex-shrink-0 w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 px-4 rounded-xl shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transition"
+                >
+                    Seleccionar por {plan.cuota === 0 ? "0€" : `${plan.cuota}€`}
+                </button>
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 export default SeleccionarPlan;
