@@ -27,6 +27,7 @@
     "stripe": "^18.2.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.4.0",
     "dotenv-cli": "^8.0.0"
   }
 }
