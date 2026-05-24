@@ -78,11 +78,11 @@ const Articulos = () => {
 
                 {/* Paginación */}
                 {articulos.length > 0 && (
-                    <nav className="flex justify-center items-center gap-3 select-none mt-auto" aria-label="Paginación artículos">
+                    <nav className="flex flex-wrap justify-center items-center gap-2 md:gap-3 select-none mt-auto" aria-label="Paginación artículos">
                         <button
                             onClick={() => cambiarPagina(currentPage - 1)}
                             disabled={currentPage === 1}
-                            className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                            className="px-3 py-2 md:px-4 md:py-2 text-sm md:text-base rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
                             aria-label="Página anterior"
                         >
                             ← Anterior
@@ -92,7 +92,7 @@ const Articulos = () => {
                             <button
                                 key={index + 1}
                                 onClick={() => cambiarPagina(index + 1)}
-                                className={`px-4 py-2 rounded-md font-medium transition ${
+                                className={`px-3 py-2 md:px-4 md:py-2 text-sm md:text-base rounded-md font-medium transition ${
                                     currentPage === index + 1
                                         ? "bg-indigo-600 text-white shadow-lg"
                                         : "bg-gray-200 text-gray-700 hover:bg-gray-300"
@@ -106,7 +106,7 @@ const Articulos = () => {
                         <button
                             onClick={() => cambiarPagina(currentPage + 1)}
                             disabled={currentPage === totalPaginas}
-                            className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                            className="px-3 py-2 md:px-4 md:py-2 text-sm md:text-base rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
                             aria-label="Página siguiente"
                         >
                             Siguiente →
