@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MailOpen, Mail, X } from "lucide-react";
 import { useAuth } from "../hooks/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const Notificaciones = () => {
     const { isLoggedIn } = useAuth();
+    const { t } = useTranslation();
     const [notificaciones, setNotificaciones] = useState([]);
     const [loading, setLoading] = useState(true);
     const [notificacionActiva, setNotificacionActiva] = useState(null);
@@ -91,23 +93,23 @@ const Notificaciones = () => {
     const cerrarModal = () => setNotificacionActiva(null);
 
     if (!isLoggedIn) {
-        return <p className="p-4 text-center text-gray-600">Debes iniciar sesión para ver tus notificaciones.</p>;
+        return <p className="p-4 text-center text-gray-600">{t("notificaciones.debes_iniciar")}</p>;
     }
 
     if (loading) {
-        return <p className="p-4 text-center text-gray-600">Cargando notificaciones...</p>;
+        return <p className="p-4 text-center text-gray-600">{t("notificaciones.cargando")}</p>;
     }
 
     return (
         <div className="max-w-4xl mx-auto p-6">
             <h1 className="text-3xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-                📬 Tus notificaciones
+                {t("notificaciones.titulo")}
             </h1>
 
             {notificaciones.length === 0 ? (
                 <div className="text-center text-gray-500 bg-gray-50 py-10 rounded-xl shadow">
                     <MailOpen className="w-10 h-10 mx-auto mb-2 text-gray-400" />
-                    <p>No tienes notificaciones por ahora.</p>
+                    <p>{t("notificaciones.sin_notificaciones")}</p>
                 </div>
             ) : (
                 <div className="grid gap-4">
@@ -187,7 +189,7 @@ const Notificaciones = () => {
                                     onClick={cerrarModal}
                                     className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition"
                                 >
-                                    Cerrar
+                                    {t("notificaciones.cerrar")}
                                 </button>
                             </div>
                         </motion.div>

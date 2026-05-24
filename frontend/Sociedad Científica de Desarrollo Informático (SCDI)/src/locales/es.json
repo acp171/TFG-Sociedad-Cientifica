@@ -1,7 +1,7 @@
 {
   "common": {
     "saber_mas": "Saber más",
-    "unirme": "Unirme Ahora",
+    "unirme": "UNIME AHORA",
     "contactanos": "CONTÁCTANOS",
     "cerrar": "Cerrar",
     "cargando": "Cargando...",
@@ -277,9 +277,15 @@
     "profesional": "Profesional",
     "eliminar": "Eliminar",
     "confirmar_eliminar_miembro": "¿Deseas eliminar este miembro?",
-    "contrasena": "Contraseña",
     "anadir_miembro": "Añadir miembro",
     "miembro_anadido": "Miembro añadido correctamente",
     "error_anadir_miembro": "Error al añadir miembro"
+  },
+  "notificaciones": {
+    "debes_iniciar": "Debes iniciar sesión para ver tus notificaciones.",
+    "cargando": "Cargando notificaciones...",
+    "titulo": "📬 Tus notificaciones",
+    "sin_notificaciones": "No tienes notificaciones por ahora.",
+    "cerrar": "Cerrar"
   }
 }
