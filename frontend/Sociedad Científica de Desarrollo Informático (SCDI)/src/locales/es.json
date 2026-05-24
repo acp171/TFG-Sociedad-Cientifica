@@ -1,0 +1,195 @@
+{
+  "common": {
+    "saber_mas": "Saber más",
+    "unirme": "Unirme Ahora",
+    "contactanos": "CONTÁCTANOS",
+    "cerrar": "Cerrar",
+    "cargando": "Cargando...",
+    "guardar": "Guardar",
+    "cancelar": "Cancelar",
+    "enviar": "Enviar",
+    "anterior": "← Anterior",
+    "siguiente": "Siguiente →",
+    "no_disponible": "No disponible",
+    "gratis": "Gratis",
+    "legal": "Aviso legal"
+  },
+  "header": {
+    "quienes_somos": "QUIÉNES SOMOS",
+    "actividades": "ACTIVIDADES",
+    "proyectos": "PROYECTOS",
+    "articulos": "ARTÍCULOS",
+    "buscar": "Buscar...",
+    "articulos_titulo": "Artículos",
+    "eventos_titulo": "Eventos",
+    "proyectos_titulo": "Proyectos",
+    "administracion": "Administración",
+    "notificaciones": "Notificaciones ({{count}})",
+    "no_notificaciones": "No hay notificaciones",
+    "ver_todas": "Mostrar todas las notificaciones",
+    "mi_perfil": "Mi Perfil",
+    "cerrar_sesion": "Cerrar Sesión",
+    "iniciar_sesion": "INICIAR SESIÓN",
+    "panel_admin": "Panel Administrador"
+  },
+  "footer": {
+    "sociedad_linea1": "Sociedad Científica de",
+    "sociedad_linea2": "Desarrollo Informático",
+    "copyright": "Copyright © {{year}} SCDI."
+  },
+  "home": {
+    "hero_titulo": "Impulsando la innovación desde la universidad",
+    "hero_desc": "Somos la SCDI, una comunidad de estudiantes apasionados por la tecnología, el desarrollo y la investigación.",
+    "unete": "ÚNETE",
+    "sobre_titulo": "¿Quiénes Somos?",
+    "sobre_desc": "Somos una comunidad científica universitaria que impulsa la investigación, el desarrollo informático y la colaboración académica. A través de nuestra plataforma, conectamos talento joven con oportunidades de crecimiento científico y tecnológico.",
+    "areas_titulo": "Áreas de Enfoque",
+    "area_web": "Desarrollo Web",
+    "area_ia": "IA & Machine Learning",
+    "area_ciberseguridad": "Ciberseguridad",
+    "area_eventos": "Eventos y Hackatones",
+    "cta_titulo": "¿Listo para unirte a la SCDI?",
+    "cta_desc": "Conéctate con una red vibrante de mentes científicas y tecnológicas."
+  },
+  "quienes_somos": {
+    "titulo": "Quiénes somos",
+    "p1": "La <strong>Sociedad Científica de Desarrollo Informático (SCDI)</strong> es una organización académica y colaborativa compuesta por estudiantes, docentes y profesionales interesados en el avance de la tecnología, la ciencia y la innovación dentro del ámbito universitario. Nuestro propósito es crear un ecosistema donde el conocimiento, la investigación y el desarrollo informático se conviertan en ejes fundamentales para impulsar el talento joven y contribuir activamente a la transformación digital en la educación superior.",
+    "p2": "A través de nuestra plataforma tecnológica, brindamos a nuestros socios un entorno integral para la participación activa en <strong>eventos científicos</strong>, <strong>proyectos de investigación</strong>, <strong>publicación de artículos</strong> y más. Nuestro sistema facilita la gestión de miembros, la inscripción a actividades, el seguimiento de pagos, la administración de comités y la comunicación fluida mediante notificaciones automatizadas.",
+    "p3": "En la SCDI valoramos la diversidad académica, por lo que contemplamos distintos tipos de membresía —desde estudiantes hasta miembros honorarios— cada uno con acceso a herramientas y contenidos adaptados a su perfil. También disponemos de una <strong>sección pública</strong>, orientada a visitantes externos, donde compartimos eventos destacados, publicaciones relevantes y avances de nuestros proyectos, fomentando así la divulgación científica.",
+    "p4": "Nuestra misión es <strong>conectar a las mentes inquietas y proactivas de la comunidad universitaria</strong>, promoviendo el trabajo colaborativo, la formación continua y la producción científica como pilares de nuestra identidad. Al unirnos, no solo compartimos conocimientos, sino que construimos una red sólida de apoyo y crecimiento profesional dentro de un marco ético, inclusivo y tecnológicamente avanzado."
+  },
+  "unete": {
+    "titulo": "Únete a nosotros",
+    "iniciar_sesion": "INICIAR SESIÓN",
+    "crear_cuenta": "CREAR CUENTA"
+  },
+  "login": {
+    "titulo": "INICIAR SESIÓN",
+    "email": "Email",
+    "contrasena": "Contraseña",
+    "no_cuenta": "¿Aún no tienes una cuenta?",
+    "olvido": "¿Olvidó su contraseña?",
+    "ingresando": "Ingresando...",
+    "boton": "Iniciar sesión"
+  },
+  "register": {
+    "titulo": "REGISTRO DE SOCIOS",
+    "plan_seleccionado": "Plan seleccionado:",
+    "nombre": "Nombre",
+    "apellidos": "Apellidos",
+    "email": "Correo electrónico",
+    "contrasena": "Contraseña",
+    "telefono": "Teléfono",
+    "fecha_nacimiento": "Fecha nacimiento",
+    "universidad": "Universidad",
+    "empresa": "Nombre de la empresa",
+    "ya_cuenta": "¿Ya tienes una cuenta?",
+    "preparando": "Preparando pago...",
+    "boton": "Registrarse"
+  },
+  "planes": {
+    "titulo": "Elige tu plan de membresía",
+    "subtitulo": "Selecciona la modalidad que mejor se adapte a tu perfil y empieza a disfrutar de las ventajas de nuestra sociedad científica.",
+    "toca_ventajas": "TOCA PARA VER VENTAJAS",
+    "incluye": "Ventajas: {{plan}}",
+    "seleccionar": "Seleccionar por {{precio}}",
+    "perfil_gestion": "Perfil y gestión personal",
+    "historial": "Pueden consultar su historial de pagos, inscripciones y publicaciones.",
+    "notificaciones": "Tienen acceso a su bandeja de notificaciones.",
+    "credenciales": "Pueden cerrar sesión actual y gestionar sus credenciales.",
+    "inscripcion": "Inscripción y participación",
+    "inscribirse": "Pueden inscribirse en eventos científicos organizados por la sociedad.",
+    "cancelar_evento": "Pueden cancelar su inscripción a eventos si aún están abiertos.",
+    "publicaciones": "Publicaciones y comunidad científica",
+    "publicar": "Pueden publicar artículos científicos para su difusión dentro de la sociedad.",
+    "comentar": "Pueden comentar publicaciones de otros socios.",
+    "limitaciones": "Limitaciones",
+    "no_eventos": "No pueden crear eventos científicos.",
+    "no_proyectos": "No pueden crear ni proyectos ni eventos científicos.",
+    "gestion_corp": "Gestión corporativa",
+    "corp_miembros": "Pueden añadir y gestionar miembros de su corporación.",
+    "menores": "Menores de 18 años o emprendedores.",
+    "corp_desc": "Permite registrar y gestionar múltiples usuarios bajo una sola membresía."
+  },
+  "articulos": {
+    "titulo": "ARTÍCULOS CIENTÍFICOS",
+    "publicar": "Publicar artículo",
+    "publicado_por": "Publicado por:",
+    "cargando": "Cargando artículos...",
+    "no_articulos": "No hay artículos disponibles."
+  },
+  "eventos": {
+    "titulo": "EVENTOS CIENTÍFICOS",
+    "crear": "Crear evento",
+    "cargando": "Cargando eventos...",
+    "no_eventos": "No hay eventos disponibles."
+  },
+  "proyectos": {
+    "titulo": "PROYECTOS DE INVESTIGACIÓN",
+    "nuevo": "Nuevo proyecto",
+    "cargando": "Cargando proyectos...",
+    "no_proyectos": "No hay proyectos disponibles.",
+    "todos_estados": "Todos los estados",
+    "inicio": "Inicio:",
+    "fin": "Fin:",
+    "estado": "Estado:"
+  },
+  "contacto": {
+    "titulo": "CONTÁCTANOS",
+    "email": "Correo electrónico",
+    "titulo_msg": "Título",
+    "mensaje": "Mensaje",
+    "placeholder_email": "tunombre@correo.com",
+    "placeholder_titulo": "Título del mensaje",
+    "placeholder_mensaje": "Escribe tu mensaje aquí...",
+    "enviar": "Enviar mensaje",
+    "exito": "✅ ¡Gracias por tu mensaje! Te responderemos pronto.",
+    "auth_requerida": "Debes estar autenticado para enviar un mensaje."
+  },
+  "notificaciones": {
+    "titulo": "Notificaciones",
+    "sin_leer": "Sin leer",
+    "todas": "Todas",
+    "no_hay": "No tienes notificaciones.",
+    "marcar_leida": "Marcar como leída"
+  },
+  "perfil": {
+    "titulo": "Mi Perfil",
+    "editar": "Editar perfil",
+    "guardar": "Guardar cambios",
+    "cancelar": "Cancelar",
+    "suscripcion": "Suscripción",
+    "vence": "Vence el:",
+    "activa": "Activa",
+    "caducada": "Caducada"
+  },
+  "suscripcion": {
+    "caducada_titulo": "Suscripción caducada",
+    "caducada_subtitulo": "Tu acceso mensual ha expirado",
+    "plan_actual": "Plan actual",
+    "cuota_mensual": "Cuota mensual",
+    "descripcion": "Para seguir publicando artículos, inscribirte en eventos y participar en proyectos necesitas renovar tu suscripción mensual.",
+    "preparando": "Preparando pasarela...",
+    "renovar_gratis": "Renovar suscripción gratuita",
+    "pagar_renovar": "Pagar {{importe}} € y renovar acceso",
+    "renovada_titulo": "¡Suscripción Renovada!",
+    "renovada_desc": "Tu pago ha sido procesado correctamente. Tienes 30 días adicionales de acceso completo.",
+    "continuar": "Continuar",
+    "ssl": "🔒 Pago seguro con cifrado SSL. Puedes cerrar sesión desde tu perfil.",
+    "descripcion_renovacion": "Renovación de suscripción mensual"
+  },
+  "forgot_password": {
+    "titulo": "Recuperar contraseña",
+    "email": "Email",
+    "boton": "Enviar enlace",
+    "enviando": "Enviando...",
+    "exito": "Enlace de recuperación enviado al correo."
+  },
+  "reset_password": {
+    "titulo": "Nueva contraseña",
+    "nueva": "Nueva contraseña",
+    "confirmar": "Confirmar contraseña",
+    "boton": "Cambiar contraseña",
+    "cambiando": "Cambiando..."
+  }
+}

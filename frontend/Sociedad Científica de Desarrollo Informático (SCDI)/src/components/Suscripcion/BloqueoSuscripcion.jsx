@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthContext";
 import PasarelaPago from "../Pago/PasarelaPago";
+import { useTranslation } from "react-i18next";
 
 export default function BloqueoSuscripcion() {
     const { isLoggedIn, suscripcionCaducada, marcarRenovado } = useAuth();
+    const { t } = useTranslation();
     const [cargando, setCargando] = useState(false);
     const [error, setError] = useState(null);
     const [clientSecret, setClientSecret] = useState(null);
@@ -37,7 +39,7 @@ export default function BloqueoSuscripcion() {
                 setError(data.message || "Error al solicitar renovación.");
             }
         } catch {
-            setError("Error de conexión al servidor.");
+            setError(t("suscripcion.ssl") || "Error de conexión al servidor.");
         } finally {
             setCargando(false);
         }
@@ -59,13 +61,13 @@ export default function BloqueoSuscripcion() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                         </svg>
                     </div>
-                    <h3 className="text-2xl font-bold text-green-600 mb-2">¡Suscripción Renovada!</h3>
-                    <p className="text-gray-600 mb-6">Tu pago ha sido procesado correctamente. Tienes 30 días adicionales de acceso completo.</p>
+                    <h3 className="text-2xl font-bold text-green-600 mb-2">{t("suscripcion.renovada_titulo")}</h3>
+                    <p className="text-gray-600 mb-6">{t("suscripcion.renovada_desc")}</p>
                     <button
                         onClick={() => window.location.reload()}
                         className="bg-blue-600 text-white font-semibold py-3 px-6 rounded-xl w-full hover:bg-blue-700 transition"
                     >
-                        Continuar
+                        {t("suscripcion.continuar")}
                     </button>
                 </div>
             </div>
@@ -79,7 +81,7 @@ export default function BloqueoSuscripcion() {
                 <PasarelaPago
                     clientSecret={clientSecret}
                     importe={importe}
-                    descripcion="Renovación de suscripción mensual"
+                    descripcion={t("suscripcion.descripcion_renovacion")}
                     onSuccess={handlePagoExito}
                     onCancel={() => setClientSecret(null)}
                 />
@@ -106,8 +108,8 @@ export default function BloqueoSuscripcion() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m0-6V9m-7.938 9h15.876C21.54 18 22.5 16.333 21.732 15L14.732 3c-.77-1.333-2.694-1.333-3.464 0L3.268 15C2.5 16.333 3.46 18 5 18z" />
                         </svg>
                     </div>
-                    <h2 className="text-2xl font-bold">Suscripción caducada</h2>
-                    <p className="mt-1 text-white/80 text-sm">Tu acceso mensual ha expirado</p>
+                    <h2 className="text-2xl font-bold">{t("suscripcion.caducada_titulo")}</h2>
+                    <p className="mt-1 text-white/80 text-sm">{t("suscripcion.caducada_subtitulo")}</p>
                 </div>
 
                 {/* Cuerpo */}
@@ -127,7 +129,7 @@ export default function BloqueoSuscripcion() {
                     </div>
 
                     <p className="text-gray-500 text-sm text-center mb-5">
-                        Para seguir publicando artículos, inscribirte en eventos y participar en proyectos necesitas renovar tu suscripción mensual.
+                        {t("suscripcion.descripcion")}
                     </p>
 
                     {error && (
@@ -145,17 +147,17 @@ export default function BloqueoSuscripcion() {
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
                                 </svg>
-                                Preparando pasarela...
+                                {t("suscripcion.preparando")}
                             </span>
                         ) : (
                             cuota === 0
-                                ? "Renovar suscripción gratuita"
-                                : `Pagar ${cuota !== null ? `${cuota} €` : ""} y renovar acceso`
+                                ? t("suscripcion.renovar_gratis")
+                                : t("suscripcion.pagar_renovar", { importe: cuota ?? "" })
                         )}
                     </button>
 
                     <p className="text-xs text-gray-400 text-center">
-                        🔒 Pago seguro con cifrado SSL. Puedes cerrar sesión desde tu perfil.
+                        {t("suscripcion.ssl")}
                     </p>
                 </div>
             </div>

@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../hooks/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const Eventos = () => {
+    const { t } = useTranslation();
     const [eventos, setEventos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchParams, setSearchParams] = useSearchParams();
@@ -40,23 +42,23 @@ const Eventos = () => {
             <div className="flex flex-col flex-grow">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-12">
                     <h2 className="text-4xl font-extrabold text-gray-900 mb-6 md:mb-0">
-                        EVENTOS CIENTÍFICOS
+                        {t("eventos.titulo")}
                     </h2>
                     {(userTipoSocio !== 2 || userRole === 1) && (
                         <Link
                             to="/eventos-cientificos/crear-evento-cientifico"
                             className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold"
                         >
-                            Crear evento
+                            {t("eventos.crear")}
                         </Link>
                     )}
                 </div>
 
                 <div className="flex-grow">
                     {loading ? (
-                        <p className="text-center text-gray-500 text-lg">Cargando eventos...</p>
+                        <p className="text-center text-gray-500 text-lg">{t("eventos.cargando")}</p>
                     ) : eventos.length === 0 ? (
-                        <p className="text-center text-gray-600 text-lg">No hay eventos disponibles.</p>
+                        <p className="text-center text-gray-600 text-lg">{t("eventos.no_eventos")}</p>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                             {eventosVisibles.map((evento) => (
@@ -83,7 +85,7 @@ const Eventos = () => {
                             className="px-3 py-2 md:px-4 md:py-2 text-sm md:text-base rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
                             aria-label="Página anterior"
                         >
-                            ← Anterior
+                            {t("common.anterior")}
                         </button>
 
                         {[...Array(totalPaginas)].map((_, index) => (
@@ -107,7 +109,7 @@ const Eventos = () => {
                             className="px-3 py-2 md:px-4 md:py-2 text-sm md:text-base rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
                             aria-label="Página siguiente"
                         >
-                            Siguiente →
+                            {t("common.siguiente")}
                         </button>
                     </nav>
                 )}

@@ -3,10 +3,13 @@ import { Search, User, LogOut, Settings, Inbox, Menu, X } from "lucide-react";
 import { FaUser } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/AuthContext";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 
 const Header = () => {
     const { isLoggedIn, logout, userRole } = useAuth();
+    const { t } = useTranslation();
 
     const [query, setQuery] = useState("");
     const [resultados, setResultados] = useState({
@@ -148,16 +151,6 @@ const Header = () => {
         setIsMenuOpen(false);
     };
 
-    // En caso de que el login ocurra desde otra parte
-    useEffect(() => {
-        const checkLogin = () => {
-            setIsLoggedIn(!!localStorage.getItem("token"));
-        };
-
-        window.addEventListener("storage", checkLogin);
-        return () => window.removeEventListener("storage", checkLogin);
-    }, []);
-
     return (
         <header className="flex items-center justify-between h-20 bg-gray-100 shadow px-3 md:px-10 sticky top-0 z-50">
             {/* Espacio invisible en móvil para equilibrar el botón de menú y forzar centrado */}
@@ -175,10 +168,10 @@ const Header = () => {
             {/* Navegación Desktop */}
             <nav className="hidden lg:block">
                 <ul className="flex space-x-6 font-medium">
-                    <li><a href="/quienes-somos" className="hover:text-purple-400">QUIÉNES SOMOS</a></li>
-                    <li><a href="/eventos-cientificos" className="hover:text-purple-400">ACTIVIDADES</a></li>
-                    <li><a href="/proyectos-investigacion" className="hover:text-purple-400">PROYECTOS</a></li>
-                    <li><a href="/articulos-cientificos" className="hover:text-purple-400">ARTÍCULOS</a></li>
+                    <li><a href="/quienes-somos" className="hover:text-purple-400">{t("header.quienes_somos")}</a></li>
+                    <li><a href="/eventos-cientificos" className="hover:text-purple-400">{t("header.actividades")}</a></li>
+                    <li><a href="/proyectos-investigacion" className="hover:text-purple-400">{t("header.proyectos")}</a></li>
+                    <li><a href="/articulos-cientificos" className="hover:text-purple-400">{t("header.articulos")}</a></li>
                 </ul>
             </nav>
 
@@ -199,14 +192,14 @@ const Header = () => {
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             onBlur={() => setTimeout(() => setIsSearching(false), 200)}
-                            placeholder="Buscar..."
+                            placeholder={t("header.buscar")}
                             className="border px-3 py-1 rounded-full w-64"
                         />
                         {(resultados.articulos.length > 0 || resultados.eventos.length > 0 || resultados.proyectos.length > 0) && (
                             <div className="absolute top-10 left-0 w-64 bg-white border shadow rounded z-50 max-h-80 overflow-auto">
                                 {resultados.articulos.length > 0 && (
                                     <>
-                                        <h4 className="px-3 py-1 font-semibold border-b">Artículos</h4>
+                                        <h4 className="px-3 py-1 font-semibold border-b">{t("header.articulos_titulo")}</h4>
                                         <ul>
                                             {resultados.articulos.map((item) => (
                                                 <Link
@@ -223,7 +216,7 @@ const Header = () => {
 
                                 {resultados.eventos.length > 0 && (
                                     <>
-                                        <h4 className="px-3 py-1 font-semibold border-b mt-2">Eventos</h4>
+                                        <h4 className="px-3 py-1 font-semibold border-b mt-2">{t("header.eventos_titulo")}</h4>
                                         <ul>
                                             {resultados.eventos.map((item) => (
                                                 <Link
@@ -240,7 +233,7 @@ const Header = () => {
 
                                 {resultados.proyectos.length > 0 && (
                                     <>
-                                        <h4 className="px-3 py-1 font-semibold border-b mt-2">Proyectos</h4>
+                                        <h4 className="px-3 py-1 font-semibold border-b mt-2">{t("header.proyectos_titulo")}</h4>
                                         <ul>
                                             {resultados.proyectos.map((item) => (
                                                 <Link
@@ -263,7 +256,7 @@ const Header = () => {
                     <Link
                         to="/panel-administrador"
                         className="p-2 rounded-full shadow text-black hover:text-green-600 transition"
-                        title="Panel de administrador"
+                        title={t("header.panel_admin")}
                     >
                         <Settings className="w-5 h-5" />
                     </Link>
@@ -275,7 +268,7 @@ const Header = () => {
                         <button
                             onClick={() => setMostrarNotificaciones(!mostrarNotificaciones)}
                             className="p-2 rounded-full shadow text-black hover:text-blue-600 transition relative"
-                            title="Notificaciones"
+                            title={t("header.notificaciones", { count: notificaciones.length })}
                         >
                             <Inbox className="w-5 h-5" />
                             {notificaciones.length > 0 && (
@@ -303,7 +296,7 @@ const Header = () => {
                                         </ul>
                                     </>
                                 ) : (
-                                    <p className="px-4 py-2 text-sm text-gray-500">No hay notificaciones</p>
+                                    <p className="px-4 py-2 text-sm text-gray-500">{t("header.no_notificaciones")}</p>
                                 )}
                                 <div className="border-t px-4 py-2 text-center">
                                     <Link
@@ -311,7 +304,7 @@ const Header = () => {
                                         className="text-blue-600 hover:underline text-sm font-medium"
                                         onClick={() => setMostrarNotificaciones(false)}
                                     >
-                                        Mostrar todas las notificaciones
+                                        {t("header.ver_todas")}
                                     </Link>
                                 </div>
                             </div>
@@ -323,7 +316,7 @@ const Header = () => {
                     <Link
                         to="/perfil"
                         className="p-2 rounded-full shadow text-black hover:text-blue-600 transition"
-                        title="Perfil"
+                        title={t("header.mi_perfil")}
                     >
                         <FaUser className="w-5 h-5" />
                     </Link>
@@ -333,7 +326,7 @@ const Header = () => {
                     <button
                         onClick={handleLogout}
                         className="p-2 rounded-full shadow text-black hover:text-red-600 transition"
-                        title="Cerrar sesión"
+                        title={t("header.cerrar_sesion")}
                     >
                         <LogOut className="w-5 h-5" />
                     </button>
@@ -341,17 +334,19 @@ const Header = () => {
                     <Link
                         to="/unete"
                         className="p-2 rounded-full shadow text-black hover:text-blue-700 transition"
-                        title="Iniciar sesión"
+                        title={t("header.iniciar_sesion")}
                     >
                         <User className="w-5 h-5" />
                     </Link>
                 )}
 
+                <LanguageSwitcher />
+
                 <Link
                     to="/contacto"
                     className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-full shadow"
                 >
-                    CONTÁCTANOS
+                    {t("common.contactanos")}
                 </Link>
             </div>
 
@@ -368,12 +363,16 @@ const Header = () => {
                 <div className="fixed inset-0 bg-white z-40 lg:hidden flex flex-col p-6 pt-24 space-y-8 overflow-y-auto slide-in-left">
                     <nav>
                         <ul className="flex flex-col space-y-6 text-xl font-bold text-center items-center">
-                            <li><a href="/quienes-somos" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600 inline-block w-full">QUIÉNES SOMOS</a></li>
-                            <li><a href="/eventos-cientificos" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600 inline-block w-full">ACTIVIDADES</a></li>
-                            <li><a href="/proyectos-investigacion" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600 inline-block w-full">PROYECTOS</a></li>
-                            <li><a href="/articulos-cientificos" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600 inline-block w-full">ARTÍCULOS</a></li>
+                            <li><a href="/quienes-somos" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600 inline-block w-full">{t("header.quienes_somos")}</a></li>
+                            <li><a href="/eventos-cientificos" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600 inline-block w-full">{t("header.actividades")}</a></li>
+                            <li><a href="/proyectos-investigacion" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600 inline-block w-full">{t("header.proyectos")}</a></li>
+                            <li><a href="/articulos-cientificos" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600 inline-block w-full">{t("header.articulos")}</a></li>
                         </ul>
                     </nav>
+
+                    <div className="flex justify-center">
+                        <LanguageSwitcher />
+                    </div>
 
                     <div className="border-t pt-8 space-y-4">
                         <div className="flex flex-col gap-4">
@@ -384,7 +383,7 @@ const Header = () => {
                                     className="flex items-center justify-center space-x-2 p-3 bg-gray-100 rounded-lg w-full text-center"
                                 >
                                     <Settings className="w-6 h-6" />
-                                    <span className="font-semibold">Administración</span>
+                                    <span className="font-semibold">{t("header.administracion")}</span>
                                 </Link>
                             )}
 
@@ -395,7 +394,7 @@ const Header = () => {
                                     className="flex items-center justify-center space-x-2 p-3 bg-gray-100 rounded-lg w-full text-center"
                                 >
                                     <Inbox className="w-6 h-6" />
-                                    <span className="font-semibold">Notificaciones ({notificaciones.length})</span>
+                                    <span className="font-semibold">{t("header.notificaciones", { count: notificaciones.length })}</span>
                                 </Link>
                             )}
 
@@ -406,7 +405,7 @@ const Header = () => {
                                     className="flex items-center justify-center space-x-2 p-3 bg-gray-100 rounded-lg w-full text-center"
                                 >
                                     <FaUser className="w-5 h-5" />
-                                    <span className="font-semibold">Mi Perfil</span>
+                                    <span className="font-semibold">{t("header.mi_perfil")}</span>
                                 </Link>
                             )}
 
@@ -416,7 +415,7 @@ const Header = () => {
                                     className="flex items-center justify-center space-x-2 p-3 bg-red-50 text-red-600 rounded-lg w-full text-center"
                                 >
                                     <LogOut className="w-6 h-6" />
-                                    <span className="font-bold">Cerrar Sesión</span>
+                                    <span className="font-bold">{t("header.cerrar_sesion")}</span>
                                 </button>
                             ) : (
                                 <Link
@@ -425,7 +424,7 @@ const Header = () => {
                                     className="flex items-center justify-center space-x-2 p-3 bg-blue-50 text-blue-700 rounded-lg w-full text-center"
                                 >
                                     <User className="w-6 h-6" />
-                                    <span className="font-bold tracking-wide">INICIAR SESIÓN</span>
+                                    <span className="font-bold tracking-wide">{t("header.iniciar_sesion")}</span>
                                 </Link>
                             )}
                         </div>
@@ -435,7 +434,7 @@ const Header = () => {
                             onClick={() => setIsMenuOpen(false)}
                             className="block text-center bg-blue-600 text-white font-bold py-4 rounded-lg shadow-lg mt-4"
                         >
-                            CONTÁCTANOS
+                            {t("common.contactanos")}
                         </Link>
                     </div>
                 </div>
@@ -452,7 +451,7 @@ const Header = () => {
                                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                                 onClick={() => setNotificacionSeleccionada(null)}
                             >
-                                Cerrar
+                                {t("common.cerrar")}
                             </button>
                         </div>
                     </div>

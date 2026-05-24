@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { login } = useAuth();
+    const { t } = useTranslation();
 
     const cameFrom = location.state?.from;
-
     const redireccionFinal = cameFrom && cameFrom !== "/unete" ? cameFrom : "/";
 
     const [email, setEmail] = useState("");
@@ -35,8 +36,6 @@ const Login = () => {
             }
 
             login(data.token, data.socio);
-
-            // Aquí redirigimos correctamente según de dónde vino el usuario
             navigate(redireccionFinal, { replace: true });
 
         } catch (err) {
@@ -49,10 +48,10 @@ const Login = () => {
     return (
         <div className="min-h-[80vh] flex items-center justify-center bg-gradient-to-b from-blue-200 to-white">
             <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-                <h2 className="text-2xl font-semibold mb-6 text-center text-blue-700">INICIAR SESIÓN</h2>
+                <h2 className="text-2xl font-semibold mb-6 text-center text-blue-700">{t("login.titulo")}</h2>
 
                 <form onSubmit={handleSubmit}>
-                    <label className="block mb-1 font-medium">Email</label>
+                    <label className="block mb-1 font-medium">{t("login.email")}</label>
                     <input
                         type="email"
                         value={email}
@@ -61,7 +60,7 @@ const Login = () => {
                         className="w-full mb-4 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
 
-                    <label className="block mb-1 font-medium">Contraseña</label>
+                    <label className="block mb-1 font-medium">{t("login.contrasena")}</label>
                     <input
                         type="password"
                         value={password}
@@ -76,7 +75,7 @@ const Login = () => {
                             title="Registrate"
                             className="text-blue-600 hover:text-blue-700 text-sm"
                         >
-                            ¿Aún no tienes una cuenta?
+                            {t("login.no_cuenta")}
                         </Link>
 
                         <Link
@@ -84,7 +83,7 @@ const Login = () => {
                             title="Recuperar contraseña"
                             className="text-blue-600 hover:text-blue-700 text-sm"
                         >
-                            ¿Olvidó su contraseña?
+                            {t("login.olvido")}
                         </Link>
                     </div>
 
@@ -96,7 +95,7 @@ const Login = () => {
                         className={`w-full py-3 text-white font-semibold rounded-md transition-colors
                             ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
                     >
-                        {loading ? "Ingresando..." : "Iniciar sesión"}
+                        {loading ? t("login.ingresando") : t("login.boton")}
                     </button>
                 </form>
             </div>

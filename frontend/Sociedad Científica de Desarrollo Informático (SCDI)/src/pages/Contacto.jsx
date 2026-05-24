@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 const Contacto = () => {
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({
         email: "",
         titulo: "",
@@ -19,7 +21,7 @@ const Contacto = () => {
         const token = localStorage.getItem("token");
 
         if (!token) {
-            alert("Debes estar autenticado para enviar un mensaje.");
+            alert(t("contacto.auth_requerida"));
             return;
         }
 
@@ -62,7 +64,7 @@ const Contacto = () => {
                 className="w-full max-w-xl bg-white shadow-xl rounded-2xl p-8"
             >
                 <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-                    CONTÁCTANOS
+                    {t("contacto.titulo")}
                 </h1>
 
                 {enviado && (
@@ -71,14 +73,14 @@ const Contacto = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                 >
-                    ✅ ¡Gracias por tu mensaje! Te responderemos pronto.
+                    {t("contacto.exito")}
                 </motion.div>
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                            Correo electrónico
+                            {t("contacto.email")}
                         </label>
                         <input
                             type="email"
@@ -87,14 +89,14 @@ const Contacto = () => {
                             value={formData.email}
                             onChange={handleChange}
                             required
-                            placeholder="tunombre@correo.com"
+                            placeholder={t("contacto.placeholder_email")}
                             className="mt-1 w-full border border-gray-300 rounded-xl px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
                     <div>
                         <label htmlFor="titulo" className="block text-sm font-medium text-gray-700">
-                            Título
+                            {t("contacto.titulo_msg")}
                         </label>
                         <input
                             type="text"
@@ -103,14 +105,14 @@ const Contacto = () => {
                             value={formData.titulo}
                             onChange={handleChange}
                             required
-                            placeholder="Título del mensaje"
+                            placeholder={t("contacto.placeholder_titulo")}
                             className="mt-1 w-full border border-gray-300 rounded-xl px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
                     <div>
                         <label htmlFor="mensaje" className="block text-sm font-medium text-gray-700">
-                            Mensaje
+                            {t("contacto.mensaje")}
                         </label>
                         <textarea
                             id="mensaje"
@@ -119,7 +121,7 @@ const Contacto = () => {
                             onChange={handleChange}
                             required
                             rows={5}
-                            placeholder="Escribe tu mensaje aquí..."
+                            placeholder={t("contacto.placeholder_mensaje")}
                             className="mt-1 w-full border border-gray-300 rounded-xl px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                         />
                     </div>
@@ -129,7 +131,7 @@ const Contacto = () => {
                             type="submit"
                             className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-full transition duration-300 shadow"
                         >
-                            Enviar mensaje
+                            {t("contacto.enviar")}
                         </button>
                     </div>
                 </form>

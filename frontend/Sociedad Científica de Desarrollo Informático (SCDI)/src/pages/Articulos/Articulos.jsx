@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const Articulos = () => {
+    const { t } = useTranslation();
     const [articulos, setArticulos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchParams, setSearchParams] = useSearchParams();
@@ -38,21 +40,21 @@ const Articulos = () => {
             <div className="flex flex-col flex-grow">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-12">
                     <h2 className="text-4xl font-extrabold text-gray-900 mb-6 md:mb-0">
-                        ARTÍCULOS CIENTÍFICOS
+                        {t("articulos.titulo")}
                     </h2>
                     <Link
                         to="/articulos-cientificos/crear-articulo"
                         className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold"
                     >
-                        Publicar artículo
+                        {t("articulos.publicar")}
                     </Link>
                 </div>
 
                 <div className="flex-grow">
                     {loading ? (
-                        <p className="text-center text-gray-500 text-lg">Cargando artículos...</p>
+                        <p className="text-center text-gray-500 text-lg">{t("articulos.cargando")}</p>
                     ) : articulos.length === 0 ? (
-                        <p className="text-center text-gray-600 text-lg">No hay artículos disponibles.</p>
+                        <p className="text-center text-gray-600 text-lg">{t("articulos.no_articulos")}</p>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                             {articulosVisibles.map((articulo) => (
@@ -64,7 +66,7 @@ const Articulos = () => {
                                 >
                                     <h3 className="text-2xl font-semibold text-gray-900 mb-3 truncate">{articulo.titulo}</h3>
                                     <p className="text-sm text-gray-600 mb-4">
-                                        Publicado por:{" "}
+                                        {t("articulos.publicado_por")}{" "}
                                         <span className="font-medium">
                                             {articulo.nombre} {articulo.apellidos}
                                         </span>
@@ -85,7 +87,7 @@ const Articulos = () => {
                             className="px-3 py-2 md:px-4 md:py-2 text-sm md:text-base rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
                             aria-label="Página anterior"
                         >
-                            ← Anterior
+                            {t("common.anterior")}
                         </button>
 
                         {[...Array(totalPaginas)].map((_, index) => (
@@ -109,7 +111,7 @@ const Articulos = () => {
                             className="px-3 py-2 md:px-4 md:py-2 text-sm md:text-base rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
                             aria-label="Página siguiente"
                         >
-                            Siguiente →
+                            {t("common.siguiente")}
                         </button>
                     </nav>
                 )}

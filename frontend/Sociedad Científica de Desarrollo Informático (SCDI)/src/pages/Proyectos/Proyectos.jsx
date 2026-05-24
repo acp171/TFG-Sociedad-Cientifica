@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../hooks/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const Proyectos = () => {
+    const { t } = useTranslation();
     const [proyectos, setProyectos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchParams, setSearchParams] = useSearchParams();
@@ -62,13 +64,13 @@ const Proyectos = () => {
         <section className="flex flex-col flex-grow py-16 px-6 lg:px-20 bg-gradient-to-b from-blue-200 to-white">
             <div className="flex flex-col flex-grow">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-12">
-                    <h1 className="text-4xl font-extrabold text-gray-900 mb-6 md:mb-0">PROYECTOS DE INVESTIGACIÓN</h1>
+                    <h1 className="text-4xl font-extrabold text-gray-900 mb-6 md:mb-0">{t("proyectos.titulo")}</h1>
                     {(userTipoSocio > 2  || userRole === 1) && (
                         <Link
                                 to="/proyectos-investigacion/crear-proyecto"
                                 className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold"
                             >
-                                Nuevo proyecto
+                                {t("proyectos.nuevo")}
                         </Link>
                     )}
                 </div>
@@ -83,7 +85,7 @@ const Proyectos = () => {
                         }}
                         className="border rounded p-2"
                     >
-                        <option value="">Todos los estados</option>
+                        <option value="">{t("proyectos.todos_estados")}</option>
                         <option value="Pendiente">Pendiente</option>
                         <option value="En curso">En curso</option>
                         <option value="Finalizado">Finalizado</option>
@@ -103,9 +105,9 @@ const Proyectos = () => {
                 {/* Contenido principal */}
                 <div className="flex-grow">
                     {loading ? (
-                        <p className="text-center text-gray-500 text-lg">Cargando proyectos...</p>
+                        <p className="text-center text-gray-500 text-lg">{t("proyectos.cargando")}</p>
                     ) : proyectosVisibles.length === 0 ? (
-                        <p className="text-gray-500 text-center">No hay proyectos disponibles.</p>
+                        <p className="text-gray-500 text-center">{t("proyectos.no_proyectos")}</p>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                             {proyectosVisibles.map((proyecto) => (
@@ -118,9 +120,9 @@ const Proyectos = () => {
                                     <h2 className="text-2xl font-semibold text-blue-700 mb-2">{proyecto.nombre_proyecto}</h2>
                                     <p className="text-gray-700 mb-4">{proyecto.descripcion}</p>
                                     <p className="text-sm text-gray-500">
-                                        <strong>Inicio:</strong> {new Date(proyecto.fecha_inicio).toLocaleDateString()}{" "}
-                                        <strong>Fin:</strong> {new Date(proyecto.fecha_fin).toLocaleDateString()}<br />
-                                        <strong>Estado:</strong> {proyecto.estado}
+                                        <strong>{t("proyectos.inicio")}</strong> {new Date(proyecto.fecha_inicio).toLocaleDateString()}{" "}
+                                        <strong>{t("proyectos.fin")}</strong> {new Date(proyecto.fecha_fin).toLocaleDateString()}<br />
+                                        <strong>{t("proyectos.estado")}</strong> {proyecto.estado}
                                     </p>
                                 </Link>
                             ))}
@@ -136,7 +138,7 @@ const Proyectos = () => {
                             disabled={currentPage === 1}
                             className="px-3 py-2 md:px-4 md:py-2 text-sm md:text-base rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
                         >
-                            ← Anterior
+                            {t("common.anterior")}
                         </button>
 
                         {[...Array(totalPaginas)].map((_, index) => (
@@ -158,7 +160,7 @@ const Proyectos = () => {
                             disabled={currentPage === totalPaginas}
                             className="px-3 py-2 md:px-4 md:py-2 text-sm md:text-base rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition"
                         >
-                            Siguiente →
+                            {t("common.siguiente")}
                         </button>
                     </nav>
                 )}

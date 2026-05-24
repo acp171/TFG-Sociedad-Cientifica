@@ -1,0 +1,195 @@
+{
+  "common": {
+    "saber_mas": "Learn more",
+    "unirme": "Join Now",
+    "contactanos": "CONTACT US",
+    "cerrar": "Close",
+    "cargando": "Loading...",
+    "guardar": "Save",
+    "cancelar": "Cancel",
+    "enviar": "Send",
+    "anterior": "← Previous",
+    "siguiente": "Next →",
+    "no_disponible": "Not available",
+    "gratis": "Free",
+    "legal": "Legal notice"
+  },
+  "header": {
+    "quienes_somos": "ABOUT US",
+    "actividades": "ACTIVITIES",
+    "proyectos": "PROJECTS",
+    "articulos": "ARTICLES",
+    "buscar": "Search...",
+    "articulos_titulo": "Articles",
+    "eventos_titulo": "Events",
+    "proyectos_titulo": "Projects",
+    "administracion": "Administration",
+    "notificaciones": "Notifications ({{count}})",
+    "no_notificaciones": "No notifications",
+    "ver_todas": "Show all notifications",
+    "mi_perfil": "My Profile",
+    "cerrar_sesion": "Log Out",
+    "iniciar_sesion": "LOGIN",
+    "panel_admin": "Admin Panel"
+  },
+  "footer": {
+    "sociedad_linea1": "Scientific Society of",
+    "sociedad_linea2": "Informatics Development",
+    "copyright": "Copyright © {{year}} SCDI."
+  },
+  "home": {
+    "hero_titulo": "Driving innovation from the university",
+    "hero_desc": "We are SCDI, a community of students passionate about technology, development and research.",
+    "unete": "JOIN US",
+    "sobre_titulo": "Who Are We?",
+    "sobre_desc": "We are a university scientific community that promotes research, informatics development and academic collaboration. Through our platform, we connect young talent with scientific and technological growth opportunities.",
+    "areas_titulo": "Focus Areas",
+    "area_web": "Web Development",
+    "area_ia": "AI & Machine Learning",
+    "area_ciberseguridad": "Cybersecurity",
+    "area_eventos": "Events & Hackathons",
+    "cta_titulo": "Ready to join SCDI?",
+    "cta_desc": "Connect with a vibrant network of scientific and technological minds."
+  },
+  "quienes_somos": {
+    "titulo": "Who we are",
+    "p1": "The <strong>Scientific Society of Informatics Development (SCDI)</strong> is an academic and collaborative organization made up of students, teachers and professionals interested in the advancement of technology, science and innovation within the university environment. Our purpose is to create an ecosystem where knowledge, research and informatics development become fundamental pillars to drive young talent and actively contribute to digital transformation in higher education.",
+    "p2": "Through our technological platform, we provide our members with a comprehensive environment for active participation in <strong>scientific events</strong>, <strong>research projects</strong>, <strong>article publishing</strong> and more. Our system facilitates member management, activity registration, payment tracking, committee administration and smooth communication through automated notifications.",
+    "p3": "At SCDI we value academic diversity, which is why we offer different types of membership — from students to honorary members — each with access to tools and content tailored to their profile. We also have a <strong>public section</strong>, aimed at external visitors, where we share featured events, relevant publications and advances in our projects, thus promoting scientific outreach.",
+    "p4": "Our mission is to <strong>connect the restless and proactive minds of the university community</strong>, promoting collaborative work, continuous training and scientific production as pillars of our identity. By joining us, we not only share knowledge, but build a solid network of support and professional growth within an ethical, inclusive and technologically advanced framework."
+  },
+  "unete": {
+    "titulo": "Join Us",
+    "iniciar_sesion": "LOGIN",
+    "crear_cuenta": "CREATE ACCOUNT"
+  },
+  "login": {
+    "titulo": "LOGIN",
+    "email": "Email",
+    "contrasena": "Password",
+    "no_cuenta": "Don't have an account yet?",
+    "olvido": "Forgot your password?",
+    "ingresando": "Signing in...",
+    "boton": "Sign in"
+  },
+  "register": {
+    "titulo": "MEMBER REGISTRATION",
+    "plan_seleccionado": "Selected plan:",
+    "nombre": "First name",
+    "apellidos": "Last name",
+    "email": "Email address",
+    "contrasena": "Password",
+    "telefono": "Phone",
+    "fecha_nacimiento": "Date of birth",
+    "universidad": "University",
+    "empresa": "Company name",
+    "ya_cuenta": "Already have an account?",
+    "preparando": "Preparing payment...",
+    "boton": "Register"
+  },
+  "planes": {
+    "titulo": "Choose your membership plan",
+    "subtitulo": "Select the plan that best suits your profile and start enjoying the benefits of our scientific society.",
+    "toca_ventajas": "TAP TO SEE BENEFITS",
+    "incluye": "Benefits: {{plan}}",
+    "seleccionar": "Select for {{precio}}",
+    "perfil_gestion": "Profile & personal management",
+    "historial": "Can view their payment history, registrations and publications.",
+    "notificaciones": "Have access to their notifications inbox.",
+    "credenciales": "Can log out and manage their credentials.",
+    "inscripcion": "Registration & participation",
+    "inscribirse": "Can register for scientific events organized by the society.",
+    "cancelar_evento": "Can cancel their event registration if still open.",
+    "publicaciones": "Publications & scientific community",
+    "publicar": "Can publish scientific articles for distribution within the society.",
+    "comentar": "Can comment on other members' publications.",
+    "limitaciones": "Limitations",
+    "no_eventos": "Cannot create scientific events.",
+    "no_proyectos": "Cannot create projects or scientific events.",
+    "gestion_corp": "Corporate management",
+    "corp_miembros": "Can add and manage members of their corporation.",
+    "menores": "Under 18 years old or entrepreneurs.",
+    "corp_desc": "Allows registering and managing multiple users under a single membership."
+  },
+  "articulos": {
+    "titulo": "SCIENTIFIC ARTICLES",
+    "publicar": "Publish article",
+    "publicado_por": "Published by:",
+    "cargando": "Loading articles...",
+    "no_articulos": "No articles available."
+  },
+  "eventos": {
+    "titulo": "SCIENTIFIC EVENTS",
+    "crear": "Create event",
+    "cargando": "Loading events...",
+    "no_eventos": "No events available."
+  },
+  "proyectos": {
+    "titulo": "RESEARCH PROJECTS",
+    "nuevo": "New project",
+    "cargando": "Loading projects...",
+    "no_proyectos": "No projects available.",
+    "todos_estados": "All statuses",
+    "inicio": "Start:",
+    "fin": "End:",
+    "estado": "Status:"
+  },
+  "contacto": {
+    "titulo": "CONTACT US",
+    "email": "Email address",
+    "titulo_msg": "Subject",
+    "mensaje": "Message",
+    "placeholder_email": "yourname@email.com",
+    "placeholder_titulo": "Message subject",
+    "placeholder_mensaje": "Write your message here...",
+    "enviar": "Send message",
+    "exito": "✅ Thank you for your message! We will get back to you soon.",
+    "auth_requerida": "You must be authenticated to send a message."
+  },
+  "notificaciones": {
+    "titulo": "Notifications",
+    "sin_leer": "Unread",
+    "todas": "All",
+    "no_hay": "You have no notifications.",
+    "marcar_leida": "Mark as read"
+  },
+  "perfil": {
+    "titulo": "My Profile",
+    "editar": "Edit profile",
+    "guardar": "Save changes",
+    "cancelar": "Cancel",
+    "suscripcion": "Subscription",
+    "vence": "Expires on:",
+    "activa": "Active",
+    "caducada": "Expired"
+  },
+  "suscripcion": {
+    "caducada_titulo": "Subscription expired",
+    "caducada_subtitulo": "Your monthly access has expired",
+    "plan_actual": "Current plan",
+    "cuota_mensual": "Monthly fee",
+    "descripcion": "To continue publishing articles, registering for events and participating in projects, you need to renew your monthly subscription.",
+    "preparando": "Preparing gateway...",
+    "renovar_gratis": "Renew free subscription",
+    "pagar_renovar": "Pay {{importe}} € and renew access",
+    "renovada_titulo": "Subscription Renewed!",
+    "renovada_desc": "Your payment has been processed successfully. You have 30 additional days of full access.",
+    "continuar": "Continue",
+    "ssl": "🔒 Secure payment with SSL encryption. You can log out from your profile.",
+    "descripcion_renovacion": "Monthly subscription renewal"
+  },
+  "forgot_password": {
+    "titulo": "Recover password",
+    "email": "Email",
+    "boton": "Send link",
+    "enviando": "Sending...",
+    "exito": "Recovery link sent to your email."
+  },
+  "reset_password": {
+    "titulo": "New password",
+    "nueva": "New password",
+    "confirmar": "Confirm password",
+    "boton": "Change password",
+    "cambiando": "Changing..."
+  }
+}
