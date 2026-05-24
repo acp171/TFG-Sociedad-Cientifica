@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 const GestionMiembros = () => {
+    const { t } = useTranslation();
     const [miembros, setMiembros] = useState([]);
     const [loading, setLoading] = useState(true);
     const [nuevoMiembro, setNuevoMiembro] = useState({
@@ -68,7 +70,7 @@ const GestionMiembros = () => {
 
             setMiembros((prev) => [...prev, data.miembro]);
             setNuevoMiembro({ nombre: "", apellidos: "", email: "", password: "", telefono: "", fecha_nacimiento: "",});
-            setSuccess("Miembro añadido correctamente");
+            setSuccess(t("perfil.miembro_anadido"));
         }
         catch (err) {
             console.error(err);
@@ -77,7 +79,7 @@ const GestionMiembros = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("¿Deseas eliminar este miembro?")) return;
+        if (!window.confirm(t("perfil.confirmar_eliminar_miembro"))) return;
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
@@ -101,21 +103,21 @@ const GestionMiembros = () => {
 
     return (
         <div className="bg-white shadow-md rounded-xl p-6">
-            <h2 className="text-2xl font-bold mb-4">Miembros de la Corporación</h2>
+            <h2 className="text-2xl font-bold mb-4">{t("perfil.miembros_corporacion")}</h2>
 
             {loading ? (
-                <p>Cargando miembros...</p>
+                <p>{t("perfil.cargando_miembros")}</p>
             ) : miembros.length === 0 ? (
-                <p>No hay miembros registrados.</p>
+                <p>{t("perfil.no_hay_miembros")}</p>
             ) : (
                 <div className="overflow-x-auto">
                     <table className="w-full mb-6 border-collapse">
                         <thead>
                             <tr className="bg-gray-200">
-                                <th className="border px-4 py-2 text-left">Nombre completo</th>
-                                <th className="border px-4 py-2 text-left">Email</th>
-                                <th className="border px-4 py-2 text-left">Tipo de socio</th>
-                                <th className="border px-4 py-2 text-left">Acciones</th>
+                                <th className="border px-4 py-2 text-left">{t("perfil.nombre_completo")}</th>
+                                <th className="border px-4 py-2 text-left">{t("perfil.email")}</th>
+                                <th className="border px-4 py-2 text-left">{t("perfil.tipo_socio")}</th>
+                                <th className="border px-4 py-2 text-left">{t("perfil.acciones")}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -123,13 +125,13 @@ const GestionMiembros = () => {
                                 <tr key={m.id_socio} className="hover:bg-gray-100">
                                     <td className="border px-4 py-2 whitespace-nowrap">{m.nombre} {m.apellidos}</td>
                                     <td className="border px-4 py-2">{m.email}</td>
-                                    <td className="border px-4 py-2">Profesional</td>
+                                    <td className="border px-4 py-2">{t("perfil.profesional")}</td>
                                     <td className="border px-4 py-2">
                                         <button
                                             onClick={() => handleDelete(m.id_socio)}
                                             className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 transition"
                                         >
-                                            Eliminar
+                                            {t("perfil.eliminar")}
                                         </button>
                                     </td>
                                 </tr>
@@ -144,24 +146,24 @@ const GestionMiembros = () => {
                 {error && <p className="text-red-600">{error}</p>}
                 {success && <p className="text-green-600">{success}</p>}
 
-                <>Nombre</>
-                <input type="text" name="nombre" placeholder="Nombre" value={nuevoMiembro.nombre} onChange={handleChange} required className="w-full border p-3 rounded" />
-                <>Apellidos</>
-                <input type="text" name="apellidos" placeholder="Apellidos" value={nuevoMiembro.apellidos} onChange={handleChange} required className="w-full border p-3 rounded" />
-                <>Correo electrónico</>
-                <input type="email" name="email" placeholder="Email" value={nuevoMiembro.email} onChange={handleChange} required className="w-full border p-3 rounded" />
-                <>Contraseña</>
-                <input type="password" name="password" placeholder="Contraseña" value={nuevoMiembro.password} onChange={handleChange} required className="w-full border p-3 rounded" />
-                <>Teléfono</>
-                <input type="tel" name="telefono" placeholder="Teléfono" value={nuevoMiembro.telefono} onChange={handleChange} required className="w-full border p-3 rounded" />
-                <>Fecha nacimiento</>
+                <>{t("perfil.nombre")}</>
+                <input type="text" name="nombre" placeholder={t("perfil.nombre")} value={nuevoMiembro.nombre} onChange={handleChange} required className="w-full border p-3 rounded" />
+                <>{t("perfil.apellidos")}</>
+                <input type="text" name="apellidos" placeholder={t("perfil.apellidos")} value={nuevoMiembro.apellidos} onChange={handleChange} required className="w-full border p-3 rounded" />
+                <>{t("perfil.email")}</>
+                <input type="email" name="email" placeholder={t("perfil.email")} value={nuevoMiembro.email} onChange={handleChange} required className="w-full border p-3 rounded" />
+                <>{t("perfil.contrasena")}</>
+                <input type="password" name="password" placeholder={t("perfil.contrasena")} value={nuevoMiembro.password} onChange={handleChange} required className="w-full border p-3 rounded" />
+                <>{t("perfil.telefono")}</>
+                <input type="tel" name="telefono" placeholder={t("perfil.telefono")} value={nuevoMiembro.telefono} onChange={handleChange} required className="w-full border p-3 rounded" />
+                <>{t("perfil.fecha_nacimiento")}</>
                 <input type="date" name="fecha_nacimiento" value={nuevoMiembro.fecha_nacimiento} onChange={handleChange} required className="w-full border p-3 rounded" />
 
                 <button
                     type="submit"
                     className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
                 >
-                    Añadir miembro
+                    {t("perfil.anadir_miembro")}
                 </button>
             </form>
         </div>

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const PerfilUsuario = () => {
+    const { t } = useTranslation();
     const [usuario, setUsuario] = useState(null);
     const [editando, setEditando] = useState(false);
 
@@ -64,17 +66,17 @@ const PerfilUsuario = () => {
         const data = await res.json();
 
         if (res.ok) {
-            alert("Perfil actualizado correctamente.");
+            alert(t("perfil.perfil_actualizado"));
             setUsuario(data.socio);
             setEditando(false);
         }
         else {
-            alert("Hubo un error al actualizar el perfil.");
+            alert(t("perfil.error_actualizar_perfil"));
         }
     };
 
     const handleBaja = async () => {
-        if (!confirm("¿Seguro que deseas darte de baja? Esta acción es irreversible.")) return;
+        if (!confirm(t("perfil.confirmar_baja"))) return;
 
         const res = await fetch(
             "https://tfg-sociedad-cientifica-production.up.railway.app/perfil",
@@ -87,16 +89,16 @@ const PerfilUsuario = () => {
         );
 
         if (res.ok) {
-            alert("Tu cuenta ha sido eliminada.");
+            alert(t("perfil.cuenta_eliminada"));
             localStorage.removeItem("token");
             window.location.href = "/";
         }
         else {
-            alert("Error al eliminar la cuenta.");
+            alert(t("perfil.error_eliminar"));
         }
     };
 
-    if (!usuario) return <p className="text-center p-6">Cargando perfil...</p>;
+    if (!usuario) return <p className="text-center p-6">{t("perfil.cargando")}</p>;
 
     return (
         <div className="min-h-[80vh] bg-gradient-to-b from-blue-200 to-white py-16 px-4">
@@ -104,45 +106,45 @@ const PerfilUsuario = () => {
             <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-3xl p-8 mt-10">
                 
                 <h1 className="text-4xl font-bold text-indigo-700 mb-6 text-center">
-                    Mi perfil
+                    {t("perfil.mi_perfil")}
                 </h1>
 
                 {!editando && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <h2 className="text-lg font-semibold text-black">Nombre completo</h2>
+                            <h2 className="text-lg font-semibold text-black">{t("perfil.nombre_completo")}</h2>
                             <p className="text-gray-900">{usuario.nombre} {usuario.apellidos}</p>
                         </div>
 
                         <div>
-                            <h2 className="text-lg font-semibold text-black">Correo electrónico</h2>
+                            <h2 className="text-lg font-semibold text-black">{t("perfil.email")}</h2>
                             <p className="text-gray-900">{usuario.email}</p>
                         </div>
 
                         <div>
-                            <h2 className="text-lg font-semibold text-black">Teléfono</h2>
+                            <h2 className="text-lg font-semibold text-black">{t("perfil.telefono")}</h2>
                             <p className="text-gray-900">{usuario.telefono}</p>
                         </div>
 
                         <div>
-                            <h2 className="text-lg font-semibold text-black">Tipo de socio</h2>
+                            <h2 className="text-lg font-semibold text-black">{t("perfil.tipo_socio")}</h2>
                             <p className="text-gray-900">{usuario.tipo_socio}</p>
                         </div>
 
                         <div>
-                            <h2 className="text-lg font-semibold text-black">Rol del socio</h2>
+                            <h2 className="text-lg font-semibold text-black">{t("perfil.rol_socio")}</h2>
                             <p className="text-gray-900">{usuario.socio_rol}</p>
                         </div>
 
                         <div>
-                            <h2 className="text-lg font-semibold text-black">Fecha de nacimiento</h2>
+                            <h2 className="text-lg font-semibold text-black">{t("perfil.fecha_nacimiento")}</h2>
                             <p className="text-gray-900">
                                 {new Date(usuario.fecha_nacimiento).toLocaleDateString()}
                             </p>
                         </div>
 
                         <div>
-                            <h2 className="text-lg font-semibold text-black">Fecha de registro</h2>
+                            <h2 className="text-lg font-semibold text-black">{t("perfil.fecha_registro")}</h2>
                             <p className="text-gray-900">
                                 {new Date(usuario.fecha_registro).toLocaleDateString()}
                             </p>
@@ -154,7 +156,7 @@ const PerfilUsuario = () => {
                     <form onSubmit={handleGuardar} className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
                         <div>
-                            <label className="font-semibold text-black">Nombre</label>
+                            <label className="font-semibold text-black">{t("perfil.nombre")}</label>
                             <input
                                 className="w-full mt-1 border p-2 rounded"
                                 value={nombre}
@@ -163,7 +165,7 @@ const PerfilUsuario = () => {
                         </div>
 
                         <div>
-                            <label className="font-semibold text-black">Apellidos</label>
+                            <label className="font-semibold text-black">{t("perfil.apellidos")}</label>
                             <input
                                 className="w-full mt-1 border p-2 rounded"
                                 value={apellidos}
@@ -172,7 +174,7 @@ const PerfilUsuario = () => {
                         </div>
 
                         <div>
-                            <label className="font-semibold text-black">Teléfono</label>
+                            <label className="font-semibold text-black">{t("perfil.telefono")}</label>
                             <input
                                 className="w-full mt-1 border p-2 rounded"
                                 value={telefono}
@@ -185,7 +187,7 @@ const PerfilUsuario = () => {
                                 type="submit"
                                 className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700"
                             >
-                                Guardar cambios
+                                {t("perfil.guardar_cambios")}
                             </button>
                         </div>
 
@@ -198,13 +200,13 @@ const PerfilUsuario = () => {
                     onClick={() => setEditando(!editando)}
                     className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
                 >
-                    {editando ? "Cancelar edición" : "Editar perfil"}
+                    {editando ? t("perfil.cancelar_edicion") : t("perfil.editar_perfil")}
                 </button>
                 <button
                     onClick={handleBaja}
                     className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700"
                 >
-                    Darme de baja
+                    {t("perfil.dar_baja")}
                 </button>
             </div>
         </div>
