@@ -32,8 +32,8 @@ router.post('/', express.raw({ type: 'application/json' }), async (request, resp
             const { nombre, apellidos, email, password, telefono, fecha_nacimiento, id_plan } = paymentIntent.metadata;
             
             const query = `INSERT INTO Socio(nombre, apellidos, email, password, telefono, 
-                            fecha_nacimiento, fecha_alta, socio_rol, tipo_socio)
-                            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id_socio, nombre, email;`;
+                            fecha_nacimiento, fecha_alta, fecha_expiracion, socio_rol, tipo_socio)
+                            VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP + INTERVAL '30 days', $8, $9) RETURNING id_socio, nombre, email;`;
         
             const values = [
                 nombre,
@@ -59,6 +59,30 @@ router.post('/', express.raw({ type: 'application/json' }), async (request, resp
             } catch (error) {
                 console.error("Error insertando socio: ", error.message);
             }        
+        }
+        else if (tipoPago === 'renovacion_socio') {
+            try {
+                // Si la fecha ya ha pasado, la configuramos a hoy + 30 días. 
+                // Si aún no ha pasado, le sumamos 30 días a lo que le quede.
+                const query = `
+                    UPDATE Socio 
+                    SET fecha_expiracion = CASE 
+                        WHEN fecha_expiracion < CURRENT_TIMESTAMP THEN CURRENT_TIMESTAMP + INTERVAL '30 days' 
+                        ELSE fecha_expiracion + INTERVAL '30 days' 
+                    END
+                    WHERE id_socio = $1;
+                `;
+                await pool.query(query, [socio_id]);
+                console.log("✅ Suscripción renovada para socio: ", socio_id);
+
+                await crearNotificacion(
+                    socio_id,
+                    'Renovación completada',
+                    'Gracias por renovar tu suscripción mensual. Tienes acceso completo por 30 días más.'
+                );
+            } catch (error) {
+                console.error("Error renovando socio: ", error.message);
+            }
         }
         else if (tipoPago === 'inscripcion_evento') {
             await pool.query("UPDATE Inscripciones SET estado_inscripcion = $1 WHERE evento = $2 AND socio = $3;", ["pagado", id_evento, socio_id])

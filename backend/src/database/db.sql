@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS Socio (
     telefono VARCHAR(16) NOT NULL,
     fecha_nacimiento TIMESTAMP NOT NULL,
     fecha_alta TIMESTAMP NOT NULL,
+    fecha_expiracion TIMESTAMP,
     socio_rol INT NOT NULL,
     tipo_socio INT NOT NULL,
     corporacion INT REFERENCES Socio(id_socio),

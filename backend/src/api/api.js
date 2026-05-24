@@ -35,10 +35,35 @@ function verificarToken(req, res, next) {
         return res.status(403).json({ message: 'Token inválido o expirado' });
       }
 
-      req.usuario = usuario; // Info extraída del token
-      next();
-    });
-  }
+            req.usuario = usuario; // Info extraída del token
+            next();
+        });
+    }
+  
+    async function verificarSuscripcionActiva(req, res, next) {
+        // Ejecutamos primero la verificación de token
+        verificarToken(req, res, async () => {
+            try {
+                const query = 'SELECT fecha_expiracion FROM Socio WHERE id_socio = $1;';
+                const result = await pool.query(query, [req.usuario.id]);
+                if (result.rows.length === 0) {
+                    return res.status(404).json({ message: 'Socio no encontrado' });
+                }
+  
+                const { fecha_expiracion } = result.rows[0];
+                if (!fecha_expiracion || new Date() > new Date(fecha_expiracion)) {
+                    return res.status(403).json({ 
+                        message: 'Suscripción mensual caducada', 
+                        requiereRenovacion: true 
+                    });
+                }
+                next();
+            } catch (err) {
+                console.error('Error al verificar suscripción:', err);
+                return res.status(500).json({ message: 'Error interno del servidor' });
+            }
+        });
+    }
 
 // ROUTES
 // POST login
@@ -70,7 +95,8 @@ router.post('/login', async (req, res) => {
               email: socio.email,
               nombre: socio.nombre,
               rol: socio.socio_rol,
-              tipo: socio.tipo_socio
+              tipo: socio.tipo_socio,
+              fecha_expiracion: socio.fecha_expiracion
             },
             SECRET_KEY,
             { expiresIn: '1h' } // Token expira en 1 hora
@@ -83,7 +109,8 @@ router.post('/login', async (req, res) => {
                 nombre: socio.nombre,
                 email: socio.email,
                 rol: socio.socio_rol,
-                tipo: socio.tipo_socio
+                tipo: socio.tipo_socio,
+                fecha_expiracion: socio.fecha_expiracion
             },
             token
         });
@@ -129,6 +156,46 @@ router.post('/register', async (req, res) => {
     } catch (error) {
         console.error('Error creando PaymentIntent:', error);
         res.status(500).json({ message: 'Error creando sesión de pago.' });
+    }
+});
+
+// POST renovar-suscripcion
+router.post('/renovar-suscripcion', verificarToken, async (req, res) => {
+    try {
+        const socioId = req.usuario.id;
+        
+        // Obtener el tipo de cuota actual del socio
+        const query = `
+            SELECT t.cuota
+            FROM Socio s
+            JOIN Tipo_Socio t ON s.tipo_socio = t.id_tipo_socio
+            WHERE s.id_socio = $1;
+        `;
+        const result = await pool.query(query, [socioId]);
+        if (result.rows.length === 0) return res.status(404).json({ message: 'Socio no encontrado' });
+        
+        const cuota = result.rows[0].cuota;
+        
+        if (cuota === 0) {
+            // Si el plan es gratuito, podemos renovar directamente en DB
+            await pool.query('UPDATE Socio SET fecha_expiracion = CURRENT_TIMESTAMP + INTERVAL \'30 days\' WHERE id_socio = $1', [socioId]);
+            return res.json({ renovado: true });
+        }
+
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: cuota * 100,
+            currency: 'eur',
+            payment_method_types: ['card'],
+            metadata: {
+                tipo_pago: 'renovacion_socio',
+                socio_id: socioId.toString(),
+            },
+        });
+
+        res.json({ clientSecret: paymentIntent.client_secret, importe: cuota });
+    } catch (error) {
+        console.error('Error creando PaymentIntent de renovación:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
 
@@ -689,7 +756,7 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
 });
 
 // POST crear un proyecto de investigación
-router.post('/proyectos-investigacion/crear-proyecto-investigacion', verificarToken, async (req, res) =>  {
+router.post('/proyectos-investigacion/crear-proyecto-investigacion', verificarSuscripcionActiva, async (req, res) =>  {
     const { nombre_proyecto, descripcion, fecha_inicio, fecha_fin } = req.body;    
     
     if (!nombre_proyecto || !descripcion || !fecha_fin) {
@@ -997,7 +1064,7 @@ router.get("/proyectos-investigacion/:id", async (req, res) => {
 });
 
 // POST crear un evento científico
-router.post('/eventos-cientificos/crear-evento-cientifico', verificarToken, async (req, res) =>  {
+router.post('/eventos-cientificos/crear-evento-cientifico', verificarSuscripcionActiva, async (req, res) =>  {
     const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
 
     if (!nombre_evento || !fecha_evento_inicio || !fecha_evento_fin || !descripcion_evento || !direccion) {
@@ -1238,7 +1305,7 @@ router.get('/eventos-cientificos/:id', async (req, res) =>  {
 });
 
 // POST Inscribirse al evento
-router.post('/eventos-cientificos/:id/inscribirse', verificarToken, async (req, res) => {
+router.post('/eventos-cientificos/:id/inscribirse', verificarSuscripcionActiva, async (req, res) => {
     const id_evento = req.params.id;
     const socio_id = req.usuario.id;
 
@@ -1334,7 +1401,7 @@ router.delete('/eventos-cientificos/:id/cancelar-inscripcion', verificarToken, a
 });
 
 // POST publicar articulo científico
-router.post('/articulos-cientificos/publicar-articulo-cientifico', verificarToken, upload.single('pdf'), async (req, res) => {
+router.post('/articulos-cientificos/publicar-articulo-cientifico', verificarSuscripcionActiva, upload.single('pdf'), async (req, res) => {
     const { titulo, contenido } = req.body;
     let rutaPDF;
 
@@ -1612,7 +1679,7 @@ router.patch('/articulos-cientificos/:id/comentarios/:id_comentario/moderar', ve
 });
 
 // POST crear comité científico
-router.post('/crear-comite-cientifico', verificarToken, async (req, res) => {
+router.post('/crear-comite-cientifico', verificarSuscripcionActiva, async (req, res) => {
     const { nombre_comite, descripcion, socio } = req.body;
 
     if (!nombre_comite || !descripcion || !socio) {
