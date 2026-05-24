@@ -234,7 +234,7 @@
     "datos": "Datos del Proyecto",
     "miembros": "Miembros del Proyecto"
   },
-  "perfil": {
+  "perfil_page": {
     "panel": "PANEL DE USUARIO",
     "tab_perfil": "Perfil",
     "tab_notificaciones": "Notificaciones",
@@ -281,7 +281,7 @@
     "miembro_anadido": "Miembro añadido correctamente",
     "error_anadir_miembro": "Error al añadir miembro"
   },
-  "notificaciones": {
+  "notificaciones_page": {
     "debes_iniciar": "Debes iniciar sesión para ver tus notificaciones.",
     "cargando": "Cargando notificaciones...",
     "titulo": "📬 Tus notificaciones",

@@ -13,13 +13,13 @@ const PanelPerfil = () => {
     const { userTipoSocio } = useAuth();
 
     const tabsBase = [
-        { id: "perfil", label: t("perfil.tab_perfil") },
-        { id: "notificaciones", label: t("perfil.tab_notificaciones") },
-        { id: "inscripciones", label: t("perfil.tab_inscripciones") },
+        { id: "perfil", label: t("perfil_page.tab_perfil") },
+        { id: "notificaciones", label: t("perfil_page.tab_notificaciones") },
+        { id: "inscripciones", label: t("perfil_page.tab_inscripciones") },
     ];
 
     const tabs = userTipoSocio === 6 
-        ? [...tabsBase, { id: "miembros", label: t("perfil.tab_miembros") }]
+        ? [...tabsBase, { id: "miembros", label: t("perfil_page.tab_miembros") }]
         : tabsBase;
 
     const renderContent = () => {
@@ -40,7 +40,7 @@ const PanelPerfil = () => {
     return (
         <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-b from-blue-200 to-white">
             <aside className="w-full md:w-80 bg-white shadow-md p-4 md:p-6 space-y-4">
-                <h2 className="text-xl font-bold mb-4 md:mb-8 text-indigo-700 text-center md:text-left">{t("perfil.panel")}</h2>
+                <h2 className="text-xl font-bold mb-4 md:mb-8 text-indigo-700 text-center md:text-left">{t("perfil_page.panel")}</h2>
                 <div className="flex md:flex-col overflow-x-auto md:overflow-x-visible pb-2 md:pb-0 gap-2 md:gap-4 no-scrollbar">
                     {tabs.map((tab) => (
                         <button

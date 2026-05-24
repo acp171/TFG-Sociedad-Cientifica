@@ -234,7 +234,7 @@
     "datos": "Project details",
     "miembros": "Project members"
   },
-  "perfil": {
+  "perfil_page": {
     "panel": "USER PANEL",
     "tab_perfil": "Profile",
     "tab_notificaciones": "Notifications",
@@ -281,7 +281,7 @@
     "miembro_anadido": "Member added successfully",
     "error_anadir_miembro": "Error adding member"
   },
-  "notificaciones": {
+  "notificaciones_page": {
     "debes_iniciar": "You must log in to see your notifications.",
     "cargando": "Loading notifications...",
     "titulo": "📬 Your notifications",
