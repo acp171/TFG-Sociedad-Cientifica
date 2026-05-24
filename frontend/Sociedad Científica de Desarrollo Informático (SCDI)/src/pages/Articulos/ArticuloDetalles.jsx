@@ -1,9 +1,11 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { HiArrowLeft, HiDownload, HiTrash } from "react-icons/hi";
+import { useTranslation } from "react-i18next";
 
 const ArticuloDetalles = () => {
     const { id } = useParams();
+    const { t } = useTranslation();
     const [articulo, setArticulo] = useState(null);
     const [comentarios, setComentarios] = useState([]);
     const [nuevoComentario, setNuevoComentario] = useState("");
@@ -20,7 +22,7 @@ const ArticuloDetalles = () => {
     }, [id]);
 
     const eliminar = async () => {
-        if (!window.confirm("¿Seguro que deseas eliminar este artículo? Esta acción no se puede deshacer.")) return;
+        if (!window.confirm(t("detalle_comun.confirmar_eliminar_articulo"))) return;
         const token = localStorage.getItem("token");
         const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${id}`, {
             method: "DELETE",
@@ -54,7 +56,7 @@ const ArticuloDetalles = () => {
             setComentarios([...comentarios, nuevo.comentario]);
             setNuevoComentario("");
         } else {
-            alert("No se pudo enviar el comentario.");
+            alert(t("detalle_articulo.error_enviar"));
         }
     };
 
@@ -79,14 +81,14 @@ const ArticuloDetalles = () => {
                 )
             );
         } else {
-            alert("No se pudo actualizar la visibilidad del comentario.");
+            alert(t("detalle_articulo.error_enviar"));
         }
     };
 
     if (!articulo) {
         return (
             <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-blue-50 to-white">
-                <p className="text-gray-500 text-lg">Cargando artículo...</p>
+                <p className="text-gray-500 text-lg">{t("detalle_articulo.cargando")}</p>
             </div>
         );
     }
@@ -113,9 +115,9 @@ const ArticuloDetalles = () => {
             <button
                 onClick={() => navigate("/articulos-cientificos")}
                 className="self-start mb-8 flex items-center text-blue-600 hover:text-blue-800 font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 rounded"
-                aria-label="Volver a la página anterior"
+                aria-label={t("detalle_comun.volver")}
             >
-                <HiArrowLeft className="mr-2 text-xl" /> Volver
+                <HiArrowLeft className="mr-2 text-xl" /> {t("detalle_comun.volver")}
             </button>
 
             <article className="bg-gradient-to-b from-blue-50 to-white shadow-xl rounded-xl p-6 md:p-10 max-w-4xl w-full">
@@ -129,11 +131,11 @@ const ArticuloDetalles = () => {
 
                 <div className="flex justify-between items-center mb-10 flex-wrap gap-4">
                     <p className="text-xs md:text-sm text-gray-500 italic">
-                        Publicado por:{" "}
+                        {t("detalle_articulo.publicado_por")}{" "}
                         <span className="font-semibold text-gray-700">
                             {articulo.nombre} {articulo.apellidos}
                         </span>{" "}
-                        el {fechaFormateadaArticulo}
+                        {t("detalle_articulo.el")} {fechaFormateadaArticulo}
                     </p>
 
                     {articulo.contenidopdf && (
@@ -144,7 +146,7 @@ const ArticuloDetalles = () => {
                             download
                             className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 md:px-5 md:py-3 rounded-md hover:bg-blue-700 transition shadow-md focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm md:text-base"
                         >
-                            <HiDownload className="text-xl" /> Descargar PDF
+                            <HiDownload className="text-xl" /> {t("detalle_articulo.descargar_pdf")}
                         </a>
                     )}
                 </div>
@@ -154,30 +156,30 @@ const ArticuloDetalles = () => {
                         <button
                             onClick={eliminar}
                             className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 md:px-6 md:py-3 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-red-600 text-sm md:text-base"
-                            aria-label="Eliminar artículo"
+                            aria-label={t("detalle_comun.eliminar_articulo")}
                         >
-                            <HiTrash className="text-xl" /> Eliminar artículo
+                            <HiTrash className="text-xl" /> {t("detalle_comun.eliminar_articulo")}
                         </button>
                     </div>
                 )}
 
                 {/* Sección de comentarios */}
                 <div className="border-t pt-8 mt-12">
-                    <h2 className="text-2xl font-bold mb-6 text-gray-800">Comentarios</h2>
+                    <h2 className="text-2xl font-bold mb-6 text-gray-800">{t("detalle_articulo.comentarios")}</h2>
 
                     {comentariosConFecha.length === 0 ? (
-                        <p className="text-gray-500 mb-4">Aún no hay comentarios.</p>
+                        <p className="text-gray-500 mb-4">{t("detalle_articulo.sin_comentarios")}</p>
                     ) : (
                         <ul className="space-y-4 mb-6">
                             {comentariosConFecha.map((comentario, i) => (
                                 <li key={i} className="bg-gray-50 p-4 rounded-lg border">
                                     <p className="text-gray-700">{comentario.comentario}</p>
                                     <p className="text-sm text-gray-500 italic">
-                                        Publicado por:{" "}
+                                        {t("detalle_articulo.publicado_por")}{" "}
                                         <span className="font-semibold text-gray-700">
                                             {comentario.nombre} {comentario.apellidos}
                                         </span>{" "}
-                                        el {comentario.fechaFormateada}
+                                        {t("detalle_articulo.el")} {comentario.fechaFormateada}
                                     </p>
 
                                     {/* Botón para admin para cambiar visibilidad */}
@@ -190,7 +192,7 @@ const ArticuloDetalles = () => {
                                                     : "bg-green-600 hover:bg-green-700 text-white"
                                             }`}
                                         >
-                                            {comentario.visibilidad ? "Ocultar" : "Mostrar"}
+                                            {comentario.visibilidad ? t("detalle_articulo.ocultar") : t("detalle_articulo.mostrar")}
                                         </button>
                                     )}
                                 </li>
@@ -204,7 +206,7 @@ const ArticuloDetalles = () => {
                             onChange={(e) => setNuevoComentario(e.target.value)}
                             rows={4}
                             className="w-full border border-gray-300 rounded-md p-3 mb-4"
-                            placeholder="Escribe tu comentario..."
+                            placeholder={t("detalle_articulo.escribe_comentario")}
                         ></textarea>
                         <button
                             onClick={() => {
@@ -216,7 +218,7 @@ const ArticuloDetalles = () => {
                             }}
                             className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
                         >
-                            Enviar comentario
+                            {t("detalle_articulo.enviar_comentario")}
                         </button>
                     </div>
                 </div>

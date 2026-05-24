@@ -4,9 +4,11 @@ import { HiArrowLeft, HiTrash } from "react-icons/hi";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import PasarelaPago from "../../components/Pago/PasarelaPago";
+import { useTranslation } from "react-i18next";
 
 const EventoDetalles = () => {
     const { id } = useParams();
+    const { t } = useTranslation();
     const [evento, setEvento] = useState(null);
     const [miembrosComite, setMiembrosComite] = useState([]);
     const [miembrosInscritos, setMiembrosInscritos] = useState([]);
@@ -37,7 +39,7 @@ const EventoDetalles = () => {
     }, [id]);
 
     const eliminar = async () => {
-        if (!window.confirm("¿Seguro que deseas eliminar este evento?")) return;
+        if (!window.confirm(t("detalle_comun.confirmar_eliminar_evento"))) return;
         const token = localStorage.getItem("token");
         const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}`, {
             method: "DELETE",
@@ -68,15 +70,15 @@ const EventoDetalles = () => {
 
             if (!res.ok) {
                 const error = await res.json();
-                alert("Error al guardar: " + error.message);
+                alert(t("detalle_comun.error_guardar") + error.message);
                 return;
             }
 
-            alert("Cambios guardados con éxito");
+            alert(t("detalle_comun.exito_guardar"));
             setModoEdicion(false);
         } catch (error) {
             console.error("Error al actualizar evento:", error);
-            alert("No se pudo actualizar el evento.");
+            alert(t("detalle_comun.error_actualizar"));
         }
     };
 
@@ -122,19 +124,19 @@ const EventoDetalles = () => {
     
         const data = await res.json();
         if (res.ok) {
-            alert("Inscripción cancelada con éxito");
+            alert(t("detalle_evento.exito_cancelar"));
             setMiembrosInscritos(prev =>
                 prev.filter(m => m.socio !== usuario?.id)
             );
         } else {
-            alert("Error al cancelar inscripción");
+            alert(t("detalle_evento.error_cancelar"));
         }
     };
 
     if (!evento) {
         return (
             <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-blue-50 to-white">
-                <p className="text-gray-500 text-lg">Cargando evento...</p>
+                <p className="text-gray-500 text-lg">{t("detalle_evento.cargando")}</p>
             </div>
         );
     }
@@ -170,7 +172,7 @@ const EventoDetalles = () => {
                     onClick={() => navigate("/eventos-cientificos")}
                     className="flex items-center text-blue-600 hover:text-blue-800 font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 rounded"
                 >
-                    <HiArrowLeft className="mr-2 text-xl" /> Volver
+                    <HiArrowLeft className="mr-2 text-xl" /> {t("detalle_comun.volver")}
                 </button>
 
                 {(esPresidente || esAdministrador) && (
@@ -187,7 +189,7 @@ const EventoDetalles = () => {
                                 onClick={() => setModoEdicion(true)}
                                 className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
                             >
-                                Editar evento
+                                {t("detalle_comun.editar_evento")}
                             </button>
                         )}
 
@@ -195,7 +197,7 @@ const EventoDetalles = () => {
                             onClick={eliminar}
                             className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
                         >
-                            <HiTrash className="text-xl" /> Eliminar evento
+                            <HiTrash className="text-xl" /> {t("detalle_comun.eliminar_evento")}
                         </button>
                     </div>
                 )}
@@ -254,21 +256,21 @@ const EventoDetalles = () => {
                 ) : (
                     <div className="flex justify-between items-center mb-10 flex-wrap gap-4">
                         <p className="text-sm text-black italic">
-                            Empieza {fechaInicioFormateada} hasta {fechaFinFormateada}.
+                            {t("detalle_evento.empieza")} {fechaInicioFormateada} {t("detalle_evento.hasta")} {fechaFinFormateada}.
                         </p>
                     </div>
                 )}
 
                 {evento.direccion && (
                     <div className="mb-10 text-gray-800">
-                        <h2 className="text-2xl font-semibold mb-2">Dirección del evento</h2>
+                        <h2 className="text-2xl font-semibold mb-2">{t("detalle_evento.direccion")}</h2>
                         <p>{evento.direccion.calle}, {evento.direccion.ciudad}, {evento.direccion.provincia}, {evento.direccion.codigo_postal}</p>
                     </div>
                 )}
 
                 {coords && (
                     <div className="mb-12">
-                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Ubicación en el mapa</h2>
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">{t("detalle_evento.mapa")}</h2>
                         <MapContainer
                             center={[coords.lat, coords.lon]}
                             zoom={16}
@@ -291,7 +293,7 @@ const EventoDetalles = () => {
 
                 {miembrosComite.length > 0 && (
                     <section aria-label="Miembros del comité" className="mb-12">
-                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Miembros del comité</h2>
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">{t("detalle_evento.comite")}</h2>
                         <ul className="grid gap-4">
                             {miembrosComite.map((miembro) => (
                                 <li
@@ -314,19 +316,19 @@ const EventoDetalles = () => {
                             onClick={cancelarInscripcion}
                             className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 cursor-pointer"
                         >
-                            Cancelar inscripción
+                            {t("detalle_evento.cancelar_inscripcion")}
                         </button>
                     ) : (
                         <button 
                             onClick={inscribirse} 
                             className="bg-indigo-600 text-white px-4 py-2 rounded cursor-pointer"
                         >
-                            Inscribirme
+                            {t("detalle_evento.inscribirme")}
                         </button>
                     )
                 ) : (
                     <p className="mt-4 text-red-600 font-medium">
-                        Plazo de inscripción expirado
+                        {t("detalle_evento.plazo_expirado")}
                     </p>
                 )}
             </article>

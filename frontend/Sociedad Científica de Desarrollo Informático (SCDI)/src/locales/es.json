@@ -191,5 +191,47 @@
     "confirmar": "Confirmar contraseña",
     "boton": "Cambiar contraseña",
     "cambiando": "Cambiando..."
+  },
+  "detalle_comun": {
+    "volver": "Volver",
+    "guardar_cambios": "Guardar cambios",
+    "eliminar_evento": "Eliminar evento",
+    "editar_evento": "Editar evento",
+    "eliminar_articulo": "Eliminar artículo",
+    "confirmar_eliminar_evento": "¿Seguro que deseas eliminar este evento?",
+    "confirmar_eliminar_articulo": "¿Seguro que deseas eliminar este artículo? Esta acción no se puede deshacer.",
+    "exito_guardar": "Cambios guardados con éxito",
+    "error_guardar": "Error al guardar: ",
+    "error_actualizar": "No se pudo actualizar el evento."
+  },
+  "detalle_evento": {
+    "cargando": "Cargando evento...",
+    "empieza": "Empieza",
+    "hasta": "hasta",
+    "direccion": "Dirección del evento",
+    "mapa": "Ubicación en el mapa",
+    "comite": "Miembros del comité",
+    "inscribirme": "Inscribirme",
+    "cancelar_inscripcion": "Cancelar inscripción",
+    "plazo_expirado": "Plazo de inscripción expirado",
+    "exito_cancelar": "Inscripción cancelada con éxito",
+    "error_cancelar": "Error al cancelar inscripción"
+  },
+  "detalle_articulo": {
+    "cargando": "Cargando artículo...",
+    "publicado_por": "Publicado por:",
+    "el": "el",
+    "descargar_pdf": "Descargar PDF",
+    "comentarios": "Comentarios",
+    "sin_comentarios": "Aún no hay comentarios.",
+    "ocultar": "Ocultar",
+    "mostrar": "Mostrar",
+    "escribe_comentario": "Escribe tu comentario...",
+    "enviar_comentario": "Enviar comentario",
+    "error_enviar": "No se pudo enviar el comentario."
+  },
+  "detalle_proyecto": {
+    "datos": "Datos del Proyecto",
+    "miembros": "Miembros del Proyecto"
   }
 }

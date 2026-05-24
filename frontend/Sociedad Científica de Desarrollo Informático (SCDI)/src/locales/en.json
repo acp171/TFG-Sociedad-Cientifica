@@ -191,5 +191,47 @@
     "confirmar": "Confirm password",
     "boton": "Change password",
     "cambiando": "Changing..."
+  },
+  "detalle_comun": {
+    "volver": "Go back",
+    "guardar_cambios": "Save changes",
+    "eliminar_evento": "Delete event",
+    "editar_evento": "Edit event",
+    "eliminar_articulo": "Delete article",
+    "confirmar_eliminar_evento": "Are you sure you want to delete this event?",
+    "confirmar_eliminar_articulo": "Are you sure you want to delete this article? This action cannot be undone.",
+    "exito_guardar": "Changes saved successfully",
+    "error_guardar": "Error saving: ",
+    "error_actualizar": "Could not update the event."
+  },
+  "detalle_evento": {
+    "cargando": "Loading event...",
+    "empieza": "Starts on",
+    "hasta": "until",
+    "direccion": "Event address",
+    "mapa": "Location on map",
+    "comite": "Committee members",
+    "inscribirme": "Register",
+    "cancelar_inscripcion": "Cancel registration",
+    "plazo_expirado": "Registration period expired",
+    "exito_cancelar": "Registration successfully cancelled",
+    "error_cancelar": "Error cancelling registration"
+  },
+  "detalle_articulo": {
+    "cargando": "Loading article...",
+    "publicado_por": "Published by:",
+    "el": "on",
+    "descargar_pdf": "Download PDF",
+    "comentarios": "Comments",
+    "sin_comentarios": "No comments yet.",
+    "ocultar": "Hide",
+    "mostrar": "Show",
+    "escribe_comentario": "Write your comment...",
+    "enviar_comentario": "Send comment",
+    "error_enviar": "Could not send comment."
+  },
+  "detalle_proyecto": {
+    "datos": "Project details",
+    "miembros": "Project members"
   }
 }

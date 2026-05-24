@@ -4,10 +4,12 @@ import { HiArrowLeft } from 'react-icons/hi';
 
 import DatosProyecto from "../../components/Proyectos/DatosProyecto";
 import MiembrosProyecto from "../../components/Proyectos/MiembrosProyecto";
+import { useTranslation } from "react-i18next";
 
 const ProyectoDetalles = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const [proyecto, setProyecto] = useState(null);
     const [miembros, setMiembros] = useState([]);
@@ -40,7 +42,7 @@ const ProyectoDetalles = () => {
     }, [id]);
 
     if (loading) {
-        return <p>Cargando...</p>;
+        return <p className="text-center mt-10">{t("common.cargando")}</p>;
     }
     if (error) {
         return <p>Error: {error}</p>;
@@ -56,7 +58,7 @@ const ProyectoDetalles = () => {
                 className="self-start mb-6 flex items-center text-blue-600 hover:text-blue-800 font-semibold transition"
             >
                 <HiArrowLeft className="mr-2 text-xl" />
-                Volver
+                {t("detalle_comun.volver")}
             </button>
 
             <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-8">{proyecto.nombre_proyecto}</h1>
@@ -68,7 +70,7 @@ const ProyectoDetalles = () => {
                     }`}
                     onClick={() => setActiveTab("datos")}
                 >
-                    Datos del Proyecto
+                    {t("detalle_proyecto.datos")}
                 </button>
                 <button
                     className={`flex-1 md:flex-none px-4 py-2 rounded-md font-semibold text-sm md:text-base ${
@@ -76,7 +78,7 @@ const ProyectoDetalles = () => {
                     }`}
                     onClick={() => setActiveTab("miembros")}
                 >
-                    Miembros del Proyecto
+                    {t("detalle_proyecto.miembros")}
                 </button>
             </nav>
 
