@@ -87,12 +87,19 @@ export default function BloqueoSuscripcion() {
         );
     }
 
+    // Leer nombre del plan y cuota desde localStorage
+    const socioGuardado = (() => {
+        try { return JSON.parse(localStorage.getItem("socio")) || {}; } catch { return {}; }
+    })();
+    const planNombre = socioGuardado.plan_nombre || "tu plan actual";
+    const cuota = socioGuardado.cuota ?? null;
+
     // Estado inicial: banner de aviso inmediato al entrar con cuenta caducada
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in p-4">
             <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-md">
 
-                {/* Cabecera de advertencia */}
+                {/* Cabecera */}
                 <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 text-center text-white">
                     <div className="mx-auto w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-3">
                         <svg className="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,7 +112,21 @@ export default function BloqueoSuscripcion() {
 
                 {/* Cuerpo */}
                 <div className="p-6">
-                    <p className="text-gray-600 text-center mb-5">
+                    {/* Resumen del plan */}
+                    <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-5 flex items-center justify-between">
+                        <div>
+                            <p className="text-xs font-semibold text-orange-500 uppercase tracking-wide">Plan actual</p>
+                            <p className="text-gray-800 font-bold text-lg">{planNombre}</p>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-xs font-semibold text-orange-500 uppercase tracking-wide">Cuota mensual</p>
+                            <p className="text-gray-800 font-bold text-2xl">
+                                {cuota !== null ? (cuota === 0 ? "Gratis" : `${cuota} €`) : "—"}
+                            </p>
+                        </div>
+                    </div>
+
+                    <p className="text-gray-500 text-sm text-center mb-5">
                         Para seguir publicando artículos, inscribirte en eventos y participar en proyectos necesitas renovar tu suscripción mensual.
                     </p>
 
@@ -126,7 +147,11 @@ export default function BloqueoSuscripcion() {
                                 </svg>
                                 Preparando pasarela...
                             </span>
-                        ) : "Renovar suscripción ahora"}
+                        ) : (
+                            cuota === 0
+                                ? "Renovar suscripción gratuita"
+                                : `Pagar ${cuota !== null ? `${cuota} €` : ""} y renovar acceso`
+                        )}
                     </button>
 
                     <p className="text-xs text-gray-400 text-center">

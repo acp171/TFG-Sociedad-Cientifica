@@ -75,7 +75,12 @@ router.post('/login', async (req, res) => {
     }
 
     try {
-        const query = 'SELECT * FROM SOCIO WHERE email = $1;';
+        const query = `
+            SELECT s.*, t.nombre_tipo AS plan_nombre, t.cuota
+            FROM Socio s
+            JOIN Tipo_Socio t ON s.tipo_socio = t.id_tipo_socio
+            WHERE s.email = $1;
+        `;
         const result = await pool.query(query, [email]);
 
         if (result.rows.length === 0) {
@@ -110,6 +115,8 @@ router.post('/login', async (req, res) => {
                 email: socio.email,
                 rol: socio.socio_rol,
                 tipo: socio.tipo_socio,
+                plan_nombre: socio.plan_nombre,
+                cuota: socio.cuota,
                 fecha_expiracion: socio.fecha_expiracion
             },
             token
