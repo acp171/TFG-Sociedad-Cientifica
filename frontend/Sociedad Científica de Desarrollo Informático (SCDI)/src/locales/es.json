@@ -49,7 +49,11 @@
     "area_ciberseguridad": "Ciberseguridad",
     "area_eventos": "Eventos y Hackatones",
     "cta_titulo": "¿Listo para unirte a la SCDI?",
-    "cta_desc": "Conéctate con una red vibrante de mentes científicas y tecnológicas."
+    "cta_desc": "Conéctate con una red vibrante de mentes científicas y tecnológicas.",
+    "proximos_eventos": "Próximos Eventos",
+    "cargando_eventos": "Cargando eventos...",
+    "no_eventos": "No hay eventos próximos.",
+    "hasta": "hasta"
   },
   "quienes_somos": {
     "titulo": "Quiénes somos",

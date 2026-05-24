@@ -49,7 +49,11 @@
     "area_ciberseguridad": "Cybersecurity",
     "area_eventos": "Events & Hackathons",
     "cta_titulo": "Ready to join SCDI?",
-    "cta_desc": "Connect with a vibrant network of scientific and technological minds."
+    "cta_desc": "Connect with a vibrant network of scientific and technological minds.",
+    "proximos_eventos": "Upcoming Events",
+    "cargando_eventos": "Loading events...",
+    "no_eventos": "No upcoming events.",
+    "hasta": "to"
   },
   "quienes_somos": {
     "titulo": "Who we are",
