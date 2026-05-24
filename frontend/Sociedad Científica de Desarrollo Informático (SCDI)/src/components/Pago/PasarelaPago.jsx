@@ -5,7 +5,6 @@ import { FiLock, FiX, FiCreditCard, FiCheckCircle } from "react-icons/fi";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
-// ─── Formulario interno (necesita estar dentro de <Elements>) ───────────────
 const FormularioPago = ({ importe, descripcion, onSuccess, onCancel }) => {
     const stripe = useStripe();
     const elements = useElements();
@@ -116,7 +115,6 @@ const FormularioPago = ({ importe, descripcion, onSuccess, onCancel }) => {
     );
 };
 
-// ─── Componente público (envuelve <Elements>) ────────────────────────────────
 const PasarelaPago = ({ clientSecret, importe, descripcion, onSuccess, onCancel }) => {
     if (!clientSecret) return null;
 
