@@ -365,26 +365,26 @@ const Header = () => {
 
             {/* Mobile Menu Overlay */}
             {isMenuOpen && (
-                <div className="fixed inset-0 bg-white z-40 lg:hidden flex flex-col p-6 pt-24 space-y-6 overflow-y-auto slide-in-left">
+                <div className="fixed inset-0 bg-white z-40 lg:hidden flex flex-col p-6 pt-24 space-y-8 overflow-y-auto slide-in-left">
                     <nav>
-                        <ul className="flex flex-col space-y-4 text-lg font-semibold">
-                            <li><a href="/quienes-somos" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600">QUIÉNES SOMOS</a></li>
-                            <li><a href="/eventos-cientificos" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600">ACTIVIDADES</a></li>
-                            <li><a href="/proyectos-investigacion" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600">PROYECTOS</a></li>
-                            <li><a href="/articulos-cientificos" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600">ARTÍCULOS</a></li>
+                        <ul className="flex flex-col space-y-6 text-xl font-bold text-center items-center">
+                            <li><a href="/quienes-somos" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600 inline-block w-full">QUIÉNES SOMOS</a></li>
+                            <li><a href="/eventos-cientificos" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600 inline-block w-full">ACTIVIDADES</a></li>
+                            <li><a href="/proyectos-investigacion" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600 inline-block w-full">PROYECTOS</a></li>
+                            <li><a href="/articulos-cientificos" onClick={() => setIsMenuOpen(false)} className="hover:text-blue-600 inline-block w-full">ARTÍCULOS</a></li>
                         </ul>
                     </nav>
 
-                    <div className="border-t pt-6 space-y-4">
-                        <div className="flex flex-wrap gap-4">
+                    <div className="border-t pt-8 space-y-4">
+                        <div className="flex flex-col gap-4">
                             {isLoggedIn && userRole === 1 && (
                                 <Link
                                     to="/panel-administrador"
                                     onClick={() => setIsMenuOpen(false)}
-                                    className="flex items-center space-x-2 p-2 bg-gray-100 rounded-lg w-full"
+                                    className="flex items-center justify-center space-x-2 p-3 bg-gray-100 rounded-lg w-full text-center"
                                 >
-                                    <Settings className="w-5 h-5" />
-                                    <span>Administración</span>
+                                    <Settings className="w-6 h-6" />
+                                    <span className="font-semibold">Administración</span>
                                 </Link>
                             )}
 
@@ -392,10 +392,10 @@ const Header = () => {
                                 <Link
                                     to="/notificaciones"
                                     onClick={() => setIsMenuOpen(false)}
-                                    className="flex items-center space-x-2 p-2 bg-gray-100 rounded-lg w-full"
+                                    className="flex items-center justify-center space-x-2 p-3 bg-gray-100 rounded-lg w-full text-center"
                                 >
-                                    <Inbox className="w-5 h-5" />
-                                    <span>Notificaciones ({notificaciones.length})</span>
+                                    <Inbox className="w-6 h-6" />
+                                    <span className="font-semibold">Notificaciones ({notificaciones.length})</span>
                                 </Link>
                             )}
 
@@ -403,29 +403,29 @@ const Header = () => {
                                 <Link
                                     to="/perfil"
                                     onClick={() => setIsMenuOpen(false)}
-                                    className="flex items-center space-x-2 p-2 bg-gray-100 rounded-lg w-full"
+                                    className="flex items-center justify-center space-x-2 p-3 bg-gray-100 rounded-lg w-full text-center"
                                 >
                                     <FaUser className="w-5 h-5" />
-                                    <span>Mi Perfil</span>
+                                    <span className="font-semibold">Mi Perfil</span>
                                 </Link>
                             )}
 
                             {isLoggedIn ? (
                                 <button
                                     onClick={handleLogout}
-                                    className="flex items-center space-x-2 p-2 bg-red-50 text-red-600 rounded-lg w-full"
+                                    className="flex items-center justify-center space-x-2 p-3 bg-red-50 text-red-600 rounded-lg w-full text-center"
                                 >
-                                    <LogOut className="w-5 h-5" />
-                                    <span>Cerrar Sesión</span>
+                                    <LogOut className="w-6 h-6" />
+                                    <span className="font-bold">Cerrar Sesión</span>
                                 </button>
                             ) : (
                                 <Link
                                     to="/unete"
                                     onClick={() => setIsMenuOpen(false)}
-                                    className="flex items-center space-x-2 p-2 bg-blue-50 text-blue-600 rounded-lg w-full"
+                                    className="flex items-center justify-center space-x-2 p-3 bg-blue-50 text-blue-700 rounded-lg w-full text-center"
                                 >
-                                    <User className="w-5 h-5" />
-                                    <span>INICIAR SESIÓN</span>
+                                    <User className="w-6 h-6" />
+                                    <span className="font-bold tracking-wide">INICIAR SESIÓN</span>
                                 </Link>
                             )}
                         </div>
@@ -433,7 +433,7 @@ const Header = () => {
                         <Link
                             to="/contacto"
                             onClick={() => setIsMenuOpen(false)}
-                            className="block text-center bg-blue-600 text-white font-bold py-3 rounded-lg shadow-lg"
+                            className="block text-center bg-blue-600 text-white font-bold py-4 rounded-lg shadow-lg mt-4"
                         >
                             CONTÁCTANOS
                         </Link>
