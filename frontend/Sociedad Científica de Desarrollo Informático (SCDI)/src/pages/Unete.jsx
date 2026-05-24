@@ -27,13 +27,13 @@ const Unete = () => {
             onClick={() => navigate("/login")}
             className="w-full bg-indigo-600 text-white py-3 rounded-md text-lg font-semibold hover:bg-indigo-700 transition cursor-pointer"
           >
-            Iniciar Sesión
+            INICIAR SESIÓN
           </button>
           <button
             onClick={() => navigate("/register/seleccionar-plan")}
             className="w-full border border-indigo-600 text-indigo-600 py-3 rounded-md text-lg font-semibold hover:bg-indigo-50 transition cursor-pointer"
           >
-            Crear Cuenta
+            CREAR CUENTA
           </button>
         </div>
       </div>

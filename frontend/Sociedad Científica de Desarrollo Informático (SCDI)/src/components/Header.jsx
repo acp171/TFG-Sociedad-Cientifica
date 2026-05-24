@@ -28,8 +28,8 @@ const Header = () => {
             nombre: evento.nombre_evento,
             id: evento.id_evento,
         }
-    ));
-      
+        ));
+
     const filtrarArticulos = (articulos) =>
         articulos.filter((articulo) =>
             articulo.titulo.toLowerCase().includes(query.toLowerCase())
@@ -38,8 +38,8 @@ const Header = () => {
             nombre: articulo.titulo,
             id: articulo.id_publicacion,
         }
-    ));
-      
+        ));
+
     const filtrarProyectos = (proyectos) =>
         proyectos.filter((proyecto) =>
             proyecto.nombre_proyecto.toLowerCase().includes(query.toLowerCase())
@@ -48,7 +48,7 @@ const Header = () => {
             nombre: proyecto.nombre_proyecto,
             id: proyecto.id_proyecto,
         }
-    ));
+        ));
 
     const abrirNotificacion = (n) => {
         marcarComoLeidaNotificacion(n.id_notificacion);
@@ -70,7 +70,7 @@ const Header = () => {
             if (!res.ok) {
                 throw new Error("Error al marcar como leída");
             }
-            
+
             setNotificaciones(prev =>
                 prev.filter(n => n.id_notificacion !== id)
             );
@@ -79,25 +79,25 @@ const Header = () => {
             console.error(error);
         }
     };
-      
+
     useEffect(() => {
         const fetchDatos = async () => {
             if (query.trim() === "") {
                 setResultados({ articulos: [], eventos: [], proyectos: [] });
                 return;
             }
-        
+
             try {
                 const [resEventos, resArticulos, resProyectos] = await Promise.all([
                     fetch("https://tfg-sociedad-cientifica-production.up.railway.app/listado-eventos-cientificos").then((res) => res.json()),
                     fetch("https://tfg-sociedad-cientifica-production.up.railway.app/listado-articulos-cientificos").then((res) => res.json()),
                     fetch("https://tfg-sociedad-cientifica-production.up.railway.app/listado-proyectos-investigacion").then((res) => res.json()),
                 ]);
-            
+
                 const eventosArray = resProyectos.eventos?.listaEventos || [];
                 const articulosArray = resArticulos.articulos?.listadoArticulos || [];
                 const proyectosArray = resProyectos.proyectos?.listaProyectos || [];
-            
+
                 const eventosFiltrados = filtrarEventos(eventosArray);
                 const articulosFiltrados = filtrarArticulos(articulosArray);
                 const proyectosFiltrados = filtrarProyectos(proyectosArray);
@@ -113,7 +113,7 @@ const Header = () => {
                 setResultados({ articulos: [], eventos: [], proyectos: [] });
             }
         };
-        
+
         fetchDatos();
     }, [query]);
 
@@ -128,7 +128,7 @@ const Header = () => {
                     },
                 });
 
-                if (!res.ok) { 
+                if (!res.ok) {
                     throw new Error("Error al obtener notificaciones");
                 }
 
@@ -265,7 +265,7 @@ const Header = () => {
                         <Settings className="w-5 h-5" />
                     </Link>
                 )}
-                
+
 
                 {isLoggedIn && (
                     <div className="relative">
@@ -422,7 +422,7 @@ const Header = () => {
                                     className="flex items-center space-x-2 p-2 bg-blue-50 text-blue-600 rounded-lg w-full"
                                 >
                                     <User className="w-5 h-5" />
-                                    <span>Iniciar Sesión</span>
+                                    <span>INICIAR SESIÓN</span>
                                 </Link>
                             )}
                         </div>
