@@ -42,8 +42,14 @@ const EventoExito = () => {
         );
     }
 
-    // El ID único para el QR basado en socio y evento
-    const ticketId = `TKT-${evento?.id_evento || id}-${socio?.id || 'GUEST'}-${Math.floor(Math.random() * 10000)}`;
+    // Generate a stable ticket ID (saved to localStorage so it persists)
+    const storageKey = `ticket_evento_${id}`;
+    let ticketId = localStorage.getItem(storageKey);
+    if (!ticketId) {
+        const rand = Math.floor(Math.random() * 90000) + 10000; // 5-digit, generated once
+        ticketId = `TKT-${evento?.id_evento || id}-${socio?.id || 'GUEST'}-${rand}`;
+        localStorage.setItem(storageKey, ticketId);
+    }
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 py-12 px-4 sm:px-6 relative overflow-hidden">
