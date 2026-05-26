@@ -142,6 +142,7 @@ CREATE TABLE IF NOT EXISTS Inscripciones (
     estado_inscripcion VARCHAR(256) NOT NULL,
     evento INT NOT NULL,
     socio INT NOT NULL,
+    payment_intent_id VARCHAR(255),
     PRIMARY KEY (socio, evento),
     CONSTRAINT FK_INSCRIPCION_EVENTO FOREIGN KEY (evento) REFERENCES Evento(id_evento) ON DELETE CASCADE,
     CONSTRAINT FK_INSCRIPCION_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio) ON DELETE CASCADE  
