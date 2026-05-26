@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../hooks/AuthContext";
 import { useTranslation } from "react-i18next";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import esLocale from "@fullcalendar/core/locales/es";
+import enLocale from "@fullcalendar/core/locales/en-gb";
 
 const Eventos = () => {
     const { t } = useTranslation();
@@ -9,6 +14,7 @@ const Eventos = () => {
     const [loading, setLoading] = useState(true);
     const [searchParams, setSearchParams] = useSearchParams();
     const { userRole, userTipoSocio } = useAuth();
+    const [viewMode, setViewMode] = useState("list"); // "list" | "calendar"
 
     const eventosPorPagina = 6;
     const currentPage = parseInt(searchParams.get("page")) || 1;
@@ -44,14 +50,34 @@ const Eventos = () => {
                     <h2 className="text-4xl font-extrabold text-gray-900 mb-6 md:mb-0">
                         {t("eventos.titulo")}
                     </h2>
-                    {(userTipoSocio !== 2 || userRole === 1) && (
-                        <Link
-                            to="/eventos-cientificos/crear-evento-cientifico"
-                            className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold"
-                        >
-                            {t("eventos.crear")}
-                        </Link>
-                    )}
+                    <div className="flex flex-col sm:flex-row gap-4 mt-6 md:mt-0">
+                        <div className="bg-gray-200 rounded-lg p-1 flex">
+                            <button
+                                onClick={() => setViewMode("list")}
+                                className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${
+                                    viewMode === "list" ? "bg-white shadow text-indigo-600" : "text-gray-600 hover:text-gray-900"
+                                }`}
+                            >
+                                {t("common.lista", "Lista")}
+                            </button>
+                            <button
+                                onClick={() => setViewMode("calendar")}
+                                className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${
+                                    viewMode === "calendar" ? "bg-white shadow text-indigo-600" : "text-gray-600 hover:text-gray-900"
+                                }`}
+                            >
+                                {t("common.calendario", "Calendario")}
+                            </button>
+                        </div>
+                        {(userTipoSocio !== 2 || userRole === 1) && (
+                            <Link
+                                to="/eventos-cientificos/crear-evento-cientifico"
+                                className="inline-block bg-indigo-600 text-white px-6 py-2 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold text-center"
+                            >
+                                {t("eventos.crear")}
+                            </Link>
+                        )}
+                    </div>
                 </div>
 
                 <div className="flex-grow">
@@ -59,6 +85,36 @@ const Eventos = () => {
                         <p className="text-center text-gray-500 text-lg">{t("eventos.cargando")}</p>
                     ) : eventos.length === 0 ? (
                         <p className="text-center text-gray-600 text-lg">{t("eventos.no_eventos")}</p>
+                    ) : viewMode === "calendar" ? (
+                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                            <FullCalendar
+                                plugins={[dayGridPlugin, timeGridPlugin]}
+                                initialView="dayGridMonth"
+                                locale={document.documentElement.lang === "es" ? esLocale : enLocale}
+                                headerToolbar={{
+                                    left: "prev,next today",
+                                    center: "title",
+                                    right: "dayGridMonth,timeGridWeek,timeGridDay"
+                                }}
+                                events={eventos.map((evento) => ({
+                                    title: evento.nombre_evento,
+                                    start: evento.fecha_evento_inicio,
+                                    end: evento.fecha_evento_fin,
+                                    url: `/eventos-cientificos/${evento.id_evento}`,
+                                    backgroundColor: "#4f46e5",
+                                    borderColor: "#4338ca",
+                                    textColor: "#ffffff"
+                                }))}
+                                eventClick={(info) => {
+                                    info.jsEvent.preventDefault(); // don't let the browser navigate
+                                    if (info.event.url) {
+                                        window.location.href = info.event.url;
+                                    }
+                                }}
+                                height="80vh"
+                                className="font-sans"
+                            />
+                        </div>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                             {eventosVisibles.map((evento) => (
@@ -77,7 +133,7 @@ const Eventos = () => {
                 </div>
 
                 {/* Paginación */}
-                {eventos.length > 0 && (
+                {viewMode === "list" && eventos.length > 0 && (
                     <nav className="flex flex-wrap justify-center items-center gap-2 md:gap-3 select-none mt-auto" aria-label="Paginación artículos">
                         <button
                             onClick={() => cambiarPagina(currentPage - 1)}
