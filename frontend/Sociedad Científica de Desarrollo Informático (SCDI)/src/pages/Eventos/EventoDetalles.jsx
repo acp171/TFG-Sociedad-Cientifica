@@ -84,7 +84,7 @@ const EventoDetalles = () => {
 
     const inscribirse = async () => {
         const token = localStorage.getItem("token");
-    
+
         if (token) {
             const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}/inscribirse`, {
                 method: "POST",
@@ -92,11 +92,11 @@ const EventoDetalles = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-        
+
             const data = await res.json();
             if (res.ok && data.clientSecret) {
                 setClientSecret(data.clientSecret);
-                setPrecioPago(evento?.precio ?? 0);
+                setPrecioPago(10);
                 setMostrarPago(true);
             } else {
                 alert(data.message || "No se pudo iniciar el pago");
@@ -121,7 +121,7 @@ const EventoDetalles = () => {
                 Authorization: `Bearer ${token}`,
             },
         });
-    
+
         const data = await res.json();
         if (res.ok) {
             alert(t("detalle_evento.exito_cancelar"));
@@ -158,7 +158,7 @@ const EventoDetalles = () => {
     const esPresidente = presidentes.some((p) => p.id_socio === usuario?.id);
     const esAdministrador = usuario?.rol === 1;
     const estaInscrito = miembrosInscritos.some((m) => m.socio === usuario?.id);
-    
+
     const fechaEvento = new Date(evento.fecha_evento_inicio);
     const hoy = new Date();
     const unaSemanaEnMs = 7 * 24 * 60 * 60 * 1000;
@@ -319,8 +319,8 @@ const EventoDetalles = () => {
                             {t("detalle_evento.cancelar_inscripcion")}
                         </button>
                     ) : (
-                        <button 
-                            onClick={inscribirse} 
+                        <button
+                            onClick={inscribirse}
                             className="bg-indigo-600 text-white px-4 py-2 rounded cursor-pointer"
                         >
                             {t("detalle_evento.inscribirme")}
