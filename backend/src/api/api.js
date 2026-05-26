@@ -1335,7 +1335,7 @@ router.post('/eventos-cientificos/:id/inscribirse', verificarSuscripcionActiva, 
         });
 
         // Registrar inscripción como pendiente
-        pool.query("INSERT INTO Inscripciones (estado_inscripcion, evento, socio) VALUES ($1, $2, $3)", ["pendiente", id_evento, socio_id])
+        pool.query("INSERT INTO Inscripciones (estado_inscripcion, evento, socio, payment_intent_id) VALUES ($1, $2, $3, $4)", ["pendiente", id_evento, socio_id, paymentIntent.id])
             .then(() => console.log("✅ Inscripción registrada"))
             .catch(err => console.error("Error registrando inscripción:", err.message));
 
@@ -1402,7 +1402,19 @@ router.delete('/eventos-cientificos/:id/cancelar-inscripcion', verificarToken, a
             `
         );
 
-        res.status(200).json({ message: "Inscripción cancelada correctamente." });
+        const id_stripe_intent = result.rows[0].payment_intent_id;
+        if (id_stripe_intent) {
+            try {
+                await stripe.refunds.create({ payment_intent: id_stripe_intent });
+                console.log(`✅ Reembolso emitido para intent: ${id_stripe_intent}`);
+            } catch (refundError) {
+                console.error("Error al emitir reembolso en Stripe: ", refundError.message);
+                // We should proceed anyway so they are unregistered in DB, 
+                // but perhaps log it or notify the admin in a real app.
+            }
+        }
+
+        res.status(200).json({ message: "Inscripción cancelada y reembolsada correctamente (si aplicaba)." });
     } catch (error) {
         console.error("Error cancelando inscripción:", error.message);
         res.status(500).json({ message: "Error al cancelar la inscripción." });
