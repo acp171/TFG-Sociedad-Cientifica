@@ -1403,14 +1403,19 @@ router.delete('/eventos-cientificos/:id/cancelar-inscripcion', verificarToken, a
         );
 
         const id_stripe_intent = result.rows[0].payment_intent_id;
+        const estado_inscripcion = result.rows[0].estado_inscripcion;
+
         if (id_stripe_intent) {
             try {
-                await stripe.refunds.create({ payment_intent: id_stripe_intent });
-                console.log(`✅ Reembolso emitido para intent: ${id_stripe_intent}`);
+                if (estado_inscripcion === 'pagado') {
+                    await stripe.refunds.create({ payment_intent: id_stripe_intent });
+                    console.log(`✅ Reembolso emitido para intent: ${id_stripe_intent}`);
+                } else {
+                    await stripe.paymentIntents.cancel(id_stripe_intent);
+                    console.log(`✅ PaymentIntent pendiente cancelado: ${id_stripe_intent}`);
+                }
             } catch (refundError) {
-                console.error("Error al emitir reembolso en Stripe: ", refundError.message);
-                // We should proceed anyway so they are unregistered in DB, 
-                // but perhaps log it or notify the admin in a real app.
+                console.error("Error en Stripe (reembolsar/cancelar): ", refundError.message);
             }
         }
 
