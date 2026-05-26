@@ -92,11 +92,11 @@ export default function ComiteWall({ comiteId }) {
                             const fechaStr = isNaN(fechaObj.getTime()) ? "" : fechaObj.toLocaleDateString();
 
                             return (
-                                <div key={msg.id_mensaje || i} className={`flex \${esMio ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[75%] rounded-2xl px-5 py-3 shadow-sm \${esMio ? 'bg-green-600 text-white rounded-br-none' : 'bg-black border border-gray-200 text-gray-800 rounded-bl-none'}`}>
-                                        {!esMio && <div className="text-xs font-semibold text-indigo-500 mb-1">{msg.nombre} {msg.apellidos}</div>}
+                                <div key={msg.id_mensaje || i} className={`flex ${esMio ? 'justify-end' : 'justify-start'}`}>
+                                    <div className={`max-w-[75%] rounded-2xl px-5 py-3 shadow-sm ${esMio ? 'bg-green-600 text-white rounded-br-none' : 'bg-gray-900 border border-gray-800 text-gray-100 rounded-bl-none'}`}>
+                                        {!esMio && <div className="text-xs font-semibold text-green-400 mb-1">{msg.nombre} {msg.apellidos}</div>}
                                         <div className="text-sm break-words whitespace-pre-wrap leading-relaxed">{msg.mensaje}</div>
-                                        <div className={`text-[10px] text-right mt-1.5 \${esMio ? 'text-indigo-200' : 'text-gray-400'}`}>
+                                        <div className={`text-[10px] text-right mt-1.5 ${esMio ? 'text-green-200' : 'text-gray-400'}`}>
                                             {fechaStr} {hora}
                                         </div>
                                     </div>
