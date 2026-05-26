@@ -123,7 +123,7 @@ const EventoExito = () => {
                 <div className="bg-indigo-600 flex-none md:w-72 p-8 md:p-10 flex flex-col justify-center items-center text-white relative">
                     <div className="bg-white p-4 rounded-xl shadow-inner mb-6 transform rotate-[-2deg] hover:rotate-0 transition-transform">
                         <QRCodeSVG 
-                            value={`https://scdi-app.com/verify/${ticketId}`}
+                            value={`${window.location.origin}/verificar/${ticketId}`}
                             size={160}
                             bgColor={"#ffffff"}
                             fgColor={"#000000"}

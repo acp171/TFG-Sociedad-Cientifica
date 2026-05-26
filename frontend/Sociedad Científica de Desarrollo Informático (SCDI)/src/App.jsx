@@ -19,6 +19,7 @@ import Eventos from './pages/Eventos/Eventos';
 import EventoDetalles from './pages/Eventos/EventoDetalles';
 import CrearEvento from './pages/Eventos/CrearEvento';
 import EventoExito from './pages/Eventos/EventoExito';
+import VerificarTicket from './pages/Eventos/VerificarTicket';
 import AvisoLegal from './pages/Aviso-Legal';
 import PanelAdmin from './pages/Administrador/PanelAdmin';
 import Contacto from './pages/Contacto';
@@ -55,6 +56,7 @@ function App() {
           <Route path="/eventos-cientificos/:id" element={<EventoDetalles />} />
           <Route path="/eventos-cientificos/crear-evento-cientifico" element={<CrearEvento />} />
           <Route path="/eventos-cientificos/:id/inscribirse/evento-exito" element={<EventoExito />} />
+          <Route path="/verificar/:ticketId" element={<VerificarTicket />} />
           <Route path="/politica-privacidad" element={<AvisoLegal />} />
           <Route path="/panel-administrador" element={<PanelAdmin />} />
           <Route path="/contacto" element={<Contacto />} />
