@@ -142,7 +142,6 @@ CREATE TABLE IF NOT EXISTS Inscripciones (
     estado_inscripcion VARCHAR(256) NOT NULL,
     evento INT NOT NULL,
     socio INT NOT NULL,
-    payment_intent_id VARCHAR(255),
     PRIMARY KEY (socio, evento),
     CONSTRAINT FK_INSCRIPCION_EVENTO FOREIGN KEY (evento) REFERENCES Evento(id_evento) ON DELETE CASCADE,
     CONSTRAINT FK_INSCRIPCION_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio) ON DELETE CASCADE  
@@ -315,17 +314,17 @@ VALUES
     ('Totalmente de acuerdo, la docencia debe evolucionar rápidamente.', (SELECT id_socio FROM Socio WHERE email='javi.sq@email.com'), (SELECT MAX(id_publicacion) FROM Publicaciones WHERE titulo='Impacto de IA generativa en la educación'), CURRENT_TIMESTAMP, true);
 
 -- Eventos
-INSERT INTO Evento (nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion, comite)
+INSERT INTO Evento (nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, precio, direccion, comite)
 VALUES 
-    ('Congreso Nacional de IA 2026', '2026-09-10 09:00:00', '2026-09-12 18:00:00', 'El mayor evento de Inteligencia Artificial de España, reuniendo a cientos de expertos en deep learning y LLMs.', 
+    ('Congreso Nacional de IA 2026', '2026-09-10 09:00:00', '2026-09-12 18:00:00', 'El mayor evento de Inteligencia Artificial de España, reuniendo a cientos de expertos en deep learning y LLMs.', 50.00,
         (SELECT id_direccion FROM Direccion WHERE ciudad='Madrid' LIMIT 1), 
         (SELECT id_comite FROM Comite WHERE nombre_comite='Comité de Inteligencia Artificial')),
         
-    ('Hackathon de Seguridad y Redes', '2026-11-20 10:00:00', '2026-11-22 20:00:00', 'Competición de hacking ético de 48 horas intensivas organizadas por equipos de Red y Blue team.', 
+    ('Hackathon de Seguridad y Redes', '2026-11-20 10:00:00', '2026-11-22 20:00:00', 'Competición de hacking ético de 48 horas intensivas organizadas por equipos de Red y Blue team.', 20.00,
         (SELECT id_direccion FROM Direccion WHERE ciudad='Barcelona' LIMIT 1), 
         (SELECT id_comite FROM Comite WHERE nombre_comite='Comité de Ciberseguridad')),
         
-    ('Charla: Arquitectura Limpia en Node', '2025-12-15 17:00:00', '2025-12-15 19:00:00', 'Charla sobre diseño de software orientado al dominio y a buenas prácticas estructurales en aplicaciones monolíticas.', 
+    ('Charla: Arquitectura Limpia en Node', '2025-12-15 17:00:00', '2025-12-15 19:00:00', 'Charla sobre diseño de software orientado al dominio y a buenas prácticas estructurales en aplicaciones monolíticas.', 0.00,
         (SELECT id_direccion FROM Direccion WHERE ciudad='Sevilla' LIMIT 1), 
         (SELECT id_comite FROM Comite WHERE nombre_comite='Comité de Ingeniería de Software'));
 
