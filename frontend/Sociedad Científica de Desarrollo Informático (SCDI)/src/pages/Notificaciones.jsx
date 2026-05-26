@@ -142,11 +142,15 @@ const Notificaciones = () => {
                                 )}
                             </div>
                             
-                            <p className="text-sm text-gray-600 mt-1">
-                                {n.mensaje.length > 80
-                                ? n.mensaje.substring(0, 80) + "..."
-                                : n.mensaje}
-                            </p>
+                            <p
+                                className="text-sm text-gray-600 mt-1"
+                                dangerouslySetInnerHTML={{
+                                    __html: (() => {
+                                        const plain = n.mensaje.replace(/<[^>]*>/g, '');
+                                        return plain.length > 80 ? plain.substring(0, 80) + '...' : plain;
+                                    })()
+                                }}
+                            />
                             <p className="text-xs text-gray-400 mt-2">
                                 {new Date(n.fecha_envio).toLocaleString()}
                             </p>
@@ -179,7 +183,10 @@ const Notificaciones = () => {
                             <h2 className="text-xl font-bold mb-2 text-gray-800">
                                 {notificacionActiva.titulo}
                             </h2>
-                            <p className="text-gray-700 mb-4">{notificacionActiva.mensaje}</p>
+                            <p
+                                className="text-gray-700 mb-4 leading-relaxed"
+                                dangerouslySetInnerHTML={{ __html: notificacionActiva.mensaje }}
+                            />
                             <p className="text-sm text-gray-400">
                                 {new Date(notificacionActiva.fecha_envio).toLocaleString()}
                             </p>
