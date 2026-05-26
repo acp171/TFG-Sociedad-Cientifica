@@ -76,7 +76,7 @@ export default function ComiteWall({ comiteId }) {
                 </h3>
                 <p className="text-indigo-100 text-sm mt-1">Chat interno y tablón de anuncios para organizadores.</p>
             </div>
-            
+
             <div className="flex-1 p-6 overflow-y-auto bg-gray-50 max-h-[400px]">
                 {mensajes.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-gray-400">
@@ -88,12 +88,12 @@ export default function ComiteWall({ comiteId }) {
                         {mensajes.map((msg, i) => {
                             const esMio = Number(msg.id_socio) === Number(usuario?.id);
                             const fechaObj = new Date(msg.fecha_envio || new Date());
-                            const hora = isNaN(fechaObj.getTime()) ? "" : fechaObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            const hora = isNaN(fechaObj.getTime()) ? "" : fechaObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                             const fechaStr = isNaN(fechaObj.getTime()) ? "" : fechaObj.toLocaleDateString();
-                            
+
                             return (
                                 <div key={msg.id_mensaje || i} className={`flex \${esMio ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[75%] rounded-2xl px-5 py-3 shadow-sm \${esMio ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none'}`}>
+                                    <div className={`max-w-[75%] rounded-2xl px-5 py-3 shadow-sm \${esMio ? 'bg-green-600 text-white rounded-br-none' : 'bg-black border border-gray-200 text-gray-800 rounded-bl-none'}`}>
                                         {!esMio && <div className="text-xs font-semibold text-indigo-500 mb-1">{msg.nombre} {msg.apellidos}</div>}
                                         <div className="text-sm break-words whitespace-pre-wrap leading-relaxed">{msg.mensaje}</div>
                                         <div className={`text-[10px] text-right mt-1.5 \${esMio ? 'text-indigo-200' : 'text-gray-400'}`}>
@@ -110,7 +110,7 @@ export default function ComiteWall({ comiteId }) {
 
             <div className="p-4 border-t border-gray-200 bg-white">
                 <form onSubmit={enviarMensaje} className="flex gap-3 relative">
-                    <textarea 
+                    <textarea
                         value={nuevoMensaje}
                         onChange={(e) => setNuevoMensaje(e.target.value)}
                         placeholder="Escribe tu mensaje al comité..."
@@ -122,8 +122,8 @@ export default function ComiteWall({ comiteId }) {
                             }
                         }}
                     />
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         disabled={!nuevoMensaje.trim()}
                         className="absolute right-2 top-2 bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition transform active:scale-95 shadow-md flex items-center justify-center h-10 w-10"
                     >
