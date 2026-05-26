@@ -221,10 +221,10 @@ VALUES
     ('Corporación', 'Asociación corporativa.', 500.0, 'price_1RaHVDPbMwKwBYLWrXVYmm7F');
 
 -- Insertar valores en la tabla Socio
-INSERT INTO Socio (nombre, apellidos, email, password, telefono, fecha_nacimiento, fecha_alta, socio_rol, tipo_socio) 
+INSERT INTO Socio (nombre, apellidos, email, password, telefono, fecha_nacimiento, fecha_alta, fecha_expiracion, socio_rol, tipo_socio) 
 VALUES 
-    ('admin', 'admin', 'admin@admin.com', '$2a$12$jb4zKaou5JP7lBA5F1.JC.TDDi1.mGxC164/HETc5WNtWnmozxM3y', '123456789', '2001-11-03 00:00:00', '2025-05-10 15:37:21.561', 1, 1),
-    ('Ángel', 'Cardoso Parreño', 'acp171@gcloud.ua.es', '$2a$12$jb4zKaou5JP7lBA5F1.JC.TDDi1.mGxC164/HETc5WNtWnmozxM3y', '123456789', '2001-11-03 00:00:00', '2025-05-10 15:37:21.561', 8, 2);
+    ('admin', 'admin', 'admin@admin.com', '$2a$12$jb4zKaou5JP7lBA5F1.JC.TDDi1.mGxC164/HETc5WNtWnmozxM3y', '123456789', '2001-11-03 00:00:00', '2025-05-10 15:37:21.561', '3000-05-10 15:37:21.561', 1, 1),
+    ('Ángel', 'Cardoso Parreño', 'acp171@gcloud.ua.es', '$2a$12$jb4zKaou5JP7lBA5F1.JC.TDDi1.mGxC164/HETc5WNtWnmozxM3y', '123456789', '2001-11-03 00:00:00', '2025-05-10 15:37:21.561', '3000-05-10 15:37:21.561', 8, 2);
 
 -- Insertar valores en la tabla Direccion
 INSERT INTO Direccion(calle, ciudad, codigo_postal, provincia, latitud, longitud) 
