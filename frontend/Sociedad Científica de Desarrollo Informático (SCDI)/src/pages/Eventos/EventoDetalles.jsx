@@ -289,7 +289,7 @@ const EventoDetalles = () => {
                             center={[coords.lat, coords.lon]}
                             zoom={16}
                             scrollWheelZoom={false}
-                            style={{ height: '300px', width: '100%', borderRadius: '0.5rem' }}
+                            style={{ height: '300px', width: '100%', borderRadius: '0.5rem', zIndex: 0 }}
                         >
                             <TileLayer
                                 attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
