@@ -1,5 +1,5 @@
 const express = require("express");
-const { Router } = require ('express');
+const { Router } = require('express');
 const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
@@ -25,45 +25,45 @@ const { obtenerMiembrosComiteEvento, obtenerInscripcionesEvento, obtenerEvento }
 function verificarToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]; // "Bearer <token>"
-  
+
     if (!token) {
         return res.status(401).json({ message: 'Token requerido' });
     }
 
     jwt.verify(token, SECRET_KEY, (err, usuario) => {
-      if (err) {
-        return res.status(403).json({ message: 'Token inválido o expirado' });
-      }
+        if (err) {
+            return res.status(403).json({ message: 'Token inválido o expirado' });
+        }
 
-            req.usuario = usuario; // Info extraída del token
-            next();
-        });
-    }
-  
-    async function verificarSuscripcionActiva(req, res, next) {
-        // Ejecutamos primero la verificación de token
-        verificarToken(req, res, async () => {
-            try {
-                const query = 'SELECT fecha_expiracion FROM Socio WHERE id_socio = $1;';
-                const result = await pool.query(query, [req.usuario.id]);
-                if (result.rows.length === 0) {
-                    return res.status(404).json({ message: 'Socio no encontrado' });
-                }
-  
-                const { fecha_expiracion } = result.rows[0];
-                if (!fecha_expiracion || new Date() > new Date(fecha_expiracion)) {
-                    return res.status(403).json({ 
-                        message: 'Suscripción mensual caducada', 
-                        requiereRenovacion: true 
-                    });
-                }
-                next();
-            } catch (err) {
-                console.error('Error al verificar suscripción:', err);
-                return res.status(500).json({ message: 'Error interno del servidor' });
+        req.usuario = usuario; // Info extraída del token
+        next();
+    });
+}
+
+async function verificarSuscripcionActiva(req, res, next) {
+    // Ejecutamos primero la verificación de token
+    verificarToken(req, res, async () => {
+        try {
+            const query = 'SELECT fecha_expiracion FROM Socio WHERE id_socio = $1;';
+            const result = await pool.query(query, [req.usuario.id]);
+            if (result.rows.length === 0) {
+                return res.status(404).json({ message: 'Socio no encontrado' });
             }
-        });
-    }
+
+            const { fecha_expiracion } = result.rows[0];
+            if (!fecha_expiracion || new Date() > new Date(fecha_expiracion)) {
+                return res.status(403).json({
+                    message: 'Suscripción mensual caducada',
+                    requiereRenovacion: true
+                });
+            }
+            next();
+        } catch (err) {
+            console.error('Error al verificar suscripción:', err);
+            return res.status(500).json({ message: 'Error interno del servidor' });
+        }
+    });
+}
 
 // ROUTES
 // POST login
@@ -96,16 +96,16 @@ router.post('/login', async (req, res) => {
 
         const token = jwt.sign(
             {
-              id: socio.id_socio,
-              email: socio.email,
-              nombre: socio.nombre,
-              rol: socio.socio_rol,
-              tipo: socio.tipo_socio,
-              fecha_expiracion: socio.fecha_expiracion
+                id: socio.id_socio,
+                email: socio.email,
+                nombre: socio.nombre,
+                rol: socio.socio_rol,
+                tipo: socio.tipo_socio,
+                fecha_expiracion: socio.fecha_expiracion
             },
             SECRET_KEY,
             { expiresIn: '1h' } // Token expira en 1 hora
-          );
+        );
 
         res.status(200).json({
             message: 'Login exitoso.',
@@ -170,7 +170,7 @@ router.post('/register', async (req, res) => {
 router.post('/renovar-suscripcion', verificarToken, async (req, res) => {
     try {
         const socioId = req.usuario.id;
-        
+
         // Obtener el tipo de cuota actual del socio
         const query = `
             SELECT t.cuota
@@ -180,9 +180,9 @@ router.post('/renovar-suscripcion', verificarToken, async (req, res) => {
         `;
         const result = await pool.query(query, [socioId]);
         if (result.rows.length === 0) return res.status(404).json({ message: 'Socio no encontrado' });
-        
+
         const cuota = result.rows[0].cuota;
-        
+
         if (cuota === 0) {
             // Si el plan es gratuito, podemos renovar directamente en DB
             await pool.query('UPDATE Socio SET fecha_expiracion = CURRENT_TIMESTAMP + INTERVAL \'30 days\' WHERE id_socio = $1', [socioId]);
@@ -254,7 +254,7 @@ router.get('/perfil', verificarToken, async (req, res) => {
 // PATCH editar perfil
 router.patch('/perfil', verificarToken, async (req, res) => {
     const { nombre, apellidos, telefono } = req.body;
-    
+
     // Validar que todos los campos necesarios no estén vacíos
     if (!nombre || !apellidos || !telefono) {
         return res.status(400).json({ message: 'Todos los campos son obligatorios y no pueden estar vacíos.' });
@@ -349,7 +349,7 @@ router.get('/socios/listado-socios', verificarToken, async (req, res) => {
 });
 
 // POST Añadir usuarios solo para administradores
-router.post('/socios/crear-socios', verificarToken, async (req,res) => {            
+router.post('/socios/crear-socios', verificarToken, async (req, res) => {
     const adminRol = await obtenernRol(req.usuario);
     if (!adminRol || adminRol.nombre !== 'Administrador') {
         return res.status(403).json({ message: 'No autorizado. Se requiere rol de administrador.' });
@@ -386,7 +386,7 @@ router.post('/socios/crear-socios', verificarToken, async (req,res) => {
     } catch (error) {
         console.error("Error insertando socio: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
-    }        
+    }
 });
 
 // GET Obtener miembros de la corporación del usuario
@@ -576,8 +576,8 @@ router.delete('/roles/:id', verificarToken, async (req, res) => {
 });
 
 // PUT asignar rol siendo administrador general
-router.put('/asignar-rol', verificarToken, async (req, res) =>  {
-    const { id_socio, rol, proyecto, comite, funcion } = req.body;    
+router.put('/asignar-rol', verificarToken, async (req, res) => {
+    const { id_socio, rol, proyecto, comite, funcion } = req.body;
 
     const adminRol = await obtenernRol(req.usuario);
     // Verifica si el usuario es administrador
@@ -587,7 +587,7 @@ router.put('/asignar-rol', verificarToken, async (req, res) =>  {
 
     try {
         let query, values;
-        switch(funcion) {
+        switch (funcion) {
             case 'socio':
                 values = [
                     rol,
@@ -595,7 +595,7 @@ router.put('/asignar-rol', verificarToken, async (req, res) =>  {
                 ];
 
                 query = 'UPDATE Socio SET socio_rol = $1 WHERE id_socio = $2;';
-            break;
+                break;
 
             case 'comite':
                 values = [
@@ -606,7 +606,7 @@ router.put('/asignar-rol', verificarToken, async (req, res) =>  {
 
                 query = 'UPDATE Miembros_Comite SET rol_comite = $1 WHERE socio = $2 AND comite = $3;';
 
-            break;
+                break;
 
             case 'proyecto':
                 values = [
@@ -617,7 +617,7 @@ router.put('/asignar-rol', verificarToken, async (req, res) =>  {
 
                 query = 'UPDATE Socio_Proyecto SET rol_proyecto = $1 WHERE socio = $2 AND proyecto = $3;';
 
-            break;
+                break;
         }
 
         const result = await pool.query(query, values);
@@ -637,8 +637,8 @@ router.put('/asignar-rol', verificarToken, async (req, res) =>  {
 });
 
 // PUT asignar rol siendo presidente de comite
-router.put('/asignar-rol-comite', verificarToken, async (req, res) =>  {
-    const { id_socio, rol, comite } = req.body;    
+router.put('/asignar-rol-comite', verificarToken, async (req, res) => {
+    const { id_socio, rol, comite } = req.body;
 
     const presidenteRol = await obtenernRol(req.usuario);
     if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
@@ -672,8 +672,8 @@ router.put('/asignar-rol-comite', verificarToken, async (req, res) =>  {
 
 
 // PUT asignar rol siendo presidente de comite
-router.put('/asignar-rol-proyecto', verificarToken, async (req, res) =>  {
-    const { id_socio, rol, proyecto } = req.body;    
+router.put('/asignar-rol-proyecto', verificarToken, async (req, res) => {
+    const { id_socio, rol, proyecto } = req.body;
 
     const presidenteRol = await obtenernRol(req.usuario);
     if (!presidenteRol || presidenteRol.nombre !== 'Presidente') {
@@ -687,7 +687,7 @@ router.put('/asignar-rol-proyecto', verificarToken, async (req, res) =>  {
             proyecto
         ];
 
-        const  query = 'UPDATE Socio_Proyecto SET rol_proyecto = $1 WHERE socio = $2 AND proyecto = $3;';
+        const query = 'UPDATE Socio_Proyecto SET rol_proyecto = $1 WHERE socio = $2 AND proyecto = $3;';
 
         const result = await pool.query(query, values);
         res.status(200).json({
@@ -706,8 +706,8 @@ router.put('/asignar-rol-proyecto', verificarToken, async (req, res) =>  {
 });
 
 // DELETE eliminar rol siendo administrador general
-router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
-    const { id_socio, proyecto, comite, funcion } = req.body;    
+router.delete('/eliminar-rol', verificarToken, async (req, res) => {
+    const { id_socio, proyecto, comite, funcion } = req.body;
 
     const adminRol = await obtenernRol(req.usuario);
     if (!adminRol || adminRol.nombre !== 'Administrador') {
@@ -716,14 +716,14 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
 
     try {
         let query, values;
-        switch(funcion) {
+        switch (funcion) {
             case 'socio':
                 values = [
                     id_socio
                 ];
 
                 query = 'DELETE FROM Socio WHERE id_socio = $1;';
-            break;
+                break;
 
             case 'comite':
                 values = [
@@ -733,7 +733,7 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
 
                 query = 'DELETE FROM Miembros_Comite WHERE socio = $1 AND comite = $2;';
 
-            break;
+                break;
 
             case 'proyecto':
                 values = [
@@ -743,7 +743,7 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
 
                 query = 'DELETE FROM Socio_Proyecto SET rol_proyecto = $1 WHERE socio = $1 AND proyecto = $2;';
 
-            break;
+                break;
         }
 
         const result = await pool.query(query, values);
@@ -763,16 +763,16 @@ router.delete('/eliminar-rol', verificarToken, async (req, res) =>  {
 });
 
 // POST crear un proyecto de investigación
-router.post('/proyectos-investigacion/crear-proyecto-investigacion', verificarSuscripcionActiva, async (req, res) =>  {
-    const { nombre_proyecto, descripcion, fecha_inicio, fecha_fin } = req.body;    
-    
+router.post('/proyectos-investigacion/crear-proyecto-investigacion', verificarSuscripcionActiva, async (req, res) => {
+    const { nombre_proyecto, descripcion, fecha_inicio, fecha_fin } = req.body;
+
     if (!nombre_proyecto || !descripcion || !fecha_fin) {
         return res.status(400).json({ message: 'Faltan datos.' });
     }
 
     const fecha_inicio_date = fecha_inicio ? new Date(fecha_inicio) : new Date();
     const fecha_fin_Date = new Date(fecha_fin);
-    
+
     let estado;
     const fecha_actual = new Date();
 
@@ -781,7 +781,7 @@ router.post('/proyectos-investigacion/crear-proyecto-investigacion', verificarSu
     }
     else if (fecha_actual < fecha_inicio_date) {
         estado = "Pendiente";
-    } 
+    }
     else if (fecha_actual >= fecha_inicio_date && fecha_actual <= fecha_fin_Date) {
         estado = "En curso";
     }
@@ -797,8 +797,8 @@ router.post('/proyectos-investigacion/crear-proyecto-investigacion', verificarSu
             ];
 
             const queryProyecto = 'INSERT INTO Proyectos_Investigacion(nombre_proyecto, descripcion, fecha_inicio,' +
-                        'fecha_fin, estado) VALUES ($1, $2, $3, $4, $5) RETURNING id_proyecto, nombre_proyecto,' +
-                        'descripcion, fecha_inicio, fecha_fin, estado;';
+                'fecha_fin, estado) VALUES ($1, $2, $3, $4, $5) RETURNING id_proyecto, nombre_proyecto,' +
+                'descripcion, fecha_inicio, fecha_fin, estado;';
             const resultProyecto = await pool.query(queryProyecto, valuesProyecto);
 
             const valuesMiembro = [
@@ -828,12 +828,12 @@ router.post('/proyectos-investigacion/crear-proyecto-investigacion', verificarSu
         }
     }
     else {
-        res.status(403).json({ message: 'Fecha fin inválida.'});
+        res.status(403).json({ message: 'Fecha fin inválida.' });
     }
 });
 
 // PUT actualizar un proyecto de investigación
-router.put("/proyectos-investigacion/:id", verificarToken, async (req, res) => {  
+router.put("/proyectos-investigacion/:id", verificarToken, async (req, res) => {
     const adminRol = await obtenernRol(req.usuario);
     if (!adminRol || adminRol.nombre !== 'Administrador') {
         const presidenteProyecto = await obtenerPresidenteProyecto(id_proyecto);
@@ -859,7 +859,7 @@ router.put("/proyectos-investigacion/:id", verificarToken, async (req, res) => {
     const fecha_actual = new Date();
     if (fecha_actual < fecha_inicio_date) {
         estado = "Pendiente";
-    } 
+    }
     else if (fecha_actual >= fecha_inicio_date && fecha_actual <= fecha_fin_Date) {
         estado = "En curso";
     }
@@ -898,9 +898,9 @@ router.put("/proyectos-investigacion/:id", verificarToken, async (req, res) => {
 
 
 // DELETE eliminar un proyecto de investigación
-router.delete('/proyectos-investigacion/:id', verificarToken, async (req, res) =>  {
+router.delete('/proyectos-investigacion/:id', verificarToken, async (req, res) => {
     const id_proyecto = req.params.id;
-    
+
     const adminRol = await obtenernRol(req.usuario);
     if (!adminRol || adminRol.nombre !== 'Administrador') {
         const presidenteProyecto = await obtenerPresidenteProyecto(id_proyecto);
@@ -925,7 +925,7 @@ router.delete('/proyectos-investigacion/:id', verificarToken, async (req, res) =
 });
 
 // GET ver proyectos de investigación
-router.get('/listado-proyectos-investigacion', async (req, res) =>  {
+router.get('/listado-proyectos-investigacion', async (req, res) => {
     try {
         const query = 'SELECT * FROM Proyectos_Investigacion;';
         const listaProyectos = await pool.query(query);
@@ -945,7 +945,7 @@ router.get('/listado-proyectos-investigacion', async (req, res) =>  {
 });
 
 // POST añadir miembro al proyecto de investigación
-router.post('/proyectos-investigacion/:id/miembros', verificarToken, async (req, res) =>  {
+router.post('/proyectos-investigacion/:id/miembros', verificarToken, async (req, res) => {
     const { socio, rol_proyecto } = req.body;
     const proyecto = req.params.id;
 
@@ -970,7 +970,7 @@ router.post('/proyectos-investigacion/:id/miembros', verificarToken, async (req,
         ];
 
         const query = 'INSERT INTO Socio_Proyecto(fecha_registro, socio, proyecto, rol_proyecto)' +
-                      'VALUES ($1, $2, $3, $4) RETURNING socio, proyecto, rol_proyecto';
+            'VALUES ($1, $2, $3, $4) RETURNING socio, proyecto, rol_proyecto';
         const result = await pool.query(query, values);
 
         const nombreProyecto = await obtenerNombreProyecto(proyecto);
@@ -995,8 +995,8 @@ router.post('/proyectos-investigacion/:id/miembros', verificarToken, async (req,
 });
 
 // DELETE eliminar rol siendo presidente de un proyecto de investigación
-router.delete('/proyectos-investigacion/:id/miembros/:id_socio', verificarToken, async (req, res) =>  {
-    const proyecto = req.params.id;    
+router.delete('/proyectos-investigacion/:id/miembros/:id_socio', verificarToken, async (req, res) => {
+    const proyecto = req.params.id;
     const id_socio = req.params.id_socio
 
     const adminRol = await obtenernRol(req.usuario);
@@ -1013,7 +1013,7 @@ router.delete('/proyectos-investigacion/:id/miembros/:id_socio', verificarToken,
             proyecto
         ];
 
-        const  query = 'DELETE FROM Socio_Proyecto WHERE socio = $1 AND proyecto = $2;';
+        const query = 'DELETE FROM Socio_Proyecto WHERE socio = $1 AND proyecto = $2;';
 
         const nombreProyecto = await obtenerNombreProyecto(proyecto);
         await crearNotificacion(
@@ -1063,7 +1063,7 @@ router.get("/proyectos-investigacion/:id", async (req, res) => {
             proyecto: proyecto,
             miembros: resultMiembros.rows,
         });
-    } 
+    }
     catch (error) {
         console.error("Error al obtener proyecto: ", error.message);
         res.status(500).json({ message: "Error interno del servidor." });
@@ -1071,7 +1071,7 @@ router.get("/proyectos-investigacion/:id", async (req, res) => {
 });
 
 // POST crear un evento científico
-router.post('/eventos-cientificos/crear-evento-cientifico', verificarSuscripcionActiva, async (req, res) =>  {
+router.post('/eventos-cientificos/crear-evento-cientifico', verificarSuscripcionActiva, async (req, res) => {
     const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion, precio } = req.body;
 
     if (!nombre_evento || !fecha_evento_inicio || !fecha_evento_fin || !descripcion_evento || !direccion) {
@@ -1091,7 +1091,7 @@ router.post('/eventos-cientificos/crear-evento-cientifico', verificarSuscripcion
             return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
         }
     }
-    
+
     if (fecha_evento_fin > fecha_evento_inicio) {
         try {
             const direccionObj = JSON.parse(direccion);
@@ -1127,8 +1127,8 @@ router.post('/eventos-cientificos/crear-evento-cientifico', verificarSuscripcion
             ];
 
             const queryEvento = 'INSERT INTO Evento(nombre_evento, fecha_evento_inicio, fecha_evento_fin,' +
-                          'descripcion_evento, precio, direccion, comite) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_evento,' +
-                          'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento;';
+                'descripcion_evento, precio, direccion, comite) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_evento,' +
+                'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento;';
             const resultEvento = await pool.query(queryEvento, valuesEvento);
 
             await crearNotificacionEvento(
@@ -1156,7 +1156,7 @@ router.post('/eventos-cientificos/crear-evento-cientifico', verificarSuscripcion
 });
 
 // PUT editar un evento científico
-router.put('/eventos-cientificos/:id', verificarToken, async (req, res) =>  {
+router.put('/eventos-cientificos/:id', verificarToken, async (req, res) => {
     const id_evento = req.params.id;
     const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, precio } = req.body;
 
@@ -1172,7 +1172,7 @@ router.put('/eventos-cientificos/:id', verificarToken, async (req, res) =>  {
             return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
         }
     }
-    
+
     if (fecha_evento_fin > fecha_evento_inicio) {
         try {
             const values = [
@@ -1185,8 +1185,8 @@ router.put('/eventos-cientificos/:id', verificarToken, async (req, res) =>  {
             ];
 
             const query = 'UPDATE Evento SET nombre_evento = $1, fecha_evento_inicio = $2, fecha_evento_fin = $3,' +
-                          'descripcion_evento = $4, precio = $5 WHERE id_evento = $6 RETURNING id_evento,' +
-                          'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, precio;';
+                'descripcion_evento = $4, precio = $5 WHERE id_evento = $6 RETURNING id_evento,' +
+                'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, precio;';
             const result = await pool.query(query, values);
 
             res.status(200).json({
@@ -1205,12 +1205,12 @@ router.put('/eventos-cientificos/:id', verificarToken, async (req, res) =>  {
         }
     }
     else {
-        res.status(403).json({ message: 'Fecha inválida.'});
+        res.status(403).json({ message: 'Fecha inválida.' });
     }
 });
 
 // DELETE eliminar un evento científico
-router.delete('/eventos-cientificos/:id', verificarToken, async (req, res) =>  {
+router.delete('/eventos-cientificos/:id', verificarToken, async (req, res) => {
     const id_evento = req.params.id;
 
     const adminRol = await obtenernRol(req.usuario);
@@ -1221,7 +1221,7 @@ router.delete('/eventos-cientificos/:id', verificarToken, async (req, res) =>  {
             return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
         }
     }
-    
+
     try {
         const query = 'DELETE FROM Evento WHERE id_evento = $1;';
         await pool.query(query, [id_evento]);
@@ -1237,7 +1237,7 @@ router.delete('/eventos-cientificos/:id', verificarToken, async (req, res) =>  {
 });
 
 // GET listado de eventos científicos
-router.get('/listado-eventos-cientificos', async (req, res) =>  {
+router.get('/listado-eventos-cientificos', async (req, res) => {
     try {
         const query = 'SELECT * FROM Evento;';
         const listaEventos = await pool.query(query);
@@ -1256,7 +1256,7 @@ router.get('/listado-eventos-cientificos', async (req, res) =>  {
 });
 
 // GET detalles del evento científico
-router.get('/eventos-cientificos/:id', async (req, res) =>  {
+router.get('/eventos-cientificos/:id', async (req, res) => {
     const id_evento = req.params.id;
 
     try {
@@ -1302,7 +1302,7 @@ router.get('/eventos-cientificos/:id', async (req, res) =>  {
             evento: {
                 ...evento,
                 direccion,
-            },  
+            },
             miembrosComite: miembrosComite,
             miembrosIncritos: miembrosInscritos
         });
@@ -1382,8 +1382,8 @@ router.delete('/eventos-cientificos/:id/cancelar-inscripcion', verificarToken, a
     const socio_id = req.usuario.id;
 
     try {
-        const query =  "DELETE FROM Inscripciones WHERE evento = $1 AND socio = $2 RETURNING *;";
-        const result = await pool.query(query,[id_evento, socio_id]);
+        const query = "DELETE FROM Inscripciones WHERE evento = $1 AND socio = $2 RETURNING *;";
+        const result = await pool.query(query, [id_evento, socio_id]);
 
         if (result.rowCount === 0) {
             return res.status(404).json({ message: "Inscripción no encontrada." });
@@ -1448,9 +1448,9 @@ router.post('/articulos-cientificos/publicar-articulo-cientifico', verificarSusc
                 new Date(),
                 req.usuario.id
             ];
-    
+
             query = 'INSERT INTO Publicaciones(titulo, contenidoPDF, fecha_publicacion, socio)' +
-                          'VALUES($1, $2, $3, $4) RETURNING id_publicacion, titulo, socio;';
+                'VALUES($1, $2, $3, $4) RETURNING id_publicacion, titulo, socio;';
         }
         else if (!req.file && contenido) {
             values = [
@@ -1459,9 +1459,9 @@ router.post('/articulos-cientificos/publicar-articulo-cientifico', verificarSusc
                 new Date(),
                 req.usuario.id
             ];
-    
+
             query = 'INSERT INTO Publicaciones(titulo, contenido, fecha_publicacion, socio)' +
-                          'VALUES($1, $2, $3, $4) RETURNING id_publicacion, titulo, socio;';
+                'VALUES($1, $2, $3, $4) RETURNING id_publicacion, titulo, socio;';
         }
         else {
             values = [
@@ -1471,11 +1471,11 @@ router.post('/articulos-cientificos/publicar-articulo-cientifico', verificarSusc
                 new Date(),
                 req.usuario.id
             ];
-    
+
             query = 'INSERT INTO Publicaciones(titulo, contenido, contenidoPDF, fecha_publicacion, socio)' +
-                          'VALUES($1, $2, $3, $4, $5) RETURNING id_publicacion, titulo, socio;';
+                'VALUES($1, $2, $3, $4, $5) RETURNING id_publicacion, titulo, socio;';
         }
-        
+
         const result = await pool.query(query, values);
         res.status(200).json({
             message: 'Artículo científico publicado.',
@@ -1645,7 +1645,7 @@ router.post('/articulos-cientificos/:id/comentarios', verificarToken, async (req
         ];
 
         const query = 'INSERT INTO Comentario_Publicacion(comentario, socio, publicacion, fecha_comentario, visibilidad)' +
-                      'VALUES($1, $2, $3, $4, $5) RETURNING id_comentario, socio, publicacion, comentario;';
+            'VALUES($1, $2, $3, $4, $5) RETURNING id_comentario, socio, publicacion, comentario;';
         const result = await pool.query(query, values);
 
         const queryComentario = `SELECT c.id_comentario, c.comentario, c.fecha_comentario, 
@@ -1807,8 +1807,8 @@ router.post('/add-miembro-comite-cientifico', verificarToken, async (req, res) =
 });
 
 // DELETE eliminar miembro del comité siendo presidente de comité
-router.delete('/eliminar-miembro-comite', verificarToken, async (req, res) =>  {
-    const { socio, comite } = req.body;    
+router.delete('/eliminar-miembro-comite', verificarToken, async (req, res) => {
+    const { socio, comite } = req.body;
 
     const presidenteComite = await obtenerPresidenteComite(comite);
     if (!presidenteComite || presidenteComite.socio !== req.usuario.id) {
@@ -1843,7 +1843,7 @@ router.delete('/eliminar-miembro-comite', verificarToken, async (req, res) =>  {
 });
 
 // GET listado de comités científicos y sus miembros
-router.get('/listado-comites-cientificos', verificarToken, async (req, res) =>  {
+router.get('/listado-comites-cientificos', verificarToken, async (req, res) => {
     try {
         const query = `SELECT C.id_comite, C.nombre_comite, C.descripcion, S.id_socio,
                        S.nombre AS nombre_socio, S.apellidos, SR.nombre AS rol
@@ -1860,10 +1860,10 @@ router.get('/listado-comites-cientificos', verificarToken, async (req, res) =>  
         result.rows.forEach(row => {
             if (!comites[row.id_comite]) {
                 comites[row.id_comite] = {
-                id_comite: row.id_comite,
-                nombre_comite: row.nombre_comite,
-                descripcion: row.descripcion,
-                miembros: []
+                    id_comite: row.id_comite,
+                    nombre_comite: row.nombre_comite,
+                    descripcion: row.descripcion,
+                    miembros: []
                 };
             }
 
@@ -2013,11 +2013,11 @@ router.get('/listado-notificaciones', verificarToken, async (req, res) => {
 // PATCH marcar una notificación como leída
 router.patch('/notificaciones/:id/leida', async (req, res) => {
     const idNotificacion = req.params.id;
-  
+
     try {
         const query = `UPDATE Notificaciones SET estado_lectura = TRUE WHERE id_notificacion = $1`;
         await pool.query(query, [idNotificacion]);
-    
+
         res.status(200).json({ message: 'Notificación marcada como leída.' });
     }
     catch (error) {
@@ -2035,7 +2035,7 @@ router.post('/pagar-suscripcion', async (req, res) => {
                     FROM Tipo_Socio 
                     WHERE nombre_tipo = $1;`;
         const resultPriceStripe = await pool.query(queryPriceStripe, [tipo_socio]);
-        
+
 
         if (resultPriceStripe.rows.length === 0) {
             return res.status(403).json({ message: 'La suscripción solicitada no existe o no está disponible en estos momentos.' });
@@ -2058,17 +2058,17 @@ router.post('/pagar-suscripcion', async (req, res) => {
     catch (error) {
         console.error("Error al pagar suscripcion: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
-    }  
+    }
 });
 
 // GET obtenr calles via NOMINATIM OPEN STRET MAP
 router.get('/buscar-calles', async (req, res) => {
     const { provincia, query } = req.query;
-  
+
     if (!provincia || !query) {
         return res.status(400).json({ message: 'Faltan parámetros provincia o query' });
     }
-  
+
     try {
         const direccionCompleta = `${query}, ${provincia}, España`;
         const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
@@ -2080,12 +2080,12 @@ router.get('/buscar-calles', async (req, res) => {
                 'User-Agent': 'TuApp/1.0 (contacto@tusitio.com)',
             },
         });
-    
+
         if (!response.ok) {
             console.error("Error en la API de Nominatim.");
             return res.status(500).json({ message: 'Error en la API de Nominatim.' });
         }
-    
+
         const data = await response.json();
         res.status(200).json(data);
     }
@@ -2216,6 +2216,62 @@ router.delete('/tipos/:id', verificarToken, async (req, res) => {
     }
     catch (error) {
         console.log('Error borrando tipo socio: ', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+
+// GET mensajes de comite
+router.get('/comites/:id/mensajes', verificarToken, async (req, res) => {
+    const id_comite = req.params.id;
+    try {
+        const query = `
+            SELECT cm.id_mensaje, cm.mensaje, cm.fecha_envio, s.id_socio, s.nombre, s.apellidos 
+            FROM Comite_Mensajes cm
+            JOIN Socio s ON cm.socio_id = s.id_socio
+            WHERE cm.comite_id = $1
+            ORDER BY cm.fecha_envio ASC;
+        `;
+        const result = await pool.query(query, [id_comite]);
+        res.status(200).json({ mensajes: result.rows });
+    } catch (error) {
+        console.error("Error al obtener mensajes del comité: ", error.message);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// POST nuevo mensaje a comite
+router.post('/comites/:id/mensajes', verificarToken, async (req, res) => {
+    const id_comite = req.params.id;
+    const socio_id = req.usuario.id;
+    const { mensaje } = req.body;
+
+    if (!mensaje || mensaje.trim() === '') {
+        return res.status(400).json({ message: 'El mensaje no puede estar vacío.' });
+    }
+
+    try {
+        // Here we could verify if the socio is part of the committee
+        const authQuery = 'SELECT * FROM Miembros_Comite WHERE comite = $1 AND socio = $2;';
+        const authResult = await pool.query(authQuery, [id_comite, socio_id]);
+
+        const amIAdmin = req.usuario && (await obtenernRol(req.usuario))?.nombre === 'Administrador';
+
+        if (authResult.rows.length === 0 && !amIAdmin) {
+            return res.status(403).json({ message: 'No perteneces a este comité.' });
+        }
+
+        const query = `
+            INSERT INTO Comite_Mensajes (comite_id, socio_id, mensaje) 
+            VALUES ($1, $2, $3) RETURNING *;
+        `;
+        const result = await pool.query(query, [id_comite, socio_id, mensaje]);
+        res.status(201).json({
+            message: 'Mensaje enviado correctamente.',
+            mensaje: result.rows[0]
+        });
+    } catch (error) {
+        console.error("Error al enviar el mensaje al comité: ", error.message);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });

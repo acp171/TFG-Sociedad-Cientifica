@@ -1,10 +1,12 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { HiArrowLeft, HiTrash } from "react-icons/hi";
+import ComiteWall from "../../components/ComiteWall";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import PasarelaPago from "../../components/Pago/PasarelaPago";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../hooks/AuthContext";
 
 const EventoDetalles = () => {
     const { id } = useParams();
@@ -16,6 +18,7 @@ const EventoDetalles = () => {
     const [modoEdicion, setModoEdicion] = useState(false);
     const navigate = useNavigate();
     const usuario = JSON.parse(localStorage.getItem("socio"));
+    const { userRole } = useAuth();
 
     // Estado pasarela de pago
     const [clientSecret, setClientSecret] = useState(null);
@@ -321,6 +324,10 @@ const EventoDetalles = () => {
                                 </li>
                             ))}
                         </ul>
+                        
+                        {(miembrosComite.some(m => Number(m.id_socio) === Number(usuario?.id)) || userRole === 1) && evento.comite && (
+                            <ComiteWall comiteId={evento.comite} />
+                        )}
                     </section>
                 )}
 
