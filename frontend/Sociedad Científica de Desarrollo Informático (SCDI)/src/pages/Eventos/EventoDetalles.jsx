@@ -64,7 +64,8 @@ const EventoDetalles = () => {
                     nombre_evento: evento.nombre_evento,
                     descripcion_evento: evento.descripcion_evento,
                     fecha_evento_inicio: evento.fecha_evento_inicio,
-                    fecha_evento_fin: evento.fecha_evento_fin
+                    fecha_evento_fin: evento.fecha_evento_fin,
+                    precio: parseFloat(evento.precio) || 0
                 })
             });
 
@@ -96,7 +97,7 @@ const EventoDetalles = () => {
             const data = await res.json();
             if (res.ok && data.clientSecret) {
                 setClientSecret(data.clientSecret);
-                setPrecioPago(10);
+                setPrecioPago(parseFloat(evento.precio) || 0);
                 setMostrarPago(true);
             } else {
                 alert(data.message || "No se pudo iniciar el pago");
@@ -252,6 +253,19 @@ const EventoDetalles = () => {
                             }
                             className="border border-gray-300 rounded p-2"
                         />
+                        <div className="flex items-center gap-2">
+                            <label className="text-sm font-semibold text-gray-700">Precio (€):</label>
+                            <input
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value={evento.precio ?? 0}
+                                onChange={(e) =>
+                                    setEvento({ ...evento, precio: e.target.value })
+                                }
+                                className="border border-gray-300 rounded p-2 w-28"
+                            />
+                        </div>
                     </div>
                 ) : (
                     <div className="flex justify-between items-center mb-10 flex-wrap gap-4">

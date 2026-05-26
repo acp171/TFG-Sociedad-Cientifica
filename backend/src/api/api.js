@@ -1072,7 +1072,7 @@ router.get("/proyectos-investigacion/:id", async (req, res) => {
 
 // POST crear un evento científico
 router.post('/eventos-cientificos/crear-evento-cientifico', verificarSuscripcionActiva, async (req, res) =>  {
-    const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion } = req.body;
+    const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion, precio } = req.body;
 
     if (!nombre_evento || !fecha_evento_inicio || !fecha_evento_fin || !descripcion_evento || !direccion) {
         return res.status(400).json({ message: 'Faltan datos.' });
@@ -1121,12 +1121,13 @@ router.post('/eventos-cientificos/crear-evento-cientifico', verificarSuscripcion
                 fecha_evento_inicio,
                 fecha_evento_fin,
                 descripcion_evento,
+                parseFloat(precio) || 0,
                 id_direccion,
                 id_comite
             ];
 
             const queryEvento = 'INSERT INTO Evento(nombre_evento, fecha_evento_inicio, fecha_evento_fin,' +
-                          'descripcion_evento, direccion, comite) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_evento,' +
+                          'descripcion_evento, precio, direccion, comite) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_evento,' +
                           'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento;';
             const resultEvento = await pool.query(queryEvento, valuesEvento);
 
@@ -1157,7 +1158,7 @@ router.post('/eventos-cientificos/crear-evento-cientifico', verificarSuscripcion
 // PUT editar un evento científico
 router.put('/eventos-cientificos/:id', verificarToken, async (req, res) =>  {
     const id_evento = req.params.id;
-    const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento } = req.body;
+    const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, precio } = req.body;
 
     if (!id_evento || !nombre_evento || !fecha_evento_inicio || !fecha_evento_fin || !descripcion_evento) {
         return res.status(400).json({ message: 'Faltan datos.' });
@@ -1179,12 +1180,13 @@ router.put('/eventos-cientificos/:id', verificarToken, async (req, res) =>  {
                 fecha_evento_inicio,
                 fecha_evento_fin,
                 descripcion_evento,
+                parseFloat(precio) || 0,
                 id_evento
             ];
 
             const query = 'UPDATE Evento SET nombre_evento = $1, fecha_evento_inicio = $2, fecha_evento_fin = $3,' +
-                          'descripcion_evento = $4 WHERE id_evento = $5 RETURNING id_evento,' +
-                          'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento;';
+                          'descripcion_evento = $4, precio = $5 WHERE id_evento = $6 RETURNING id_evento,' +
+                          'nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, precio;';
             const result = await pool.query(query, values);
 
             res.status(200).json({

@@ -12,6 +12,7 @@ const CrearEvento = () => {
     const [fechaInicio, setFechaInicio] = useState("");
     const [fechaFin, setFechaFin] = useState("");
     const [direccionExtra, setDireccionExtra] = useState("");
+    const [precio, setPrecio] = useState("0");
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -86,6 +87,7 @@ const CrearEvento = () => {
             descripcion_evento: descripcion,
             fecha_evento_inicio: fechaInicio,
             fecha_evento_fin: fechaFin,
+            precio: parseFloat(precio) || 0,
             direccion: JSON.stringify(direccion),
         };
 
@@ -114,6 +116,7 @@ const CrearEvento = () => {
                 setCalles([]);
                 setCalleSeleccionada(null);
                 setDireccionExtra("");
+                setPrecio("0");
             } 
             else {
                 const errorData = await res.json();
@@ -215,6 +218,13 @@ const CrearEvento = () => {
                         value={direccionExtra}
                         onChange={(e) => setDireccionExtra(e.target.value)}
                         placeholder="Ej: Número, piso, letra..."
+                    />
+                    <Input
+                        label="Precio de inscripción (€)"
+                        type="number"
+                        value={precio}
+                        onChange={(e) => setPrecio(e.target.value)}
+                        placeholder="0 = gratuito"
                     />
                     <button
                         type="submit"

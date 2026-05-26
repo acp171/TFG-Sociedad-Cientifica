@@ -129,6 +129,7 @@ CREATE TABLE IF NOT EXISTS Evento (
     fecha_evento_inicio TIMESTAMP NOT NULL,
     fecha_evento_fin TIMESTAMP NOT NULL,
     descripcion_evento TEXT NOT NULL,
+    precio FLOAT DEFAULT 0,
     direccion INT NOT NULL,
     comite INT,
     CONSTRAINT FK_EVENTO_DIRECCION FOREIGN KEY (direccion) REFERENCES Direccion(id_direccion) ON DELETE CASCADE,
