@@ -290,7 +290,12 @@ const Header = () => {
                                                     onClick={() => abrirNotificacion(n)}
                                                 >
                                                     <p className="font-semibold">{n.titulo}</p>
-                                                    <p className="text-sm text-gray-600">{n.mensaje.substring(0, 50)}...</p>
+                                                    <p
+                                                        className="text-sm text-gray-600"
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: n.mensaje.replace(/<[^>]*>/g, '').substring(0, 50) + '...'
+                                                        }}
+                                                    />
                                                 </li>
                                             ))}
                                         </ul>
@@ -444,7 +449,10 @@ const Header = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
                         <h2 className="text-xl font-bold mb-2">{notificacionSeleccionada.titulo}</h2>
-                        <p className="text-gray-700">{notificacionSeleccionada.mensaje}</p>
+                        <p
+                            className="text-gray-700 leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: notificacionSeleccionada.mensaje }}
+                        />
 
                         <div className="mt-4 text-right">
                             <button

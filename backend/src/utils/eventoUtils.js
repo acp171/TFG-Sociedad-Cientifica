@@ -42,6 +42,6 @@ async function obtenerInscripcionesEvento(evento) {
 
 module.exports = {
     obtenerMiembrosComiteEvento,
-    obtenerInscripcionesEvento, 
+    obtenerInscripcionesEvento,
     obtenerEvento
 }
