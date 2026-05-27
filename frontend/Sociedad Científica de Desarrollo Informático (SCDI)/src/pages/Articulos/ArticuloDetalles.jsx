@@ -62,7 +62,7 @@ const ArticuloDetalles = () => {
 
     const cambiarVisibilidadComentario = async (idPublicacion, idComentario) => {
         const token = localStorage.getItem("token");
-    
+
         const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${idPublicacion}/comentarios/${idComentario}/moderar`, {
             method: "PATCH",
             headers: {
@@ -70,7 +70,7 @@ const ArticuloDetalles = () => {
                 Authorization: `Bearer ${token}`
             }
         });
-    
+
         if (res.ok) {
             const actualizado = await res.json();
             setComentarios(prev =>
@@ -106,9 +106,10 @@ const ArticuloDetalles = () => {
             month: "long",
             day: "numeric",
             hour: "2-digit",
-            minute: "2-digit"
+            minute: "2-digit",
+            timeZone: "UTC"
         })
-    }));    
+    }));
 
     return (
         <section className="min-h-screen bg-gradient-to-b from-blue-200 to-white py-16 px-6 lg:px-20 flex flex-col items-center">
@@ -186,11 +187,10 @@ const ArticuloDetalles = () => {
                                     {usuario?.socio_rol === 1 && (
                                         <button
                                             onClick={() => cambiarVisibilidadComentario(articulo.id_publicacion, comentario.id_comentario)}
-                                            className={`mt-2 px-4 py-2 rounded text-sm font-semibold transition ${
-                                                comentario.visibilidad
-                                                    ? "bg-yellow-500 hover:bg-yellow-600 text-white"
-                                                    : "bg-green-600 hover:bg-green-700 text-white"
-                                            }`}
+                                            className={`mt-2 px-4 py-2 rounded text-sm font-semibold transition ${comentario.visibilidad
+                                                ? "bg-yellow-500 hover:bg-yellow-600 text-white"
+                                                : "bg-green-600 hover:bg-green-700 text-white"
+                                                }`}
                                         >
                                             {comentario.visibilidad ? t("detalle_articulo.ocultar") : t("detalle_articulo.mostrar")}
                                         </button>
