@@ -30,11 +30,11 @@ router.post('/', express.raw({ type: 'application/json' }), async (request, resp
         const tipoPago = paymentIntent.metadata.tipo_pago;
         if (tipoPago === 'registro_socio') {
             const { nombre, apellidos, email, password, telefono, fecha_nacimiento, id_plan } = paymentIntent.metadata;
-            
+
             const query = `INSERT INTO Socio(nombre, apellidos, email, password, telefono, 
                             fecha_nacimiento, fecha_alta, fecha_expiracion, socio_rol, tipo_socio)
                             VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP + INTERVAL '30 days', $8, $9) RETURNING id_socio, nombre, email;`;
-        
+
             const values = [
                 nombre,
                 apellidos,
@@ -46,11 +46,11 @@ router.post('/', express.raw({ type: 'application/json' }), async (request, resp
                 8,
                 id_plan,
             ];
-        
+
             try {
                 const result = await pool.query(query, values);
                 console.log("Socio insertado con ID: ", result.rows[0].id_socio);
-        
+
                 await crearNotificacion(
                     result.rows[0].id_socio,
                     'Bienvenido a la Sociedad Científica',
@@ -58,7 +58,7 @@ router.post('/', express.raw({ type: 'application/json' }), async (request, resp
                 );
             } catch (error) {
                 console.error("Error insertando socio: ", error.message);
-            }        
+            }
         }
         else if (tipoPago === 'renovacion_socio') {
             try {
@@ -92,13 +92,18 @@ router.post('/', express.raw({ type: 'application/json' }), async (request, resp
             const socio = await obtenerSocio(socio_id);
             const evento = await obtenerEvento(id_evento);
 
+            const formatFecha = (f) => new Date(f).toLocaleDateString('es-ES', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+
             await crearNotificacion(
                 socio_id,
                 '¡Inscripción evento!',
                 `
                     Hola ${socio.nombre} ${socio.apellidos},<br><br>
                     Tu inscripción al evento <strong>"${evento.nombre_evento}"</strong> ha sido registrada correctamente.<br><br>
-                    <strong>📅 Fecha:</strong> ${evento.fecha_evento_inicio} hastas ${evento.fecha_evento_fin}<br>
+                    <strong>📅 Fecha:</strong> ${formatFecha(evento.fecha_evento_inicio)} hasta ${formatFecha(evento.fecha_evento_fin)}<br>
                     <strong>📍 Lugar:</strong> ${evento.calle}, ${evento.ciudad}<br><br>
                     ¡Gracias por tu participación!<br><br>
                     <em>Sociedad Científica de Desarrollo Informático</em>
