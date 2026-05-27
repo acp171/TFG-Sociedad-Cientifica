@@ -35,9 +35,6 @@ export default function ComiteWall({ comiteId }) {
         return () => clearInterval(interval);
     }, [comiteId]);
 
-    useEffect(() => {
-        mensajesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [mensajes]);
 
     const enviarMensaje = async (e) => {
         e.preventDefault();
