@@ -145,18 +145,14 @@ const EventoDetalles = () => {
         );
     }
 
-    const fechaInicioFormateada = new Date(evento.fecha_evento_inicio).toLocaleDateString(i18n.language, {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-    });
+    const opcionesFecha = { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "UTC" };
+    const fechaInicioFormateada = new Date(evento.fecha_evento_inicio).toLocaleDateString(i18n.language, opcionesFecha);
 
-    const fechaFinFormateada = new Date(evento.fecha_evento_fin).toLocaleTimeString(i18n.language, {
-        hour: "2-digit",
-        minute: "2-digit"
-    });
+    const fechaFinSameDay = new Date(evento.fecha_evento_inicio).toDateString() === new Date(evento.fecha_evento_fin).toDateString();
+    const opcionesFinMismoDia = { hour: "2-digit", minute: "2-digit", timeZone: "UTC" };
+    const fechaFinFormateada = fechaFinSameDay
+        ? new Date(evento.fecha_evento_fin).toLocaleTimeString(i18n.language, opcionesFinMismoDia)
+        : new Date(evento.fecha_evento_fin).toLocaleDateString(i18n.language, opcionesFecha);
 
     const presidentes = miembrosComite.filter((m) => m.rol === "Presidente");
     const esPresidente = presidentes.some((p) => p.id_socio === usuario?.id);
