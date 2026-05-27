@@ -157,7 +157,7 @@ const Header = () => {
             <div className="w-10 lg:hidden flex-shrink-0"></div>
 
             {/* Logo + Nombre */}
-            <Link to="/" className="flex items-center justify-center space-x-3 z-50 flex-grow lg:flex-grow-0" title="Página de inicio de SCDI">
+            <Link to="/" className="flex items-center justify-center space-x-3 z-50 flex-grow lg:flex-grow-0" title={t("header.pagina_inicio")}>
                 <img src="/scdi.webp" alt="Logo" className="w-12 h-12 xs:w-14 xs:h-14 md:w-16 md:h-16 object-contain flex-shrink-0" />
                 <div className="text-sm xs:text-base md:text-lg leading-tight text-slate-800 text-left">
                     <span className="block font-extrabold tracking-tight">Sociedad Científica de</span>
