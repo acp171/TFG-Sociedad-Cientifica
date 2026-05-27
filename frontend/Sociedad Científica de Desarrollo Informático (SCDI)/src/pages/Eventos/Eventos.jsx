@@ -90,6 +90,7 @@ const Eventos = () => {
                             <FullCalendar
                                 plugins={[dayGridPlugin, timeGridPlugin]}
                                 initialView="dayGridMonth"
+                                timeZone="UTC"
                                 locale={document.documentElement.lang === "es" ? esLocale : enLocale}
                                 headerToolbar={{
                                     left: "prev,next today",
