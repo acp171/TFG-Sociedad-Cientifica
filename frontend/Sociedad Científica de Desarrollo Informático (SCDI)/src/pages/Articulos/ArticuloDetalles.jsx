@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 const ArticuloDetalles = () => {
     const { id } = useParams();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [articulo, setArticulo] = useState(null);
     const [comentarios, setComentarios] = useState([]);
     const [nuevoComentario, setNuevoComentario] = useState("");
@@ -93,7 +93,7 @@ const ArticuloDetalles = () => {
         );
     }
 
-    const fechaFormateadaArticulo = new Date(articulo.fecha_publicacion).toLocaleDateString("es-ES", {
+    const fechaFormateadaArticulo = new Date(articulo.fecha_publicacion).toLocaleDateString(i18n.language, {
         year: "numeric",
         month: "long",
         day: "numeric"
@@ -101,7 +101,7 @@ const ArticuloDetalles = () => {
 
     const comentariosConFecha = comentarios.map((comentario) => ({
         ...comentario,
-        fechaFormateada: new Date(comentario.fecha_comentario).toLocaleString("es-ES", {
+        fechaFormateada: new Date(comentario.fecha_comentario).toLocaleString(i18n.language, {
             year: "numeric",
             month: "long",
             day: "numeric",

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const roles = [
     { id: 8, nombre_rol: "Miembro" },
@@ -7,12 +8,13 @@ const roles = [
 ];
 
 const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, token, refetchProyecto }) => {
+    const { t } = useTranslation();
     const [nuevoSocio, setNuevoSocio] = useState("");
     const [nuevoRol, setNuevoRol] = useState("");
 
     const agregarMiembro = async () => {
         if (!nuevoSocio || !nuevoRol) {
-            alert("Selecciona socio y rol");
+            alert(t("detalle_proyecto.selecciona_socio_rol"));
             return;
         }
         try {
@@ -25,11 +27,11 @@ const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, tok
                 body: JSON.stringify({ socio: nuevoSocio, rol_proyecto: nuevoRol }),
             });
             if (!res.ok) {
-                throw new Error("Error agregando miembro");
+                throw new Error(t("detalle_proyecto.error_anadir_miembro"));
             }
             
-            const data = await res.json(); // Supón que devuelve el nuevo miembro
-            setMiembros((prev) => [...prev, data.miembro]); // 👈 actualización local
+            const data = await res.json(); 
+            setMiembros((prev) => [...prev, data.miembro]);
             setNuevoSocio("");
             setNuevoRol("");
         }
@@ -39,7 +41,7 @@ const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, tok
     };
 
     const eliminarMiembro = async (id_socio) => {
-        if (!window.confirm("¿Eliminar miembro?")) return;
+        if (!window.confirm(t("detalle_proyecto.confirmar_eliminar_miembro"))) return;
         try {
             const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${proyectoId}/miembros/${id_socio}`, {
                 method: "DELETE",
@@ -49,7 +51,7 @@ const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, tok
                 },
             });
             if (!res.ok) {
-                throw new Error("Error eliminando miembro");
+                throw new Error(t("detalle_proyecto.error_eliminar_miembro"));
             }
             
             setMiembros((prev) => prev.filter((m) => m.id_socio !== id_socio));
@@ -60,7 +62,7 @@ const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, tok
     };
 
     const cambiarRol = async (id_socio, rolId) => {
-        if (!window.confirm("¿Cambiar rol?")) return;
+        if (!window.confirm(t("detalle_proyecto.confirmar_cambio_rol"))) return;
         try {
             const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${proyectoId}/miembros/${id_socio}`, {
                 method: "PUT",
@@ -68,7 +70,7 @@ const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, tok
                 body: JSON.stringify({ rol_proyecto: rolId }),
             });
             if (!res.ok) {
-                throw new Error("Error cambiando rol");
+                throw new Error(t("detalle_proyecto.error_cambiar_rol"));
             }
             const data = await res.json();
             setMiembros(data.miembros);
@@ -84,7 +86,7 @@ const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, tok
                 <input
                     className="border rounded-md px-3 py-2 flex-grow"
                     type="number"
-                    placeholder="ID Socio"
+                    placeholder={t("detalle_proyecto.id_socio")}
                     value={nuevoSocio}
                     onChange={(e) => setNuevoSocio(e.target.value)}
                 />
@@ -93,10 +95,10 @@ const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, tok
                     value={nuevoRol}
                     onChange={(e) => setNuevoRol(e.target.value)}
                 >
-                    <option value="">Selecciona rol</option>
+                    <option value="">{t("detalle_proyecto.selecciona_rol")}</option>
                     {roles.map((r) => (
                         <option key={r.id} value={r.id}>
-                        {r.nombre_rol}
+                        {r.nombre_rol === "Miembro" ? t("perfil_page.tipo_socio") : r.nombre_rol}
                         </option>
                     ))}
                 </select>
@@ -104,7 +106,7 @@ const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, tok
                     className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
                     onClick={agregarMiembro}
                 >
-                    Añadir Miembro
+                    {t("detalle_proyecto.anadir_miembro")}
                 </button>
             </div>
         
@@ -112,11 +114,11 @@ const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, tok
                 <table className="w-full border-collapse table-auto">
                     <thead>
                         <tr className="bg-indigo-100 uppercase text-xs text-left">
-                            <th className="border px-3 py-2 whitespace-nowrap">ID Socio</th>
-                            <th className="border px-3 py-2 whitespace-nowrap">Nombre</th>
-                            <th className="border px-3 py-2 whitespace-nowrap">Rol</th>
-                            <th className="border px-3 py-2 whitespace-nowrap">Fecha Registro</th>
-                            <th className="border px-3 py-2 whitespace-nowrap">Acciones</th>
+                            <th className="border px-3 py-2 whitespace-nowrap">{t("detalle_proyecto.id_socio")}</th>
+                            <th className="border px-3 py-2 whitespace-nowrap">{t("detalle_proyecto.nombre")}</th>
+                            <th className="border px-3 py-2 whitespace-nowrap">{t("detalle_proyecto.rol")}</th>
+                            <th className="border px-3 py-2 whitespace-nowrap">{t("detalle_proyecto.fecha_registro")}</th>
+                            <th className="border px-3 py-2 whitespace-nowrap">{t("detalle_proyecto.acciones")}</th>
                         </tr>
                     </thead>
                     <tbody className="text-sm">
@@ -146,7 +148,7 @@ const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, tok
                                     className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition text-xs"
                                     onClick={() => eliminarMiembro(m.id_socio)}
                                 >
-                                    Eliminar
+                                    {t("perfil_page.eliminar")}
                                 </button>
                                 )}
                             </td>

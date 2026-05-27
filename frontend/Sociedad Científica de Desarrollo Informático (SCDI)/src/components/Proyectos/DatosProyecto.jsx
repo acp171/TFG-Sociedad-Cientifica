@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresidente, token }) => {
+    const { t } = useTranslation();
     const [editMode, setEditMode] = useState(false);
     const [formData, setFormData] = useState({
         nombre_proyecto: proyecto.nombre_proyecto,
@@ -25,12 +27,12 @@ const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresiden
                 body: JSON.stringify(formData),
             });
             if (!res.ok) {
-                throw new Error("Error actualizando proyecto");
+                throw new Error(t("detalle_proyecto.error_actualizar"));
             }
             const data = await res.json();
             setProyecto(data.proyecto);
             setEditMode(false);
-            alert("Proyecto actualizado");
+            alert(t("detalle_proyecto.exito_actualizar"));
         }
         catch (err) {
             alert(err.message);
@@ -38,7 +40,7 @@ const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresiden
     };
 
     const eliminarProyecto = async () => {
-        if (!window.confirm("¿Eliminar proyecto?")) return;
+        if (!window.confirm(t("detalle_proyecto.confirmar_eliminar"))) return;
         try {
             const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${proyectoId}`, {
                 method: "DELETE",
@@ -48,9 +50,9 @@ const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresiden
                 }
             });
             if (!res.ok) {
-                throw new Error("Error eliminando proyecto");
+                throw new Error(t("detalle_proyecto.error_eliminar"));
             }
-            alert("Proyecto eliminado");
+            alert(t("detalle_proyecto.exito_actualizar")); // reusing some simple msg or add new
             navigate("/proyectos-investigacion");
         }
         catch (err) {
@@ -62,10 +64,10 @@ const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresiden
         <div className="bg-white rounded-xl shadow-md p-6 max-w-3xl mx-auto">
             {!editMode ? (
                 <>
-                <p className="mb-3"><strong>Descripción:</strong> {proyecto.descripcion}</p>
-                <p className="mb-1"><strong>Fecha inicio:</strong> {new Date(proyecto.fecha_inicio).toLocaleDateString()}</p>
-                <p className="mb-1"><strong>Fecha fin:</strong> {new Date(proyecto.fecha_fin).toLocaleDateString()}</p>
-                <p className="mb-4"><strong>Estado:</strong> {proyecto.estado}</p>
+                <p className="mb-3"><strong>{t("detalle_proyecto.descripcion")}</strong> {proyecto.descripcion}</p>
+                <p className="mb-1"><strong>{t("detalle_proyecto.fecha_inicio")}</strong> {new Date(proyecto.fecha_inicio).toLocaleDateString()}</p>
+                <p className="mb-1"><strong>{t("detalle_proyecto.fecha_fin")}</strong> {new Date(proyecto.fecha_fin).toLocaleDateString()}</p>
+                <p className="mb-4"><strong>{t("detalle_proyecto.estado")}</strong> {proyecto.estado}</p>
         
                 {esPresidente && (
                     <div className="flex gap-4">
@@ -73,13 +75,13 @@ const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresiden
                         className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
                         onClick={() => setEditMode(true)}
                     >
-                        Modificar Proyecto
+                        {t("detalle_proyecto.modificar")}
                     </button>
                     <button
                         className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
                         onClick={eliminarProyecto}
                     >
-                        Eliminar Proyecto
+                        {t("detalle_proyecto.eliminar")}
                     </button>
                     </div>
                 )}
@@ -91,7 +93,7 @@ const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresiden
                         name="nombre_proyecto"
                         value={formData.nombre_proyecto}
                         onChange={handleChange}
-                        placeholder="Nombre Proyecto"
+                        placeholder={t("detalle_proyecto.nombre_placeholder")}
                     />
                     <textarea
                         className="border rounded-md px-3 py-2 resize-none"
@@ -99,7 +101,7 @@ const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresiden
                         value={formData.descripcion}
                         onChange={handleChange}
                         rows={4}
-                        placeholder="Descripción"
+                        placeholder={t("detalle_proyecto.descripcion_placeholder")}
                     />
                     <input
                         className="border rounded-md px-3 py-2"
@@ -122,14 +124,14 @@ const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresiden
                             className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
                             onClick={guardarProyecto}
                         >
-                            Guardar
+                            {t("detalle_proyecto.guardar")}
                         </button>
                         <button
                             type="button"
                             className="bg-gray-400 text-gray-900 px-4 py-2 rounded-md hover:bg-gray-500 transition"
                             onClick={() => setEditMode(false)}
                         >
-                            Cancelar
+                            {t("detalle_proyecto.cancelar")}
                         </button>
                     </div>
                 </form>
