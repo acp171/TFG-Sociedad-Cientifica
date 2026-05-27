@@ -159,7 +159,7 @@ const Header = () => {
             {/* Logo + Nombre */}
             <Link to="/" className="flex items-center justify-center space-x-3 z-50 flex-grow lg:flex-grow-0">
                 <img src="/scdi.webp" alt="Logo" className="w-12 h-12 xs:w-14 xs:h-14 md:w-16 md:h-16 object-contain flex-shrink-0" />
-                <div className="text-sm xs:text-base md:text-lg leading-tight text-slate-800 text-left">
+                <div className="text-sm xs:text-base md:text-lg leading-tight text-slate-800 text-left" title="Página de inicio de SCDI">
                     <span className="block font-extrabold tracking-tight">Sociedad Científica de</span>
                     <span className="block font-extrabold tracking-tight">Desarrollo Informático</span>
                 </div>
@@ -168,10 +168,10 @@ const Header = () => {
             {/* Navegación Desktop */}
             <nav className="hidden lg:block">
                 <ul className="flex space-x-6 font-medium">
-                    <li><a href="/quienes-somos" className="hover:text-purple-400">{t("header.quienes_somos")}</a></li>
-                    <li><a href="/eventos-cientificos" className="hover:text-purple-400">{t("header.actividades")}</a></li>
-                    <li><a href="/proyectos-investigacion" className="hover:text-purple-400">{t("header.proyectos")}</a></li>
-                    <li><a href="/articulos-cientificos" className="hover:text-purple-400">{t("header.articulos")}</a></li>
+                    <li><a href="/quienes-somos" className="hover:text-purple-400" title={t("header.quienes_somos")}>{t("header.quienes_somos")}</a></li>
+                    <li><a href="/eventos-cientificos" className="hover:text-purple-400" title={t("header.actividades")}>{t("header.actividades")}</a></li>
+                    <li><a href="/proyectos-investigacion" className="hover:text-purple-400" title={t("header.proyectos")}>{t("header.proyectos")}</a></li>
+                    <li><a href="/articulos-cientificos" className="hover:text-purple-400" title={t("header.articulos")}>{t("header.articulos")}</a></li>
                 </ul>
             </nav>
 
