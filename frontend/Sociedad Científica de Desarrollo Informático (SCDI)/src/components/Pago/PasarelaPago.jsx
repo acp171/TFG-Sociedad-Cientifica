@@ -145,7 +145,7 @@ const PasarelaPago = ({ clientSecret, importe, descripcion, onSuccess, onCancel 
             />
 
             {/* Modal de pago */}
-            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 animate-fade-in">
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 animate-fade-in max-h-[90vh] overflow-y-auto">
                 {/* Cabecera */}
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
