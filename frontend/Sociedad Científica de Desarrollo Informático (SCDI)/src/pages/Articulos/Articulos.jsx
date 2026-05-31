@@ -60,7 +60,7 @@ const Articulos = () => {
                             {articulosVisibles.map((articulo) => (
                                 <Link
                                     key={articulo.id_publicacion}
-                                    to={`/articulos-cientificos/${articulo.id_publicacion}`}
+                                    to={`/articulos-cientificos/${articulo.slug || articulo.id_publicacion}`}
                                     className="block bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6"
                                     aria-label={`Ver artículo: ${articulo.titulo}`}
                                 >

@@ -5,6 +5,7 @@ const { obtenerMiembrosComiteEvento, obtenerInscripcionesEvento, obtenerEvento }
 const { obtenerPresidenteComite, obtenerComiteEvento, obtenerComitePorSocio } = require('../utils/comiteUtils');
 const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones');
 const { encrypt } = require('../utils/cryptoUtils');
+const { slugify } = require('../utils/slugify');
 
 const createEvento = async (req, res) => {
     const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion, precio } = req.body;
@@ -35,9 +36,10 @@ const createEvento = async (req, res) => {
         );
         const id_direccion = direccionResult.rows[0].id_direccion;
 
-        const valuesEvento = [nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, parseFloat(precio) || 0, id_direccion, id_comite];
+        const slug = slugify(nombre_evento);
+        const valuesEvento = [nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, parseFloat(precio) || 0, id_direccion, id_comite, slug];
         const resultEvento = await pool.query(
-            'INSERT INTO Evento(nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, precio, direccion, comite) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;',
+            'INSERT INTO Evento(nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, precio, direccion, comite, slug) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;',
             valuesEvento
         );
 
@@ -99,13 +101,15 @@ const getEventos = async (req, res) => {
 };
 
 const getEventoById = async (req, res) => {
-    const id_evento = req.params.id;
+    const identifier = req.params.id;
+    const isId = /^\d+$/.test(identifier);
+
     try {
         const queryEvento = `SELECT e.*, d.calle, d.ciudad, d.codigo_postal, d.provincia, d.extra, d.longitud, d.latitud 
                              FROM Evento e 
                              LEFT JOIN Direccion d ON e.direccion = d.id_direccion
-                             WHERE e.id_evento = $1;`;
-        const resultEvento = await pool.query(queryEvento, [id_evento]);
+                             WHERE ${isId ? 'e.id_evento' : 'e.slug'} = $1;`;
+        const resultEvento = await pool.query(queryEvento, [isId ? parseInt(identifier) : identifier]);
         if (resultEvento.rows.length === 0) return res.status(404).json({ message: 'Evento no encontrado.' });
 
         const evento = resultEvento.rows[0];

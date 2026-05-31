@@ -101,7 +101,7 @@ const Eventos = () => {
                                     title: evento.nombre_evento,
                                     start: evento.fecha_evento_inicio,
                                     end: evento.fecha_evento_fin,
-                                    url: `/eventos-cientificos/${evento.id_evento}`,
+                                    url: `/eventos-cientificos/${evento.slug || evento.id_evento}`,
                                     backgroundColor: "#4f46e5",
                                     borderColor: "#4338ca",
                                     textColor: "#ffffff"
@@ -121,7 +121,7 @@ const Eventos = () => {
                             {eventosVisibles.map((evento) => (
                                 <Link
                                     key={evento.id_evento}
-                                    to={`/eventos-cientificos/${evento.id_evento}`}
+                                    to={`/eventos-cientificos/${evento.slug || evento.id_evento}`}
                                     className="block bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6"
                                     aria-label={`Ver artículo: ${evento.nombre_evento}`}
                                 >

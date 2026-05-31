@@ -1,6 +1,7 @@
 const pool = require('../database');
 const path = require('path');
 const { obtenernRol } = require('../utils/socioUtils');
+const { slugify } = require('../utils/slugify');
 
 const createArticulo = async (req, res) => {
     const { titulo, contenido } = req.body;
@@ -11,16 +12,16 @@ const createArticulo = async (req, res) => {
     }
 
     try {
-        let query, values;
+        const slug = slugify(titulo);
         if (req.file && !contenido) {
-            values = [titulo, rutaPDF, new Date(), req.usuario.id];
-            query = 'INSERT INTO Publicaciones(titulo, contenidoPDF, fecha_publicacion, socio) VALUES($1, $2, $3, $4) RETURNING *;';
+            values = [titulo, rutaPDF, new Date(), req.usuario.id, slug];
+            query = 'INSERT INTO Publicaciones(titulo, contenidoPDF, fecha_publicacion, socio, slug) VALUES($1, $2, $3, $4, $5) RETURNING *;';
         } else if (!req.file && contenido) {
-            values = [titulo, contenido, new Date(), req.usuario.id];
-            query = 'INSERT INTO Publicaciones(titulo, contenido, fecha_publicacion, socio) VALUES($1, $2, $3, $4) RETURNING *;';
+            values = [titulo, contenido, new Date(), req.usuario.id, slug];
+            query = 'INSERT INTO Publicaciones(titulo, contenido, fecha_publicacion, socio, slug) VALUES($1, $2, $3, $4, $5) RETURNING *;';
         } else {
-            values = [titulo, contenido, rutaPDF, new Date(), req.usuario.id];
-            query = 'INSERT INTO Publicaciones(titulo, contenido, contenidoPDF, fecha_publicacion, socio) VALUES($1, $2, $3, $4, $5) RETURNING *;';
+            values = [titulo, contenido, rutaPDF, new Date(), req.usuario.id, slug];
+            query = 'INSERT INTO Publicaciones(titulo, contenido, contenidoPDF, fecha_publicacion, socio, slug) VALUES($1, $2, $3, $4, $5, $6) RETURNING *;';
         }
 
         const result = await pool.query(query, values);
@@ -62,14 +63,16 @@ const getArticulos = async (req, res) => {
 };
 
 const getArticuloById = async (req, res) => {
-    const id = req.params.id;
+    const identifier = req.params.id;
+    const isId = /^\d+$/.test(identifier);
     try {
-        const resultArticulo = await pool.query(`SELECT p.*, s.nombre, s.apellidos FROM Publicaciones p JOIN Socio s ON p.socio = s.id_socio WHERE p.id_publicacion = $1;`, [id]);
+        const resultArticulo = await pool.query(`SELECT p.*, s.nombre, s.apellidos FROM Publicaciones p JOIN Socio s ON p.socio = s.id_socio WHERE p.${isId ? 'id_publicacion' : 'slug'} = $1;`, [isId ? parseInt(identifier) : identifier]);
         if (resultArticulo.rows.length === 0) return res.status(404).json({ message: 'Artículo no encontrado.' });
 
+        const id_original = resultArticulo.rows[0].id_publicacion;
         const resultComentarios = await pool.query(
             `SELECT c.*, s.nombre, s.apellidos FROM Comentario_Publicacion c JOIN Socio s ON c.socio = s.id_socio WHERE c.publicacion = $1 ORDER BY c.fecha_comentario DESC;`,
-            [id]
+            [id_original]
         );
         res.status(200).json({ articulo: resultArticulo.rows[0], comentarios: resultComentarios.rows });
     } catch (error) {

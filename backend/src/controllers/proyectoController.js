@@ -2,6 +2,7 @@ const pool = require('../database');
 const { obtenernRol } = require('../utils/socioUtils');
 const { obtenerNombreProyecto, obtenerPresidenteProyecto, obtenerMiembro } = require('../utils/proyectoUtils');
 const { crearNotificacion } = require('../utils/notificaciones');
+const { slugify } = require('../utils/slugify');
 
 const createProyecto = async (req, res) => {
     const { nombre_proyecto, descripcion, fecha_inicio, fecha_fin } = req.body;
@@ -22,10 +23,11 @@ const createProyecto = async (req, res) => {
         estado = "En curso";
     }
 
-    if (fecha_fin_Date > fecha_inicio_date) {
+        if (fecha_fin_Date > fecha_inicio_date) {
         try {
-            const valuesProyecto = [nombre_proyecto, descripcion, fecha_inicio_date, fecha_fin_Date, estado];
-            const queryProyecto = 'INSERT INTO Proyectos_Investigacion(nombre_proyecto, descripcion, fecha_inicio, fecha_fin, estado) VALUES ($1, $2, $3, $4, $5) RETURNING *;';
+            const slug = slugify(nombre_proyecto);
+            const valuesProyecto = [nombre_proyecto, descripcion, fecha_inicio_date, fecha_fin_Date, estado, slug];
+            const queryProyecto = 'INSERT INTO Proyectos_Investigacion(nombre_proyecto, descripcion, fecha_inicio, fecha_fin, estado, slug) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;';
             const resultProyecto = await pool.query(queryProyecto, valuesProyecto);
 
             const valuesMiembro = [fecha_actual, req.usuario.id, resultProyecto.rows[0].id_proyecto, 2];
@@ -113,13 +115,15 @@ const getProyectos = async (req, res) => {
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
-
 const getProyectoById = async (req, res) => {
-    const id = req.params.id;
+    const identifier = req.params.id;
+    const isId = /^\d+$/.test(identifier);
+
     try {
-        const resultProyecto = await pool.query('SELECT * FROM Proyectos_Investigacion WHERE id_proyecto = $1;', [id]);
+        const resultProyecto = await pool.query(`SELECT * FROM Proyectos_Investigacion WHERE ${isId ? 'id_proyecto' : 'slug'} = $1;`, [isId ? parseInt(identifier) : identifier]);
         if (resultProyecto.rows.length === 0) return res.status(404).json({ message: "Proyecto no encontrado." });
 
+        const id_original = resultProyecto.rows[0].id_proyecto;
         const queryMiembros = `
             SELECT s.id_socio, s.nombre, s.apellidos, r.nombre AS rol, sp.fecha_registro
             FROM Socio_Proyecto sp
@@ -127,8 +131,7 @@ const getProyectoById = async (req, res) => {
             JOIN Socio_Rol r ON sp.rol_proyecto = r.id_socio_rol
             WHERE sp.proyecto = $1;
         `;
-        const resultMiembros = await pool.query(queryMiembros, [id]);
-
+        const resultMiembros = await pool.query(queryMiembros, [id_original]);
         res.status(200).json({ proyecto: resultProyecto.rows[0], miembros: resultMiembros.rows });
     } catch (error) {
         console.error(error);

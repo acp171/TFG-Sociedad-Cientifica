@@ -113,7 +113,7 @@ const Proyectos = () => {
                             {proyectosVisibles.map((proyecto) => (
                                 <Link 
                                     key={proyecto.id_proyecto} 
-                                    to={`/proyectos-investigacion/${proyecto.id_proyecto}`}
+                                    to={`/proyectos-investigacion/${proyecto.slug || proyecto.id_proyecto}`}
                                     className="p-6 bg-gray-50 rounded-xl shadow-md"
                                     aria-label={`Ver proyecto: ${proyecto.nombre_proyecto}`}
                                 >
