@@ -65,6 +65,8 @@ const FormularioPago = ({ importe, descripcion, onSuccess, onCancel }) => {
                         options={{
                             layout: "tabs",
                             fields: { billingDetails: { name: "auto" } },
+                            wallets: { applePay: "never", googlePay: "never" },
+                            terms: { card: "never" }
                         }}
                     />
                 </div>
