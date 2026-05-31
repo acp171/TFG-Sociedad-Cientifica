@@ -26,10 +26,16 @@ app.use(cors({
 
 
 // API
-app.use('/webhook', require('./api/webhook'));
+app.use('/webhook', require('./routes/webhookRoutes'));
 app.use(express.json());
-app.use('/', require('./api/api'));
-app.use('/auth/', require('./utils/auth'));
+app.use('/', require('./routes/authRoutes'));
+app.use('/', require('./routes/socioRoutes'));
+app.use('/', require('./routes/eventoRoutes'));
+app.use('/', require('./routes/proyectoRoutes'));
+app.use('/', require('./routes/articuloRoutes'));
+app.use('/', require('./routes/notificacionRoutes'));
+app.use('/', require('./routes/comiteRoutes'));
+app.use('/', require('./routes/adminRoutes'));
 
 
 // Static files
