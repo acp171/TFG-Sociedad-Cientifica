@@ -124,7 +124,7 @@ const getEventoById = async (req, res) => {
         };
         delete evento.calle; delete evento.ciudad; delete evento.codigo_postal; delete evento.provincia; delete evento.extra; delete evento.longitud; delete evento.latitud;
 
-        const miembrosInscritos = await obtenerInscripcionesEvento(id_evento) || [];
+        const miembrosInscritos = await obtenerInscripcionesEvento(evento.id_evento) || [];
         const miembrosComite = evento.comite ? await obtenerMiembrosComiteEvento(evento.comite) : [];
 
         res.status(200).json({ evento: { ...evento, direccion }, miembrosComite, miembrosIncritos: miembrosInscritos });
