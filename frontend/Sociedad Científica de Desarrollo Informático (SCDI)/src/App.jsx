@@ -47,15 +47,15 @@ function App() {
           <Route path="/registro-exitoso" element={<RegistroExitoso />} />
           <Route path="/quienes-somos" element={<QuienesSomos />} />
           <Route path="/articulos-cientificos" element={<Articulos />} />
-          <Route path="/articulos-cientificos/:id" element={<ArticuloDetalles />} />
+          <Route path="/articulos-cientificos/:slug" element={<ArticuloDetalles />} />
           <Route path="/articulos-cientificos/crear-articulo" element={<CrearArticulo />} />
           <Route path="/proyectos-investigacion" element={<Proyectos />} />
-          <Route path="/proyectos-investigacion/:id" element={<ProyectoDetalles />} />
+          <Route path="/proyectos-investigacion/:slug" element={<ProyectoDetalles />} />
           <Route path="/proyectos-investigacion/crear-proyecto" element={<CrearProyecto />} />
           <Route path="/eventos-cientificos" element={<Eventos />} />
-          <Route path="/eventos-cientificos/:id" element={<EventoDetalles />} />
+          <Route path="/eventos-cientificos/:slug" element={<EventoDetalles />} />
           <Route path="/eventos-cientificos/crear-evento-cientifico" element={<CrearEvento />} />
-          <Route path="/eventos-cientificos/:id/inscribirse/evento-exito" element={<EventoExito />} />
+          <Route path="/eventos-cientificos/:slug/inscribirse/evento-exito" element={<EventoExito />} />
           <Route path="/verificar/:ticketId" element={<VerificarTicket />} />
           <Route path="/politica-privacidad" element={<AvisoLegal />} />
           <Route path="/panel-administrador" element={<PanelAdmin />} />

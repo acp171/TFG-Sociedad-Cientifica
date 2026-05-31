@@ -52,17 +52,27 @@ const createEvento = async (req, res) => {
 };
 
 const updateEvento = async (req, res) => {
-    const id_evento = req.params.id;
-    const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, precio } = req.body;
-
-    const adminRol = await obtenernRol(req.usuario);
-    if (!adminRol || adminRol.nombre !== 'Administrador') {
-        const id_comite = await obtenerComiteEvento(id_evento);
-        const presidenteComite = await obtenerPresidenteComite(id_comite);
-        if (presidenteComite.socio !== req.usuario.id) return res.status(403).json({ message: 'No autorizado.' });
-    }
+    const identifier = req.params.id;
+    const isId = /^\d+$/.test(identifier);
 
     try {
+        // Resolve ID if slug is provided
+        let id_evento;
+        if (isId) {
+            id_evento = parseInt(identifier);
+        } else {
+            const resSlug = await pool.query('SELECT id_evento FROM Evento WHERE slug = $1', [identifier]);
+            if (resSlug.rows.length === 0) return res.status(404).json({ message: 'Evento no encontrado.' });
+            id_evento = resSlug.rows[0].id_evento;
+        }
+
+        const adminRol = await obtenernRol(req.usuario);
+        if (!adminRol || adminRol.nombre !== 'Administrador') {
+            const id_comite = await obtenerComiteEvento(id_evento);
+            const presidenteComite = await obtenerPresidenteComite(id_comite);
+            if (presidenteComite.socio !== req.usuario.id) return res.status(403).json({ message: 'No autorizado.' });
+        }
+
         const query = `UPDATE Evento SET nombre_evento = $1, fecha_evento_inicio = $2, fecha_evento_fin = $3, descripcion_evento = $4, precio = $5 WHERE id_evento = $6 RETURNING *;`;
         const result = await pool.query(query, [nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, parseFloat(precio) || 0, id_evento]);
         res.status(200).json({ message: 'Evento científico editado.', evento: result.rows[0] });
@@ -73,15 +83,27 @@ const updateEvento = async (req, res) => {
 };
 
 const deleteEvento = async (req, res) => {
-    const id_evento = req.params.id;
-    const adminRol = await obtenernRol(req.usuario);
-    if (!adminRol || adminRol.nombre !== 'Administrador') {
-        const id_comite = await obtenerComiteEvento(id_evento);
-        const presidenteComite = await obtenerPresidenteComite(id_comite);
-        if (presidenteComite.socio !== req.usuario.id) return res.status(403).json({ message: 'No autorizado.' });
-    }
+    const identifier = req.params.id;
+    const isId = /^\d+$/.test(identifier);
 
     try {
+        // Resolve ID if slug is provided
+        let id_evento;
+        if (isId) {
+            id_evento = parseInt(identifier);
+        } else {
+            const resSlug = await pool.query('SELECT id_evento FROM Evento WHERE slug = $1', [identifier]);
+            if (resSlug.rows.length === 0) return res.status(404).json({ message: 'Evento no encontrado.' });
+            id_evento = resSlug.rows[0].id_evento;
+        }
+
+        const adminRol = await obtenernRol(req.usuario);
+        if (!adminRol || adminRol.nombre !== 'Administrador') {
+            const id_comite = await obtenerComiteEvento(id_evento);
+            const presidenteComite = await obtenerPresidenteComite(id_comite);
+            if (presidenteComite.socio !== req.usuario.id) return res.status(403).json({ message: 'No autorizado.' });
+        }
+
         await pool.query('DELETE FROM Evento WHERE id_evento = $1;', [id_evento]);
         res.status(200).json({ message: 'Evento científico eliminado.' });
     } catch (error) {
@@ -135,9 +157,21 @@ const getEventoById = async (req, res) => {
 };
 
 const inscribirse = async (req, res) => {
-    const id_evento = req.params.id;
+    const identifier = req.params.id;
     const socio_id = req.usuario.id;
+    const isId = /^\d+$/.test(identifier);
+
     try {
+        // Resolve ID if slug is provided
+        let id_evento;
+        if (isId) {
+            id_evento = parseInt(identifier);
+        } else {
+            const resSlug = await pool.query('SELECT id_evento FROM Evento WHERE slug = $1', [identifier]);
+            if (resSlug.rows.length === 0) return res.status(404).json({ message: 'Evento no encontrado.' });
+            id_evento = resSlug.rows[0].id_evento;
+        }
+
         const eventoResult = await pool.query('SELECT precio FROM Evento WHERE id_evento = $1', [id_evento]);
         const precio = eventoResult.rows[0]?.precio ?? 0;
 
@@ -179,9 +213,21 @@ const getMisInscripciones = async (req, res) => {
 };
 
 const cancelarInscripcion = async (req, res) => {
-    const id_evento = req.params.id;
+    const identifier = req.params.id;
     const socio_id = req.usuario.id;
+    const isId = /^\d+$/.test(identifier);
+
     try {
+        // Resolve ID if slug is provided
+        let id_evento;
+        if (isId) {
+            id_evento = parseInt(identifier);
+        } else {
+            const resSlug = await pool.query('SELECT id_evento FROM Evento WHERE slug = $1', [identifier]);
+            if (resSlug.rows.length === 0) return res.status(404).json({ message: 'Evento no encontrado.' });
+            id_evento = resSlug.rows[0].id_evento;
+        }
+
         const result = await pool.query("DELETE FROM Inscripciones WHERE evento = $1 AND socio = $2 RETURNING *;", [id_evento, socio_id]);
         if (result.rowCount === 0) return res.status(404).json({ message: "Inscripción no encontrada." });
 

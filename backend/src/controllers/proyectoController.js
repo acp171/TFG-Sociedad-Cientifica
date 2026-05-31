@@ -48,16 +48,29 @@ const createProyecto = async (req, res) => {
 };
 
 const updateProyecto = async (req, res) => {
-    const id = req.params.id;
+    const identifier = req.params.id;
     const { nombre_proyecto, descripcion, fecha_inicio, fecha_fin } = req.body;
 
-    const adminRol = await obtenernRol(req.usuario);
-    if (!adminRol || adminRol.nombre !== 'Administrador') {
-        const presidenteProyecto = await obtenerPresidenteProyecto(id);
-        if (presidenteProyecto.socio !== req.usuario.id) {
-            return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+    const isId = /^\d+$/.test(identifier);
+
+    try {
+        // Resolve ID if slug is provided
+        let id_proyecto;
+        if (isId) {
+            id_proyecto = parseInt(identifier);
+        } else {
+            const resSlug = await pool.query('SELECT id_proyecto FROM Proyectos_Investigacion WHERE slug = $1', [identifier]);
+            if (resSlug.rows.length === 0) return res.status(404).json({ message: 'Proyecto no encontrado.' });
+            id_proyecto = resSlug.rows[0].id_proyecto;
         }
-    }
+
+        const adminRol = await obtenernRol(req.usuario);
+        if (!adminRol || adminRol.nombre !== 'Administrador') {
+            const presidenteProyecto = await obtenerPresidenteProyecto(id_proyecto);
+            if (presidenteProyecto.socio !== req.usuario.id) {
+                return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+            }
+        }
 
     if (!nombre_proyecto || nombre_proyecto.trim() === "") {
         return res.status(400).json({ message: "El título es obligatorio." });
@@ -74,9 +87,8 @@ const updateProyecto = async (req, res) => {
         estado = "En curso";
     }
 
-    try {
         const query = `UPDATE Proyectos_Investigacion SET nombre_proyecto = $1, descripcion = $2, fecha_inicio = $3, fecha_fin = $4, estado = $5 WHERE id_proyecto = $6 RETURNING *;`;
-        const values = [nombre_proyecto.trim(), descripcion || null, fecha_inicio || null, fecha_fin || null, estado, id];
+        const values = [nombre_proyecto.trim(), descripcion || null, fecha_inicio || null, fecha_fin || null, estado, id_proyecto];
         const result = await pool.query(query, values);
 
         if (result.rowCount === 0) return res.status(404).json({ message: "Proyecto no encontrado." });
@@ -88,16 +100,28 @@ const updateProyecto = async (req, res) => {
 };
 
 const deleteProyecto = async (req, res) => {
-    const id_proyecto = req.params.id;
-    const adminRol = await obtenernRol(req.usuario);
-    if (!adminRol || adminRol.nombre !== 'Administrador') {
-        const presidenteProyecto = await obtenerPresidenteProyecto(id_proyecto);
-        if (presidenteProyecto.socio !== req.usuario.id) {
-            return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
-        }
-    }
+    const identifier = req.params.id;
+    const isId = /^\d+$/.test(identifier);
 
     try {
+        // Resolve ID if slug is provided
+        let id_proyecto;
+        if (isId) {
+            id_proyecto = parseInt(identifier);
+        } else {
+            const resSlug = await pool.query('SELECT id_proyecto FROM Proyectos_Investigacion WHERE slug = $1', [identifier]);
+            if (resSlug.rows.length === 0) return res.status(404).json({ message: 'Proyecto no encontrado.' });
+            id_proyecto = resSlug.rows[0].id_proyecto;
+        }
+
+        const adminRol = await obtenernRol(req.usuario);
+        if (!adminRol || adminRol.nombre !== 'Administrador') {
+            const presidenteProyecto = await obtenerPresidenteProyecto(id_proyecto);
+            if (presidenteProyecto.socio !== req.usuario.id) {
+                return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+            }
+        }
+
         await pool.query('DELETE FROM Proyectos_Investigacion WHERE id_proyecto = $1;', [id_proyecto]);
         res.status(200).json({ message: 'Proyecto de investigación eliminado.' });
     } catch (error) {
@@ -141,25 +165,37 @@ const getProyectoById = async (req, res) => {
 
 const addMiembro = async (req, res) => {
     const { socio, rol_proyecto } = req.body;
-    const proyecto = req.params.id;
+    const identifier = req.params.id;
     if (!socio || !rol_proyecto) return res.status(400).json({ message: 'Faltan datos.' });
 
-    const adminRol = await obtenernRol(req.usuario);
-    if (!adminRol || adminRol.nombre !== 'Administrador') {
-        const presidenteProyecto = await obtenerPresidenteProyecto(proyecto);
-        if (presidenteProyecto.socio !== req.usuario.id) {
-            return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
-        }
-    }
+    const isId = /^\d+$/.test(identifier);
 
     try {
-        const values = [new Date(), socio, proyecto, rol_proyecto];
+        // Resolve ID if slug is provided
+        let id_proyecto;
+        if (isId) {
+            id_proyecto = parseInt(identifier);
+        } else {
+            const resSlug = await pool.query('SELECT id_proyecto FROM Proyectos_Investigacion WHERE slug = $1', [identifier]);
+            if (resSlug.rows.length === 0) return res.status(404).json({ message: 'Proyecto no encontrado.' });
+            id_proyecto = resSlug.rows[0].id_proyecto;
+        }
+
+        const adminRol = await obtenernRol(req.usuario);
+        if (!adminRol || adminRol.nombre !== 'Administrador') {
+            const presidenteProyecto = await obtenerPresidenteProyecto(id_proyecto);
+            if (presidenteProyecto.socio !== req.usuario.id) {
+                return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+            }
+        }
+
+        const values = [new Date(), socio, id_proyecto, rol_proyecto];
         await pool.query('INSERT INTO Socio_Proyecto(fecha_registro, socio, proyecto, rol_proyecto) VALUES ($1, $2, $3, $4);', values);
 
-        const nombreProyecto = await obtenerNombreProyecto(proyecto);
+        const nombreProyecto = await obtenerNombreProyecto(id_proyecto);
         await crearNotificacion(socio, 'Has sido añadido a un proyecto', `Fuiste añadido al proyecto "${nombreProyecto}".`);
 
-        const nuevoMiembro = await obtenerMiembro(proyecto, socio);
+        const nuevoMiembro = await obtenerMiembro(id_proyecto, socio);
         res.status(200).json({ message: 'Miembro añadido.', miembro: nuevoMiembro });
     } catch (error) {
         console.error(error);
@@ -168,20 +204,32 @@ const addMiembro = async (req, res) => {
 };
 
 const removeMiembro = async (req, res) => {
-    const proyecto = req.params.id;
+    const identifier = req.params.id;
     const id_socio = req.params.id_socio;
 
-    const adminRol = await obtenernRol(req.usuario);
-    if (!adminRol || adminRol.nombre !== 'Administrador') {
-        const presidenteProyecto = await obtenerPresidenteProyecto(proyecto);
-        if (presidenteProyecto.socio !== req.usuario.id) {
-            return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
-        }
-    }
+    const isId = /^\d+$/.test(identifier);
 
     try {
-        await pool.query('DELETE FROM Socio_Proyecto WHERE socio = $1 AND proyecto = $2;', [id_socio, proyecto]);
-        const nombreProyecto = await obtenerNombreProyecto(proyecto);
+        // Resolve ID if slug is provided
+        let id_proyecto;
+        if (isId) {
+            id_proyecto = parseInt(identifier);
+        } else {
+            const resSlug = await pool.query('SELECT id_proyecto FROM Proyectos_Investigacion WHERE slug = $1', [identifier]);
+            if (resSlug.rows.length === 0) return res.status(404).json({ message: 'Proyecto no encontrado.' });
+            id_proyecto = resSlug.rows[0].id_proyecto;
+        }
+
+        const adminRol = await obtenernRol(req.usuario);
+        if (!adminRol || adminRol.nombre !== 'Administrador') {
+            const presidenteProyecto = await obtenerPresidenteProyecto(id_proyecto);
+            if (presidenteProyecto.socio !== req.usuario.id) {
+                return res.status(403).json({ message: 'No autorizado. Se requiere permisos.' });
+            }
+        }
+
+        await pool.query('DELETE FROM Socio_Proyecto WHERE socio = $1 AND proyecto = $2;', [id_socio, id_proyecto]);
+        const nombreProyecto = await obtenerNombreProyecto(id_proyecto);
         await crearNotificacion(id_socio, 'Has sido expulsado del proyecto.', `Fuiste expulsado del proyecto "${nombreProyecto}".`);
         res.status(200).json({ message: 'Miembro expulsado.' });
     } catch (error) {

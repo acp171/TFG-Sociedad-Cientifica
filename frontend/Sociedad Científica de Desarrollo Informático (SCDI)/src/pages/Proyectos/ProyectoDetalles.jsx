@@ -7,7 +7,7 @@ import MiembrosProyecto from "../../components/Proyectos/MiembrosProyecto";
 import { useTranslation } from "react-i18next";
 
 const ProyectoDetalles = () => {
-    const { id } = useParams();
+    const { slug } = useParams();
     const navigate = useNavigate();
     const { t } = useTranslation();
 
@@ -21,7 +21,7 @@ const ProyectoDetalles = () => {
     const fetchProyecto = async () => {
         try {
             setLoading(true);
-            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${id}`);
+            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${slug}`);
 
             if (!res.ok) {
                 throw new Error("Proyecto no encontrado")
@@ -39,7 +39,7 @@ const ProyectoDetalles = () => {
 
     useEffect(() => {
         fetchProyecto();
-    }, [id]);
+    }, [slug]);
 
     if (loading) {
         return <p className="text-center mt-10">{t("common.cargando")}</p>;
@@ -88,7 +88,7 @@ const ProyectoDetalles = () => {
                         proyecto={proyecto}
                         setProyecto={setProyecto}
                         navigate={navigate}
-                        proyectoId={id}
+                        proyectoId={slug}
                         esPresidente={esPresidente}
                         token={localStorage.getItem("token")}
                     />
@@ -97,7 +97,7 @@ const ProyectoDetalles = () => {
                     <MiembrosProyecto
                         miembros={miembros}
                         setMiembros={setMiembros}
-                        proyectoId={id}
+                        proyectoId={slug}
                         esPresidente={esPresidente}
                         token={localStorage.getItem("token")}
                         refetchProyecto={fetchProyecto}

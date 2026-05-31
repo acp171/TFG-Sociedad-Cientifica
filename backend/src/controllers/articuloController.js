@@ -33,9 +33,21 @@ const createArticulo = async (req, res) => {
 };
 
 const deleteArticulo = async (req, res) => {
-    const id = req.params.id;
+    const identifier = req.params.id;
+    const isId = /^\d+$/.test(identifier);
+
     try {
-        const result = await pool.query('SELECT socio FROM Publicaciones WHERE id_publicacion = $1', [id]);
+        // Resolve ID if slug is provided
+        let id_publicacion;
+        if (isId) {
+            id_publicacion = parseInt(identifier);
+        } else {
+            const resSlug = await pool.query('SELECT id_publicacion FROM Publicaciones WHERE slug = $1', [identifier]);
+            if (resSlug.rows.length === 0) return res.status(404).json({ message: 'Publicación no encontrada.' });
+            id_publicacion = resSlug.rows[0].id_publicacion;
+        }
+
+        const result = await pool.query('SELECT socio FROM Publicaciones WHERE id_publicacion = $1', [id_publicacion]);
         if (result.rows.length === 0) return res.status(404).json({ message: 'Publicación no encontrada.' });
 
         const adminRol = await obtenernRol(req.usuario);
@@ -43,7 +55,7 @@ const deleteArticulo = async (req, res) => {
             return res.status(403).json({ message: 'No autorizado.' });
         }
 
-        await pool.query('DELETE FROM Publicaciones WHERE id_publicacion = $1;', [id]);
+        await pool.query('DELETE FROM Publicaciones WHERE id_publicacion = $1;', [id_publicacion]);
         res.status(200).json({ message: 'Artículo científico eliminado.' });
     } catch (error) {
         console.error(error);
@@ -82,9 +94,21 @@ const getArticuloById = async (req, res) => {
 };
 
 const downloadPDF = async (req, res) => {
-    const id = req.params.id;
+    const identifier = req.params.id;
+    const isId = /^\d+$/.test(identifier);
+
     try {
-        const result = await pool.query('SELECT contenidopdf FROM Publicaciones WHERE id_publicacion = $1', [id]);
+        // Resolve ID if slug is provided
+        let id_publicacion;
+        if (isId) {
+            id_publicacion = parseInt(identifier);
+        } else {
+            const resSlug = await pool.query('SELECT id_publicacion FROM Publicaciones WHERE slug = $1', [identifier]);
+            if (resSlug.rows.length === 0) return res.status(404).json({ message: 'Publicación no encontrada.' });
+            id_publicacion = resSlug.rows[0].id_publicacion;
+        }
+
+        const result = await pool.query('SELECT contenidopdf FROM Publicaciones WHERE id_publicacion = $1', [id_publicacion]);
         if (result.rows.length === 0 || !result.rows[0].contenidopdf) return res.status(404).json({ message: "PDF no encontrado" });
 
         let pdfPath = result.rows[0].contenidopdf;
@@ -100,14 +124,26 @@ const downloadPDF = async (req, res) => {
 };
 
 const addComentario = async (req, res) => {
-    const publicacion = req.params.id;
+    const identifier = req.params.id;
     const { comentario } = req.body;
     if (!comentario) return res.status(400).json({ message: 'Falta el comentario.' });
 
+    const isId = /^\d+$/.test(identifier);
+
     try {
+        // Resolve ID if slug is provided
+        let id_publicacion;
+        if (isId) {
+            id_publicacion = parseInt(identifier);
+        } else {
+            const resSlug = await pool.query('SELECT id_publicacion FROM Publicaciones WHERE slug = $1', [identifier]);
+            if (resSlug.rows.length === 0) return res.status(404).json({ message: 'Publicación no encontrada.' });
+            id_publicacion = resSlug.rows[0].id_publicacion;
+        }
+
         const result = await pool.query(
             'INSERT INTO Comentario_Publicacion(comentario, socio, publicacion, fecha_comentario, visibilidad) VALUES($1, $2, $3, $4, $5) RETURNING *;',
-            [comentario, req.usuario.id, publicacion, new Date(), true]
+            [comentario, req.usuario.id, id_publicacion, new Date(), true]
         );
         const resultDetailed = await pool.query(
             `SELECT c.*, s.nombre, s.apellidos FROM Comentario_Publicacion c JOIN Socio s ON c.socio = s.id_socio WHERE c.id_comentario = $1;`,

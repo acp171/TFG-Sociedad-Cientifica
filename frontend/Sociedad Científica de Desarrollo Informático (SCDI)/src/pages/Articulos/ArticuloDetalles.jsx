@@ -4,7 +4,7 @@ import { HiArrowLeft, HiDownload, HiTrash } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 
 const ArticuloDetalles = () => {
-    const { id } = useParams();
+    const { slug } = useParams();
     const { t, i18n } = useTranslation();
     const [articulo, setArticulo] = useState(null);
     const [comentarios, setComentarios] = useState([]);
@@ -13,18 +13,18 @@ const ArticuloDetalles = () => {
     const usuario = JSON.parse(localStorage.getItem("socio"));
 
     useEffect(() => {
-        fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${id}`)
+        fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${slug}`)
             .then(res => res.json())
             .then(data => {
                 setArticulo(data.articulo);
                 setComentarios((data.comentarios || []).filter(c => c.visibilidad !== false));
             });
-    }, [id]);
+    }, [slug]);
 
     const eliminar = async () => {
         if (!window.confirm(t("detalle_comun.confirmar_eliminar_articulo"))) return;
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${id}`, {
+        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${slug}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`
@@ -36,11 +36,11 @@ const ArticuloDetalles = () => {
         }
     };
 
-    const enviarComentario = async (idPublicacion) => {
+    const enviarComentario = async (identificador) => {
         if (!nuevoComentario.trim()) return;
 
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${idPublicacion}/comentarios`, {
+        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${identificador}/comentarios`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -60,10 +60,10 @@ const ArticuloDetalles = () => {
         }
     };
 
-    const cambiarVisibilidadComentario = async (idPublicacion, idComentario) => {
+    const cambiarVisibilidadComentario = async (identificador, idComentario) => {
         const token = localStorage.getItem("token");
 
-        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${idPublicacion}/comentarios/${idComentario}/moderar`, {
+        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${identificador}/comentarios/${idComentario}/moderar`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
@@ -186,7 +186,7 @@ const ArticuloDetalles = () => {
                                     {/* Botón para admin para cambiar visibilidad */}
                                     {usuario?.socio_rol === 1 && (
                                         <button
-                                            onClick={() => cambiarVisibilidadComentario(articulo.id_publicacion, comentario.id_comentario)}
+                                            onClick={() => cambiarVisibilidadComentario(slug, comentario.id_comentario)}
                                             className={`mt-2 px-4 py-2 rounded text-sm font-semibold transition ${comentario.visibilidad
                                                 ? "bg-yellow-500 hover:bg-yellow-600 text-white"
                                                 : "bg-green-600 hover:bg-green-700 text-white"
@@ -213,7 +213,7 @@ const ArticuloDetalles = () => {
                                 if (!usuario) {
                                     navigate("/login");
                                 } else {
-                                    enviarComentario(articulo.id_publicacion);
+                                    enviarComentario(slug);
                                 }
                             }}
                             className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
