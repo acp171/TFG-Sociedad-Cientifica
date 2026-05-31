@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS Publicaciones (
     contenidopdf VARCHAR(1000),
     fecha_publicacion TIMESTAMP NOT NULL,
     socio INT NOT NULL,
+    slug VARCHAR(256) UNIQUE,
     CONSTRAINT FK_PUBLICACION_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio) ON DELETE CASCADE
 );
 
@@ -87,7 +88,8 @@ CREATE TABLE IF NOT EXISTS Proyectos_Investigacion (
     descripcion VARCHAR(1000) NOT NULL,
     fecha_inicio TIMESTAMP NOT NULL,
     fecha_fin TIMESTAMP NOT NULL,
-    estado VARCHAR(25) NOT NULL
+    estado VARCHAR(25) NOT NULL,
+    slug VARCHAR(256) UNIQUE
 );
 
 -- SOCIO_PROYECTO TABLE --
@@ -143,6 +145,7 @@ CREATE TABLE IF NOT EXISTS Evento (
     precio FLOAT DEFAULT 0,
     direccion INT NOT NULL,
     comite INT,
+    slug VARCHAR(256) UNIQUE,
     CONSTRAINT FK_EVENTO_DIRECCION FOREIGN KEY (direccion) REFERENCES Direccion(id_direccion) ON DELETE CASCADE,
     CONSTRAINT FK_EVENTO_COMITE FOREIGN KEY (comite) REFERENCES Comite(id_comite) ON DELETE CASCADE
 );
@@ -293,12 +296,12 @@ VALUES
 ON CONFLICT DO NOTHING;
 
 -- Proyectos de Investigación
-INSERT INTO Proyectos_Investigacion (nombre_proyecto, descripcion, fecha_inicio, fecha_fin, estado)
+INSERT INTO Proyectos_Investigacion (nombre_proyecto, descripcion, fecha_inicio, fecha_fin, estado, slug)
 VALUES 
-    ('Detección de sesgos en LLMs', 'Proyecto para analizar y reducir discriminación en modelos masivos del lenguaje.', '2025-01-01', '2026-01-01', 'activo'),
-    ('Seguridad en redes IoT', 'Estudio sobre vulnerabilidades modernas en dispositivos inteligentes domésticos.', '2024-06-01', '2025-06-01', 'activo'),
-    ('Nuevo framewok Frontend', 'Investigación comparativa de rendimiento entre React, Vue y Svelte.', '2023-01-01', '2024-01-01', 'finalizado'),
-    ('Machine Learning aplicado a la sanidad', 'Análisis predictivo de enfermedades usando historiales médicos.', '2025-03-01', '2027-03-01', 'activo')
+    ('Detección de sesgos en LLMs', 'Proyecto para analizar y reducir discriminación en modelos masivos del lenguaje.', '2025-01-01', '2026-01-01', 'activo', 'deteccion-de-sesgos-en-llms'),
+    ('Seguridad en redes IoT', 'Estudio sobre vulnerabilidades modernas en dispositivos inteligentes domésticos.', '2024-06-01', '2025-06-01', 'activo', 'seguridad-en-redes-iot'),
+    ('Nuevo framewok Frontend', 'Investigación comparativa de rendimiento entre React, Vue y Svelte.', '2023-01-01', '2024-01-01', 'finalizado', 'nuevo-framework-frontend'),
+    ('Machine Learning aplicado a la sanidad', 'Análisis predictivo de enfermedades usando historiales médicos.', '2025-03-01', '2027-03-01', 'activo', 'machine-learning-aplicado-a-la-sanidad')
 ON CONFLICT DO NOTHING;
 
 -- Miembros Proyecto
@@ -311,12 +314,12 @@ VALUES
 ON CONFLICT DO NOTHING;
 
 -- Publicaciones
-INSERT INTO Publicaciones (titulo, contenido, fecha_publicacion, socio)
+INSERT INTO Publicaciones (titulo, contenido, fecha_publicacion, socio, slug)
 VALUES 
-    ('Avances en algoritmos cuánticos', 'El futuro de la computación está marcado por los bits cuánticos y su estabilización mediante nuevas estructuras.', CURRENT_TIMESTAMP, (SELECT id_socio FROM Socio WHERE email='admin@admin.com')),
-    ('10 principios de seguridad sólida', 'Exploramos cómo evitar ataques de inyección y XSS en aplicaciones modernas mediante el uso de interceptores.', CURRENT_TIMESTAMP, (SELECT id_socio FROM Socio WHERE email='ana.garcia@email.com')),
-    ('Impacto de IA generativa en la educación', 'La adaptación de los métodos de enseñanza ha sufrido cambios drásticos que requieren atención continua del profesorado.', CURRENT_TIMESTAMP, (SELECT id_socio FROM Socio WHERE email='laura.mart@email.com')),
-    ('Eficiencia energética en centros de datos', 'Cómo optimizar el código desde el backend y usar edge computing para reducir emisiones de huella de carbono a gran escala.', CURRENT_TIMESTAMP, (SELECT id_socio FROM Socio WHERE email='carlos.lopez@email.com'));
+    ('Avances en algoritmos cuánticos', 'El futuro de la computación está marcado por los bits cuánticos y su estabilización mediante nuevas estructuras.', CURRENT_TIMESTAMP, (SELECT id_socio FROM Socio WHERE email='admin@admin.com'), 'avances-en-algoritmos-cuanticos'),
+    ('10 principios de seguridad sólida', 'Exploramos cómo evitar ataques de inyección y XSS en aplicaciones modernas mediante el uso de interceptores.', CURRENT_TIMESTAMP, (SELECT id_socio FROM Socio WHERE email='ana.garcia@email.com'), '10-principios-de-seguridad-solida'),
+    ('Impacto de IA generativa en la educación', 'La adaptación de los métodos de enseñanza ha sufrido cambios drásticos que requieren atención continua del profesorado.', CURRENT_TIMESTAMP, (SELECT id_socio FROM Socio WHERE email='laura.mart@email.com'), 'impacto-de-ia-generativa-en-la-educacion'),
+    ('Eficiencia energética en centros de datos', 'Cómo optimizar el código desde el backend y usar edge computing para reducir emisiones de huella de carbono a gran escala.', CURRENT_TIMESTAMP, (SELECT id_socio FROM Socio WHERE email='carlos.lopez@email.com'), 'eficiencia-energetica-en-centros-de-datos');
 
 -- Comentarios a publicaciones
 INSERT INTO Comentario_Publicacion (comentario, socio, publicacion, fecha_comentario, visibilidad)
@@ -326,19 +329,19 @@ VALUES
     ('Totalmente de acuerdo, la docencia debe evolucionar rápidamente.', (SELECT id_socio FROM Socio WHERE email='javi.sq@email.com'), (SELECT MAX(id_publicacion) FROM Publicaciones WHERE titulo='Impacto de IA generativa en la educación'), CURRENT_TIMESTAMP, true);
 
 -- Eventos
-INSERT INTO Evento (nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, precio, direccion, comite)
+INSERT INTO Evento (nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, precio, direccion, comite, slug)
 VALUES 
     ('Congreso Nacional de IA 2026', '2026-09-10 09:00:00', '2026-09-12 18:00:00', 'El mayor evento de Inteligencia Artificial de España, reuniendo a cientos de expertos en deep learning y LLMs.', 50.00,
         (SELECT id_direccion FROM Direccion WHERE ciudad='Madrid' LIMIT 1), 
-        (SELECT id_comite FROM Comite WHERE nombre_comite='Comité de Inteligencia Artificial')),
+        (SELECT id_comite FROM Comite WHERE nombre_comite='Comité de Inteligencia Artificial'), 'congreso-nacional-de-ia-2026'),
         
     ('Hackathon de Seguridad y Redes', '2026-11-20 10:00:00', '2026-11-22 20:00:00', 'Competición de hacking ético de 48 horas intensivas organizadas por equipos de Red y Blue team.', 20.00,
         (SELECT id_direccion FROM Direccion WHERE ciudad='Barcelona' LIMIT 1), 
-        (SELECT id_comite FROM Comite WHERE nombre_comite='Comité de Ciberseguridad')),
+        (SELECT id_comite FROM Comite WHERE nombre_comite='Comité de Ciberseguridad'), 'hackathon-de-seguridad-y-redes'),
         
     ('Charla: Arquitectura Limpia en Node', '2025-12-15 17:00:00', '2025-12-15 19:00:00', 'Charla sobre diseño de software orientado al dominio y a buenas prácticas estructurales en aplicaciones monolíticas.', 0.00,
         (SELECT id_direccion FROM Direccion WHERE ciudad='Sevilla' LIMIT 1), 
-        (SELECT id_comite FROM Comite WHERE nombre_comite='Comité de Ingeniería de Software'));
+        (SELECT id_comite FROM Comite WHERE nombre_comite='Comité de Ingeniería de Software'), 'charla-arquitectura-limpia-en-node');
 
 -- Inscripciones a eventos
 INSERT INTO Inscripciones (estado_inscripcion, evento, socio)

@@ -57,6 +57,38 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 
+// Automigración de slugs
+const runAutomigration = async () => {
+  try {
+    console.log("Comprobando integridad de slugs...");
+    // 1. Asegurar que las columnas existen
+    await pool.query(`ALTER TABLE Evento ADD COLUMN IF NOT EXISTS slug VARCHAR(256) UNIQUE;`);
+    await pool.query(`ALTER TABLE Publicaciones ADD COLUMN IF NOT EXISTS slug VARCHAR(256) UNIQUE;`);
+    await pool.query(`ALTER TABLE Proyectos_Investigacion ADD COLUMN IF NOT EXISTS slug VARCHAR(256) UNIQUE;`);
+
+    // 2. Función auxiliar de postgres para slugify (solo si no existe)
+    // Usamos COALESCE y regex para generar slugs básicos para registros existentes que no tengan uno.
+    const tables = [
+      { name: 'Evento', id: 'id_evento', title: 'nombre_evento' },
+      { name: 'Publicaciones', id: 'id_publicacion', title: 'titulo' },
+      { name: 'Proyectos_Investigacion', id: 'id_proyecto', title: 'nombre_proyecto' }
+    ];
+
+    for (const table of tables) {
+      await pool.query(`
+        UPDATE ${table.name} 
+        SET slug = LOWER(REGEXP_REPLACE(REGEXP_REPLACE(NORMALIZE(${table.title}, NFD), '[^a-zA-Z0-9 ]', '', 'g'), '\\s+', '-', 'g'))
+        WHERE slug IS NULL;
+      `);
+    }
+    console.log("Slugs verificados correctamente.");
+  } catch (err) {
+    console.error("Error en automigración:", err);
+  }
+};
+
+runAutomigration();
+
 // Start server
 app.listen(app.get('port'), () => {
   console.log('Servidor backend corriendo en http://localhost:' + app.get('port'));
