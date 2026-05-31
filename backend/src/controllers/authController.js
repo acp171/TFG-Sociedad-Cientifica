@@ -81,6 +81,12 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(formData.password, saltRounds);
 
     try {
+        // Verificar si el correo ya existe para evitar sesión de pago innecesaria
+        const userCheck = await pool.query('SELECT id_socio FROM Socio WHERE email = $1', [formData.email]);
+        if (userCheck.rowCount > 0) {
+            return res.status(400).json({ message: 'El correo electrónico ya está registrado.' });
+        }
+
         const paymentIntent = await stripe.paymentIntents.create({
             amount: plan.cuota * 100,
             currency: 'eur',

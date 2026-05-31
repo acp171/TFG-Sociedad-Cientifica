@@ -144,7 +144,13 @@ const inscribirse = async (req, res) => {
             metadata: { tipo_pago: 'inscripcion_evento', id_evento: id_evento.toString(), socio_id: socio_id.toString() },
         });
 
-        await pool.query("INSERT INTO Inscripciones (estado_inscripcion, evento, socio, payment_intent_id) VALUES ($1, $2, $3, $4)", ["pendiente", id_evento, socio_id, paymentIntent.id]);
+        const queryInscripcion = `
+            INSERT INTO Inscripciones (estado_inscripcion, evento, socio, payment_intent_id) 
+            VALUES ($1, $2, $3, $4)
+            ON CONFLICT (socio, evento) 
+            DO UPDATE SET payment_intent_id = EXCLUDED.payment_intent_id, estado_inscripcion = EXCLUDED.estado_inscripcion;
+        `;
+        await pool.query(queryInscripcion, ["pendiente", id_evento, socio_id, paymentIntent.id]);
         res.status(200).json({ clientSecret: paymentIntent.client_secret });
     } catch (error) {
         console.error(error);
