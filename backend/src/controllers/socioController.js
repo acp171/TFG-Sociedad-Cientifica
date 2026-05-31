@@ -4,6 +4,7 @@ const stripe = require('../config/stripe');
 const saltRounds = 10;
 const { obtenernRol, obtenerSocio, obtenerSocios } = require('../utils/socioUtils');
 const { crearNotificacion } = require('../utils/notificaciones');
+const { encrypt } = require('../utils/cryptoUtils');
 
 const renovarSuscripcion = async (req, res) => {
     try {
@@ -28,7 +29,7 @@ const renovarSuscripcion = async (req, res) => {
         const paymentIntent = await stripe.paymentIntents.create({
             amount: cuota * 100,
             currency: 'eur',
-            payment_method_types: ['card'],
+            payment_method_types: ['card', 'sepa_debit', 'paypal'],
             metadata: {
                 tipo_pago: 'renovacion_socio',
                 socio_id: socioId.toString(),

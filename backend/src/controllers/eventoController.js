@@ -4,6 +4,7 @@ const { obtenernRol, obtenerSocio } = require('../utils/socioUtils');
 const { obtenerMiembrosComiteEvento, obtenerInscripcionesEvento, obtenerEvento } = require("../utils/eventoUtils");
 const { obtenerPresidenteComite, obtenerComiteEvento, obtenerComitePorSocio } = require('../utils/comiteUtils');
 const { crearNotificacion, crearNotificacionEvento } = require('../utils/notificaciones');
+const { encrypt } = require('../utils/cryptoUtils');
 
 const createEvento = async (req, res) => {
     const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion, precio } = req.body;
@@ -139,7 +140,7 @@ const inscribirse = async (req, res) => {
         const paymentIntent = await stripe.paymentIntents.create({
             amount: Math.round(precio * 100),
             currency: 'eur',
-            payment_method_types: ['card'],
+            payment_method_types: ['card', 'sepa_debit', 'paypal'],
             metadata: { tipo_pago: 'inscripcion_evento', id_evento: id_evento.toString(), socio_id: socio_id.toString() },
         });
 

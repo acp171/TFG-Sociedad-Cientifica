@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const pool = require('../database');
 const stripe = require('../config/stripe');
+const { encrypt } = require('../utils/cryptoUtils');
 const saltRounds = 10;
 const SECRET_KEY = process.env.JWT_SECRET;
 
@@ -83,7 +84,7 @@ const register = async (req, res) => {
         const paymentIntent = await stripe.paymentIntents.create({
             amount: plan.cuota * 100,
             currency: 'eur',
-            payment_method_types: ['card'],
+            payment_method_types: ['card', 'sepa_debit', 'paypal'],
             metadata: {
                 tipo_pago: 'registro_socio',
                 id_plan: plan.id_tipo_socio.toString(),

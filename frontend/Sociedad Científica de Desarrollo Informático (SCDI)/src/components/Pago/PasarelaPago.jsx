@@ -21,6 +21,9 @@ const FormularioPago = ({ importe, descripcion, onSuccess, onCancel }) => {
 
         const { error: stripeError } = await stripe.confirmPayment({
             elements,
+            confirmParams: {
+                return_url: window.location.href, // O podrías usar una página específica de éxito
+            },
             redirect: "if_required",
         });
 
