@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useEffect, useState } from "react";
 import { HiXCircle } from 'react-icons/hi';
 
@@ -24,7 +25,7 @@ const AdminArticulos = () => {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
-                "https://tfg-sociedad-cientifica-production.up.railway.app/listado-articulos-cientificos",
+                `${API_BASE_URL}/listado-articulos-cientificos`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
@@ -77,7 +78,7 @@ const AdminArticulos = () => {
             }
     
             const res = await fetch(
-                "https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/publicar-articulo-cientifico",
+                `${API_BASE_URL}/articulos-cientificos/publicar-articulo-cientifico`,
                 {
                     method: "POST",
                     headers: {
@@ -114,7 +115,7 @@ const AdminArticulos = () => {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
-                `https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${art.id_publicacion}`,
+                `${API_BASE_URL}/articulos-cientificos/${art.id_publicacion}`,
                 {
                     method: "DELETE",
                     headers: { Authorization: `Bearer ${token}` },

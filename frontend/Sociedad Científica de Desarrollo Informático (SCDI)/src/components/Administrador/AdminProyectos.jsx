@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useEffect, useState } from "react";
 
 const AdminProyectos = () => {
@@ -23,7 +24,7 @@ const AdminProyectos = () => {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
-                "https://tfg-sociedad-cientifica-production.up.railway.app/listado-proyectos-investigacion",
+                `${API_BASE_URL}/listado-proyectos-investigacion`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -89,8 +90,8 @@ const AdminProyectos = () => {
         try {
             const token = localStorage.getItem("token");
             const url = editingProyecto
-                ? `https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${editingProyecto.id_proyecto}`
-                : "https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/crear-proyecto-investigacion";
+                ? `${API_BASE_URL}/proyectos-investigacion/${editingProyecto.id_proyecto}`
+                : `${API_BASE_URL}/proyectos-investigacion/crear-proyecto-investigacion`;
             const method = editingProyecto ? "PUT" : "POST";
 
             const res = await fetch(url, {
@@ -124,7 +125,7 @@ const AdminProyectos = () => {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
-                `https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${proyecto.id_proyecto}`,
+                `${API_BASE_URL}/proyectos-investigacion/${proyecto.id_proyecto}`,
                 {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },

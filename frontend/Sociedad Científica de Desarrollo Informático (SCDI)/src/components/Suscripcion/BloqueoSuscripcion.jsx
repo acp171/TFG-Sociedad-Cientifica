@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useAuth } from "../../hooks/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import PasarelaPago from "../Pago/PasarelaPago";
 import { useTranslation } from "react-i18next";
+import API_BASE_URL from "../../config/backendConfig";
 
 export default function BloqueoSuscripcion() {
     const { isLoggedIn, suscripcionCaducada, marcarRenovado } = useAuth();
@@ -20,7 +21,7 @@ export default function BloqueoSuscripcion() {
         setError(null);
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch("https://tfg-sociedad-cientifica-production.up.railway.app/renovar-suscripcion", {
+            const res = await fetch(`${API_BASE_URL}/renovar-suscripcion`, {
                 method: "POST",
                 headers: { "Authorization": `Bearer ${token}` }
             });

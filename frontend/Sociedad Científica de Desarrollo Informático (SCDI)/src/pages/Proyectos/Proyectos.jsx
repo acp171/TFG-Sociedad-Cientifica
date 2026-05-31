@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useAuth } from "../../hooks/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { useTranslation } from "react-i18next";
+import API_BASE_URL from "../../config/backendConfig";
 
 const Proyectos = () => {
     const { t } = useTranslation();
@@ -19,7 +20,7 @@ const Proyectos = () => {
 
     useEffect(() => {
         setLoading(true);
-        fetch("https://tfg-sociedad-cientifica-production.up.railway.app/listado-proyectos-investigacion")
+        fetch(`${API_BASE_URL}/listado-proyectos-investigacion`)
             .then((res) => res.json())
             .then((data) => {
                 setProyectos(data.proyectos?.listaProyectos || []);

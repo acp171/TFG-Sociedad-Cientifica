@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -15,7 +16,7 @@ const PerfilUsuario = () => {
         const fetchPerfil = async () => {
             try {
                 const res = await fetch(
-                    "https://tfg-sociedad-cientifica-production.up.railway.app/perfil",
+                    `${API_BASE_URL}/perfil`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -48,7 +49,7 @@ const PerfilUsuario = () => {
         e.preventDefault();
 
         const res = await fetch(
-            "https://tfg-sociedad-cientifica-production.up.railway.app/perfil",
+            `${API_BASE_URL}/perfil`,
             {
                 method: "PATCH",
                 headers: {
@@ -79,7 +80,7 @@ const PerfilUsuario = () => {
         if (!confirm(t("perfil_page.confirmar_baja"))) return;
 
         const res = await fetch(
-            "https://tfg-sociedad-cientifica-production.up.railway.app/perfil",
+            `${API_BASE_URL}/perfil`,
             {
                 method: "DELETE",
                 headers: {

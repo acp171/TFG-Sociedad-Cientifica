@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
@@ -11,7 +12,7 @@ const EventoExito = () => {
 
     useEffect(() => {
         // Fetch event details to show on the ticket
-        fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}`)
+        fetch(`${API_BASE_URL}/eventos-cientificos/${id}`)
             .then(res => res.json())
             .then(data => {
                 setEvento(data.evento);

@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useEffect, useState } from "react";
 
 const AdminEventos = () => {
@@ -32,7 +33,7 @@ const AdminEventos = () => {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
-                "https://tfg-sociedad-cientifica-production.up.railway.app/listado-eventos-cientificos",
+                `${API_BASE_URL}/listado-eventos-cientificos`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
@@ -55,7 +56,7 @@ const AdminEventos = () => {
             return;
         }
         try {
-            const url = `https://tfg-sociedad-cientifica-production.up.railway.app/buscar-calles?provincia=${encodeURIComponent(
+            const url = `${API_BASE_URL}/buscar-calles?provincia=${encodeURIComponent(
                     formData.provincia
                 )}&query=${encodeURIComponent(valor)}`;
             const res = await fetch(url);
@@ -144,8 +145,8 @@ const AdminEventos = () => {
         try {
             const token = localStorage.getItem("token");
             const url = editingEvento
-                ? `https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${editingEvento.id_evento}`
-                : "https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/crear-evento-cientifico";
+                ? `${API_BASE_URL}/eventos-cientificos/${editingEvento.id_evento}`
+                : `${API_BASE_URL}/eventos-cientificos/crear-evento-cientifico`;
             const method = editingEvento ? "PUT" : "POST";
 
             const res = await fetch(url, {
@@ -246,7 +247,7 @@ const AdminEventos = () => {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
-                `https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${evento.id_evento}`,
+                `${API_BASE_URL}/eventos-cientificos/${evento.id_evento}`,
                 {
                     method: "DELETE",
                     headers: { Authorization: `Bearer ${token}` },

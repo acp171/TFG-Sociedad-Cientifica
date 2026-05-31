@@ -2,9 +2,10 @@ import { Link } from "react-router-dom";
 import { Search, User, LogOut, Settings, Inbox, Menu, X } from "lucide-react";
 import { FaUser } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { useAuth } from "../hooks/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
+import API_BASE_URL from "../../config/backendConfig";
 
 
 const Header = () => {
@@ -62,7 +63,7 @@ const Header = () => {
     const marcarComoLeidaNotificacion = async (id) => {
         try {
             const res = await fetch(
-                `https://tfg-sociedad-cientifica-production.up.railway.app/notificaciones/${id}/leida`,
+                `${API_BASE_URL}/notificaciones/${id}/leida`,
                 {
                     method: "PATCH",
                     headers: {
@@ -92,9 +93,9 @@ const Header = () => {
 
             try {
                 const [resEventos, resArticulos, resProyectos] = await Promise.all([
-                    fetch("https://tfg-sociedad-cientifica-production.up.railway.app/listado-eventos-cientificos").then((res) => res.json()),
-                    fetch("https://tfg-sociedad-cientifica-production.up.railway.app/listado-articulos-cientificos").then((res) => res.json()),
-                    fetch("https://tfg-sociedad-cientifica-production.up.railway.app/listado-proyectos-investigacion").then((res) => res.json()),
+                    fetch(`${API_BASE_URL}/listado-eventos-cientificos`).then((res) => res.json()),
+                    fetch(`${API_BASE_URL}/listado-articulos-cientificos`).then((res) => res.json()),
+                    fetch(`${API_BASE_URL}/listado-proyectos-investigacion`).then((res) => res.json()),
                 ]);
 
                 const eventosArray = resProyectos.eventos?.listaEventos || [];
@@ -125,7 +126,7 @@ const Header = () => {
             if (!isLoggedIn) return;
 
             try {
-                const res = await fetch("https://tfg-sociedad-cientifica-production.up.railway.app/listado-notificacion-usuario-sin-leer", {
+                const res = await fetch(`${API_BASE_URL}/listado-notificacion-usuario-sin-leer`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },

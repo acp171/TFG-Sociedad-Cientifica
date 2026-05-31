@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useAuth } from "../../hooks/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import esLocale from "@fullcalendar/core/locales/es";
 import enLocale from "@fullcalendar/core/locales/en-gb";
+import API_BASE_URL from "../../config/backendConfig";
 
 const Eventos = () => {
     const { t } = useTranslation();
@@ -20,7 +21,7 @@ const Eventos = () => {
     const currentPage = parseInt(searchParams.get("page")) || 1;
 
     useEffect(() => {
-        fetch("https://tfg-sociedad-cientifica-production.up.railway.app/listado-eventos-cientificos")
+        fetch(`${API_BASE_URL}/listado-eventos-cientificos`)
             .then((res) => res.json())
             .then((data) => {
                 setEventos(data.eventos?.listaEventos || []);

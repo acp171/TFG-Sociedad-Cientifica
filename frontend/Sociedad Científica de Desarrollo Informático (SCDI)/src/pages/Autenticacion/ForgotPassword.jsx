@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useState } from "react";
 import { Mail } from "lucide-react";
 
@@ -12,7 +13,7 @@ export default function ForgotPassword() {
 
         try {
             const res = await fetch(
-                "https://tfg-sociedad-cientifica-production.up.railway.app/auth/forgot-password",
+                `${API_BASE_URL}/auth/forgot-password`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },

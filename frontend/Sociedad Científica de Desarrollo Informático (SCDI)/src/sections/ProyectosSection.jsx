@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useEffect, useState } from 'react';
 
 const ProyectosSection = () => {
@@ -11,7 +12,7 @@ const ProyectosSection = () => {
     ];
 
     useEffect(() => {
-        fetch('https://tfg-sociedad-cientifica-production.up.railway.app/listado-proyectos-investigacion')
+        fetch(`${API_BASE_URL}/listado-proyectos-investigacion`)
         .then(res => res.json())
         .then(data => {
             setProyectos(data.proyectos.listaProyectos || []);

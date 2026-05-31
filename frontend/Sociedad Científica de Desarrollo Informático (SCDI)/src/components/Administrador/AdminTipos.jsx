@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useEffect, useState } from "react";
 
 const AdminTipos = () => {
@@ -20,7 +21,7 @@ const AdminTipos = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch("https://tfg-sociedad-cientifica-production.up.railway.app/tipos", {
+            const res = await fetch(`${API_BASE_URL}/tipos`, {
                 headers: {
                 Authorization: `Bearer ${token}`,
                 },
@@ -45,8 +46,8 @@ const AdminTipos = () => {
         const token = localStorage.getItem("token");
 
         const url = editandoId
-        ? `https://tfg-sociedad-cientifica-production.up.railway.app/tipos/${editandoId}`
-        : `https://tfg-sociedad-cientifica-production.up.railway.app/tipos`;
+        ? `${API_BASE_URL}/tipos/${editandoId}`
+        : `${API_BASE_URL}/tipos`;
 
         const method = editandoId ? "PUT" : "POST";
 
@@ -90,7 +91,7 @@ const AdminTipos = () => {
         const token = localStorage.getItem("token");
 
         try {
-            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/tipos/${id}`, {
+            const res = await fetch(`${API_BASE_URL}/tipos/${id}`, {
                 method: "DELETE",
                 headers: {
                 Authorization: `Bearer ${token}`,

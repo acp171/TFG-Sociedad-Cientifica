@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import API_BASE_URL from "../../backendConfig";
 
 const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresidente, token }) => {
     const { t } = useTranslation();
@@ -18,7 +19,7 @@ const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresiden
 
     const guardarProyecto = async () => {
         try {
-            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${proyectoId}`, {
+            const res = await fetch(`${API_BASE_URL}/proyectos-investigacion/${proyectoId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -42,7 +43,7 @@ const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresiden
     const eliminarProyecto = async () => {
         if (!window.confirm(t("detalle_proyecto.confirmar_eliminar"))) return;
         try {
-            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${proyectoId}`, {
+            const res = await fetch(`${API_BASE_URL}/proyectos-investigacion/${proyectoId}`, {
                 method: "DELETE",
                 headers: { 
                     "Content-Type": "application/json",

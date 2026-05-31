@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -21,7 +22,7 @@ const GestionMiembros = () => {
             try {
                 const token = localStorage.getItem("token");
                 const res = await fetch(
-                    "https://tfg-sociedad-cientifica-production.up.railway.app/corporacion/miembros",
+                    `${API_BASE_URL}/corporacion/miembros`,
                     {
                         headers: { Authorization: `Bearer ${token}` },
                     }
@@ -55,7 +56,7 @@ const GestionMiembros = () => {
             const token = localStorage.getItem("token");
             console.log(token);
             const res = await fetch(
-                "https://tfg-sociedad-cientifica-production.up.railway.app/corporacion/miembros",
+                `${API_BASE_URL}/corporacion/miembros`,
                 {
                     method: "POST",
                     headers: {
@@ -83,7 +84,7 @@ const GestionMiembros = () => {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
-                `https://tfg-sociedad-cientifica-production.up.railway.app/corporacion/miembros/${id}`,
+                `${API_BASE_URL}/corporacion/miembros/${id}`,
                 {
                     method: "DELETE",
                     headers: { Authorization: `Bearer ${token}` },

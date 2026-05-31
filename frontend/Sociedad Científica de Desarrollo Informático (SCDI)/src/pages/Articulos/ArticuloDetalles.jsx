@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { HiArrowLeft, HiDownload, HiTrash } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
+import API_BASE_URL from "../../backendConfig";
 
 const ArticuloDetalles = () => {
     const { slug } = useParams();
@@ -13,7 +14,7 @@ const ArticuloDetalles = () => {
     const usuario = JSON.parse(localStorage.getItem("socio"));
 
     useEffect(() => {
-        fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${slug}`)
+        fetch(`${API_BASE_URL}/articulos-cientificos/${slug}`)
             .then(res => res.json())
             .then(data => {
                 setArticulo(data.articulo);
@@ -24,7 +25,7 @@ const ArticuloDetalles = () => {
     const eliminar = async () => {
         if (!window.confirm(t("detalle_comun.confirmar_eliminar_articulo"))) return;
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${slug}`, {
+        const res = await fetch(`${API_BASE_URL}/articulos-cientificos/${slug}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`
@@ -40,7 +41,7 @@ const ArticuloDetalles = () => {
         if (!nuevoComentario.trim()) return;
 
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${identificador}/comentarios`, {
+        const res = await fetch(`${API_BASE_URL}/articulos-cientificos/${identificador}/comentarios`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -63,7 +64,7 @@ const ArticuloDetalles = () => {
     const cambiarVisibilidadComentario = async (identificador, idComentario) => {
         const token = localStorage.getItem("token");
 
-        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/${identificador}/comentarios/${idComentario}/moderar`, {
+        const res = await fetch(`${API_BASE_URL}/articulos-cientificos/${identificador}/comentarios/${idComentario}/moderar`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",

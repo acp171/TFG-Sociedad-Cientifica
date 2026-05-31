@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -26,7 +27,7 @@ const Contacto = () => {
         }
 
         try {
-            const response = await fetch("https://tfg-sociedad-cientifica-production.up.railway.app/notificacion-contacto", {
+            const response = await fetch(`${API_BASE_URL}/notificacion-contacto`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

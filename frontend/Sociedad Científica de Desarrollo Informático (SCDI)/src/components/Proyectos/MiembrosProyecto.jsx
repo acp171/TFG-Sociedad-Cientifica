@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -18,7 +19,7 @@ const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, tok
             return;
         }
         try {
-            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${proyectoId}/miembros`, {
+            const res = await fetch(`${API_BASE_URL}/proyectos-investigacion/${proyectoId}/miembros`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
@@ -43,7 +44,7 @@ const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, tok
     const eliminarMiembro = async (id_socio) => {
         if (!window.confirm(t("detalle_proyecto.confirmar_eliminar_miembro"))) return;
         try {
-            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${proyectoId}/miembros/${id_socio}`, {
+            const res = await fetch(`${API_BASE_URL}/proyectos-investigacion/${proyectoId}/miembros/${id_socio}`, {
                 method: "DELETE",
                 headers: { 
                     "Content-Type": "application/json",
@@ -64,7 +65,7 @@ const MiembrosProyecto = ({ miembros, setMiembros, proyectoId, esPresidente, tok
     const cambiarRol = async (id_socio, rolId) => {
         if (!window.confirm(t("detalle_proyecto.confirmar_cambio_rol"))) return;
         try {
-            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${proyectoId}/miembros/${id_socio}`, {
+            const res = await fetch(`${API_BASE_URL}/proyectos-investigacion/${proyectoId}/miembros/${id_socio}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ rol_proyecto: rolId }),

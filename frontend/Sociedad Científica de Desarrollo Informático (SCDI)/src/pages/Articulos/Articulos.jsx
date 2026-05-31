@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import API_BASE_URL from "../../backendConfig";
 
 const Articulos = () => {
     const { t } = useTranslation();
@@ -12,7 +13,7 @@ const Articulos = () => {
     const currentPage = parseInt(searchParams.get("page")) || 1;
 
     useEffect(() => {
-        fetch("https://tfg-sociedad-cientifica-production.up.railway.app/listado-articulos-cientificos")
+        fetch(`${API_BASE_URL}/listado-articulos-cientificos`)
             .then((res) => res.json())
             .then((data) => {
                 setArticulos(data.articulos?.listadoArticulos || []);

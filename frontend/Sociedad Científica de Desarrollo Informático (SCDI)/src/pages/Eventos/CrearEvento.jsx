@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { HiArrowLeft } from "react-icons/hi";
@@ -30,7 +31,7 @@ const CrearEvento = () => {
         if (!provincia || !valor) return;
 
         try {
-            const url = `https://tfg-sociedad-cientifica-production.up.railway.app/buscar-calles?provincia=${encodeURIComponent(
+            const url = `${API_BASE_URL}/buscar-calles?provincia=${encodeURIComponent(
                 provincia
             )}&query=${encodeURIComponent(valor)}`;
 
@@ -94,7 +95,7 @@ const CrearEvento = () => {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
-                "https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/crear-evento-cientifico",
+                `${API_BASE_URL}/eventos-cientificos/crear-evento-cientifico`,
                 {
                     method: "POST",
                     headers: { 

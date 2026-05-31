@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -20,7 +21,7 @@ const InscripcionesUsuario = () => {
         const fetchInscripciones = async () => {
             try {
                 const res = await fetch(
-                    "https://tfg-sociedad-cientifica-production.up.railway.app/incripciones/listado-incripciones-usuario",
+                    `${API_BASE_URL}/incripciones/listado-incripciones-usuario`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -45,7 +46,7 @@ const InscripcionesUsuario = () => {
 
         try {
             const res = await fetch(
-                `https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id_evento}/cancelar-inscripcion`,
+                `${API_BASE_URL}/eventos-cientificos/${id_evento}/cancelar-inscripcion`,
                 {
                     method: "DELETE",
                     headers: {

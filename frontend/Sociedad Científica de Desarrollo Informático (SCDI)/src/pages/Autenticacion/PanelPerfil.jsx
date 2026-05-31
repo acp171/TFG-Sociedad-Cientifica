@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../../hooks/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 import PerfilUsuario from "../../components/Perfil/PerfilUsuario";
 import Notificaciones from "../Notificaciones";

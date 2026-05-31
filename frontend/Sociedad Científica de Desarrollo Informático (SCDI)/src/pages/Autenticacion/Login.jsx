@@ -1,6 +1,7 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../../hooks/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 
 const Login = () => {
@@ -23,7 +24,7 @@ const Login = () => {
         setError(null);
 
         try {
-            const res = await fetch("https://tfg-sociedad-cientifica-production.up.railway.app/login", {
+            const res = await fetch(`${API_BASE_URL}/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),

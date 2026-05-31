@@ -1,7 +1,8 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MailOpen, Mail, X } from "lucide-react";
-import { useAuth } from "../hooks/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 
 const Notificaciones = () => {
@@ -14,7 +15,7 @@ const Notificaciones = () => {
     const fetchNotificaciones = async () => {
         try {
             const res = await fetch(
-                "https://tfg-sociedad-cientifica-production.up.railway.app/listado-notificacion-usuario",
+                `${API_BASE_URL}/listado-notificacion-usuario`,
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -62,7 +63,7 @@ const Notificaciones = () => {
     const marcarComoLeidaNotificacion = async (id) => {
         try {
             await fetch(
-                `https://tfg-sociedad-cientifica-production.up.railway.app/notificaciones/${id}/leida`,
+                `${API_BASE_URL}/notificaciones/${id}/leida`,
                 {
                     method: "PATCH",
                     headers: {

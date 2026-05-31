@@ -1,6 +1,6 @@
 import BloqueoSuscripcion from './components/Suscripcion/BloqueoSuscripcion';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import Header from './components/Layout/Header';
+import Footer from './components/Layout/Footer';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import QuienesSomos from './pages/Quienes-Somos';

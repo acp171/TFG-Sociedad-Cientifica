@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useEffect, useState } from "react";
 
 const AdminSocios = () => {
@@ -31,7 +32,7 @@ const AdminSocios = () => {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
-                "https://tfg-sociedad-cientifica-production.up.railway.app/socios/listado-socios",
+                `${API_BASE_URL}/socios/listado-socios`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -74,7 +75,7 @@ const AdminSocios = () => {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
-                "https://tfg-sociedad-cientifica-production.up.railway.app/socios/crear-socios",
+                `${API_BASE_URL}/socios/crear-socios`,
                 {
                     method: "POST",
                     headers: {

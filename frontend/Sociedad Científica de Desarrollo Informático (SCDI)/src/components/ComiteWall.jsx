@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -16,7 +17,7 @@ export default function ComiteWall({ comiteId }) {
         const cargarMensajes = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/comites/${comiteId}/mensajes`, {
+                const res = await fetch(`${API_BASE_URL}/comites/${comiteId}/mensajes`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -42,7 +43,7 @@ export default function ComiteWall({ comiteId }) {
 
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/comites/${comiteId}/mensajes`, {
+            const res = await fetch(`${API_BASE_URL}/comites/${comiteId}/mensajes`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

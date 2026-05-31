@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useEffect, useState } from 'react';
 import { useTranslation } from "react-i18next";
 
@@ -7,7 +8,7 @@ const EventosSection = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('https://tfg-sociedad-cientifica-production.up.railway.app/listado-eventos-cientificos')
+        fetch(`${API_BASE_URL}/listado-eventos-cientificos`)
         .then((res) => res.json())
         .then((data) => {
             setEventos(data.eventos.listaEventos || []);

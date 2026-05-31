@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PasarelaPago from "../../components/Pago/PasarelaPago";
@@ -55,7 +56,7 @@ const Register = () => {
                 plan: selectedPlan,
             };
 
-            const res = await fetch("https://tfg-sociedad-cientifica-production.up.railway.app/register", {
+            const res = await fetch(`${API_BASE_URL}/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(dataToSend),

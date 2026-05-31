@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Lock } from "lucide-react";
@@ -30,7 +31,7 @@ export default function ResetPassword() {
         }
 
         try {
-            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/auth/reset-password`, {
+            const res = await fetch(`${API_BASE_URL}/auth/reset-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token, password }),

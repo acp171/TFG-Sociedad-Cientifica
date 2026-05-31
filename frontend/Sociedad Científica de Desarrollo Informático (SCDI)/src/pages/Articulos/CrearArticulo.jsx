@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../config/backendConfig';
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { HiXCircle, HiArrowLeft } from 'react-icons/hi';
@@ -31,7 +32,7 @@ const CrearArticulo = () => {
         }
 
         try {
-            const res = await fetch("https://tfg-sociedad-cientifica-production.up.railway.app/articulos-cientificos/publicar-articulo-cientifico", {
+            const res = await fetch(`${API_BASE_URL}/articulos-cientificos/publicar-articulo-cientifico`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`

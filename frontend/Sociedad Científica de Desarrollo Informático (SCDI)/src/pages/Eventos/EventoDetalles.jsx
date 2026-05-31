@@ -6,7 +6,8 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import PasarelaPago from "../../components/Pago/PasarelaPago";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../../hooks/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
+import API_BASE_URL from "../../config/backendConfig";
 
 const EventoDetalles = () => {
     const { slug } = useParams();
@@ -26,7 +27,7 @@ const EventoDetalles = () => {
     const [precioPago, setPrecioPago] = useState(0);
 
     useEffect(() => {
-        fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${slug}`)
+        fetch(`${API_BASE_URL}/eventos-cientificos/${slug}`)
             .then(res => res.json())
             .then(data => {
                 setEvento(data.evento);
@@ -44,7 +45,7 @@ const EventoDetalles = () => {
     const eliminar = async () => {
         if (!window.confirm(t("detalle_comun.confirmar_eliminar_evento"))) return;
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${slug}`, {
+        const res = await fetch(`${API_BASE_URL}/eventos-cientificos/${slug}`, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${token}` }
         });
@@ -57,7 +58,7 @@ const EventoDetalles = () => {
         const token = localStorage.getItem("token");
 
         try {
-            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${slug}`, {
+            const res = await fetch(`${API_BASE_URL}/eventos-cientificos/${slug}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -90,7 +91,7 @@ const EventoDetalles = () => {
         const token = localStorage.getItem("token");
 
         if (token) {
-            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${slug}/inscribirse`, {
+            const res = await fetch(`${API_BASE_URL}/eventos-cientificos/${slug}/inscribirse`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -119,7 +120,7 @@ const EventoDetalles = () => {
 
     const cancelarInscripcion = async () => {
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${slug}/cancelar-inscripcion`, {
+        const res = await fetch(`${API_BASE_URL}/eventos-cientificos/${slug}/cancelar-inscripcion`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`,

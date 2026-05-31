@@ -5,6 +5,7 @@ import { HiArrowLeft } from 'react-icons/hi';
 import DatosProyecto from "../../components/Proyectos/DatosProyecto";
 import MiembrosProyecto from "../../components/Proyectos/MiembrosProyecto";
 import { useTranslation } from "react-i18next";
+import API_BASE_URL from "../../backendConfig";
 
 const ProyectoDetalles = () => {
     const { slug } = useParams();
@@ -21,7 +22,7 @@ const ProyectoDetalles = () => {
     const fetchProyecto = async () => {
         try {
             setLoading(true);
-            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/proyectos-investigacion/${slug}`);
+            const res = await fetch(`${API_BASE_URL}/proyectos-investigacion/${slug}`);
 
             if (!res.ok) {
                 throw new Error("Proyecto no encontrado")
