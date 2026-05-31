@@ -29,7 +29,7 @@ const Header = () => {
         ).map((evento) => ({
             tipo: "Evento",
             nombre: evento.nombre_evento,
-            id: evento.id_evento,
+            id: evento.slug || evento.id_evento,
         }
         ));
 
@@ -39,7 +39,7 @@ const Header = () => {
         ).map((articulo) => ({
             tipo: "Artículo",
             nombre: articulo.titulo,
-            id: articulo.id_publicacion,
+            id: articulo.slug || articulo.id_publicacion,
         }
         ));
 
@@ -49,7 +49,7 @@ const Header = () => {
         ).map((proyecto) => ({
             tipo: "Proyecto",
             nombre: proyecto.nombre_proyecto,
-            id: proyecto.id_proyecto,
+            id: proyecto.slug || proyecto.id_proyecto,
         }
         ));
 

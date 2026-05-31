@@ -44,7 +44,7 @@ const EventoDetalles = () => {
     const eliminar = async () => {
         if (!window.confirm(t("detalle_comun.confirmar_eliminar_evento"))) return;
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}`, {
+        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${evento?.slug || id}`, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${token}` }
         });
@@ -57,7 +57,7 @@ const EventoDetalles = () => {
         const token = localStorage.getItem("token");
 
         try {
-            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}`, {
+            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${evento?.slug || id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -90,7 +90,7 @@ const EventoDetalles = () => {
         const token = localStorage.getItem("token");
 
         if (token) {
-            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}/inscribirse`, {
+            const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${evento?.slug || id}/inscribirse`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -114,12 +114,12 @@ const EventoDetalles = () => {
     };
 
     const handlePagoExito = () => {
-        navigate(`/eventos-cientificos/${id}/inscribirse/evento-exito`);
+        navigate(`/eventos-cientificos/${evento?.slug || id}/inscribirse/evento-exito`);
     };
 
     const cancelarInscripcion = async () => {
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${id}/cancelar-inscripcion`, {
+        const res = await fetch(`https://tfg-sociedad-cientifica-production.up.railway.app/eventos-cientificos/${evento?.slug || id}/cancelar-inscripcion`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`,
