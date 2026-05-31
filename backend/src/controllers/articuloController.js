@@ -132,4 +132,12 @@ const moderarComentario = async (req, res) => {
     }
 };
 
-module.exports = { createArticulo, deleteArticulo, getArticulos, getArticuloById, downloadPDF, addComentario, moderarComentario };
+module.exports = {
+    createArticulo,
+    deleteArticulo,
+    getArticulos,
+    getArticuloById,
+    downloadPDF,
+    addComentario,
+    moderarComentario
+};

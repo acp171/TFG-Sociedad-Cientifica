@@ -122,4 +122,11 @@ const sendMensaje = async (req, res) => {
     }
 };
 
-module.exports = { createComite, addMiembro, removeMiembro, getComites, getMensajes, sendMensaje };
+module.exports = {
+    createComite,
+    addMiembro,
+    removeMiembro,
+    getComites,
+    getMensajes,
+    sendMensaje
+};

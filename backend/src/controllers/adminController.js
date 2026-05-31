@@ -178,4 +178,15 @@ const buscarCalles = async (req, res) => {
     }
 };
 
-module.exports = { asignarRol, eliminarRol, getRoles, createRol, updateRol, deleteRol, getTipos, createTipo, updateTipo, deleteTipo, buscarCalles };
+module.exports = {
+    asignarRol,
+    eliminarRol,
+    getRoles, createRol,
+    updateRol,
+    deleteRol,
+    getTipos,
+    createTipo,
+    updateTipo,
+    deleteTipo,
+    buscarCalles
+};

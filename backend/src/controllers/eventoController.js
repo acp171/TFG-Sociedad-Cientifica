@@ -27,7 +27,7 @@ const createEvento = async (req, res) => {
     try {
         const direccionObj = JSON.parse(direccion);
         const { calle, ciudad, codigo_postal, provincia, extra, latitud, longitud } = direccionObj;
-        
+
         const direccionResult = await pool.query(
             `INSERT INTO Direccion (calle, ciudad, codigo_postal, provincia, extra, latitud, longitud) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_direccion;`,
             [calle, ciudad, codigo_postal, provincia, extra || null, latitud || null, longitud || null]
@@ -196,4 +196,13 @@ const cancelarInscripcion = async (req, res) => {
     }
 };
 
-module.exports = { createEvento, updateEvento, deleteEvento, getEventos, getEventoById, inscribirse, getMisInscripciones, cancelarInscripcion };
+module.exports = {
+    createEvento,
+    updateEvento,
+    deleteEvento,
+    getEventos,
+    getEventoById,
+    inscribirse,
+    getMisInscripciones,
+    cancelarInscripcion
+};

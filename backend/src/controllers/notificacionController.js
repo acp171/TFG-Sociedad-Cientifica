@@ -75,4 +75,11 @@ const markAsRead = async (req, res) => {
     }
 };
 
-module.exports = { sendNotificacionToSocio, sendNotificacionContacto, getMisNotificaciones, getMisNotificacionesSinLeer, getAllNotificaciones, markAsRead };
+module.exports = {
+    sendNotificacionToSocio,
+    sendNotificacionContacto,
+    getMisNotificaciones,
+    getMisNotificacionesSinLeer,
+    getAllNotificaciones,
+    markAsRead
+};
