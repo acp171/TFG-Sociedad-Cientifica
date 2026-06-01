@@ -53,6 +53,7 @@ const createEvento = async (req, res) => {
 
 const updateEvento = async (req, res) => {
     const identifier = req.params.id;
+    const { nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, precio } = req.body;
     const isId = /^\d+$/.test(identifier);
 
     try {

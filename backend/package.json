@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "start": "dotenv -e .env.production -- node src/app.js",
-    "dev": "dotenv -e .env.development -- node src/app.js"
+    "dev": "dotenv -e .env.development -- node src/app.js",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +30,8 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^10.4.0",
-    "dotenv-cli": "^8.0.0"
+    "dotenv-cli": "^8.0.0",
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2"
   }
 }
