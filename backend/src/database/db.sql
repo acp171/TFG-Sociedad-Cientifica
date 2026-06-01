@@ -170,27 +170,6 @@ CREATE TABLE IF NOT EXISTS Forma_Pago (
     CONSTRAINT FK_FORMA_PAGO_SOCIO FOREIGN KEY (socio) REFERENCES Socio(id_socio) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Tarjeta_Credito (
-    forma_pago INT PRIMARY KEY,
-    numero_tarjeta VARCHAR(20),
-    fecha_expiracion DATE,
-    codigo_expiracion VARCHAR(3),
-    CONSTRAINT FK_TARJETA_CREDITO_FORMA_PAGO FOREIGN KEY (forma_pago) REFERENCES Forma_Pago(id_forma_pago) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS Paypal (
-    forma_pago INT PRIMARY KEY,
-    email_paypal VARCHAR(100),
-    CONSTRAINT FK_TARJETA_CREDITO_FORMA_PAGO FOREIGN KEY (forma_pago) REFERENCES Forma_Pago(id_forma_pago) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS Transferencia (
-    forma_pago INT PRIMARY KEY,
-    banco VARCHAR(100),
-    numero_cuenta VARCHAR(16),
-    CONSTRAINT FK_TARJETA_CREDITO_FORMA_PAGO FOREIGN KEY (forma_pago) REFERENCES Forma_Pago(id_forma_pago) ON DELETE CASCADE
-);
-
 -- PAGOS TABLE --
 CREATE TABLE IF NOT EXISTS Pagos (
     id_pago SERIAL PRIMARY KEY,
@@ -350,3 +329,8 @@ VALUES
     ('pagado', (SELECT MAX(id_evento) FROM Evento WHERE nombre_evento='Congreso Nacional de IA 2026'), (SELECT id_socio FROM Socio WHERE email='laura.mart@email.com')),
     ('pagado', (SELECT MAX(id_evento) FROM Evento WHERE nombre_evento='Hackathon de Seguridad y Redes'), (SELECT id_socio FROM Socio WHERE email='ana.garcia@email.com'))
 ON CONFLICT DO NOTHING;
+
+-- Formas de Pago de Ejemplo
+INSERT INTO Forma_Pago (nombre, socio)
+VALUES 
+    ('Cuenta Ahorros', (SELECT id_socio FROM Socio WHERE email='acp171@gcloud.ua.es'));
