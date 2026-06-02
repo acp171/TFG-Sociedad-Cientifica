@@ -87,9 +87,10 @@ const Proyectos = () => {
                         className="border rounded p-2"
                     >
                         <option value="">{t("proyectos.todos_estados")}</option>
-                        <option value="Pendiente">Pendiente</option>
-                        <option value="En curso">En curso</option>
-                        <option value="Finalizado">Finalizado</option>
+                        <option value="activo">Activo</option>
+                        <option value="finalizado">Finalizado</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="en curso">En curso</option>
                     </select>
 
                     <input
