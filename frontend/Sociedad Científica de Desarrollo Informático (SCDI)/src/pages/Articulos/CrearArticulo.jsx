@@ -2,8 +2,10 @@ import API_BASE_URL from '../../config/backendConfig';
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { HiXCircle, HiArrowLeft } from 'react-icons/hi';
+import { useTranslation } from "react-i18next";
 
 const CrearArticulo = () => {
+    const { t } = useTranslation();
     const [titulo, setTitulo] = useState("");
     const [contenido, setContenido] = useState("");
     const [pdfFile, setPdfFile] = useState(null);
@@ -46,14 +48,14 @@ const CrearArticulo = () => {
             if (res.ok) {
                 navigate("/articulos-cientificos");
             } else {
-                let mensaje = "Error desconocido";
+                let mensaje = "Error";
                 try {
                     const data = JSON.parse(text);
                     mensaje = data.message || mensaje;
                 } catch {
                     // ya tenemos `text`, lo mostramos por consola
                 }
-                alert("Error al publicar: " + mensaje);
+                alert(t("crear_articulo.error_publicar") + mensaje);
             }
         } catch (err) {
             console.error("Error al subir artículo:", err);
@@ -68,11 +70,11 @@ const CrearArticulo = () => {
                 className="self-start mb-6 flex items-center text-blue-600 hover:text-blue-800 font-semibold transition"
             >
                 <HiArrowLeft className="mr-2 text-xl" />
-                Volver
+                {t("crear_articulo.volver")}
             </button>
 
             <h2 className="text-3xl font-extrabold text-gray-900 mb-12 text-center">
-                PUBLICAR ARTÍCULO CIENTÍFICO
+                {t("crear_articulo.titulo_pagina")}
             </h2>
             <form
                 onSubmit={handleSubmit}
@@ -81,12 +83,12 @@ const CrearArticulo = () => {
             >
                 <div>
                     <label htmlFor="titulo" className="block mb-3 font-semibold text-gray-700">
-                        Título
+                        {t("crear_articulo.titulo")}
                     </label>
                     <input
                         id="titulo"
                         type="text"
-                        placeholder="Título"
+                        placeholder={t("crear_articulo.titulo_placeholder")}
                         value={titulo}
                         onChange={(e) => setTitulo(e.target.value)}
                         required
@@ -96,11 +98,11 @@ const CrearArticulo = () => {
 
                 <div>
                     <label htmlFor="contenido" className="block mb-3 font-semibold text-gray-700">
-                        Contenido
+                        {t("crear_articulo.contenido")}
                     </label>
                     <textarea
                         id="contenido"
-                        placeholder="Contenido"
+                        placeholder={t("crear_articulo.contenido_placeholder")}
                         value={contenido}
                         onChange={(e) => setContenido(e.target.value)}
                         required
@@ -114,7 +116,7 @@ const CrearArticulo = () => {
                         htmlFor="pdf-upload"
                         className="inline-block cursor-pointer bg-gray-700 text-white px-6 py-3 rounded-md hover:bg-yellow-600 transition select-none"
                     >
-                        Subir PDF
+                        {t("crear_articulo.subir_pdf")}
                     </label>
                     <input
                         id="pdf-upload"
@@ -125,15 +127,15 @@ const CrearArticulo = () => {
                     />
                     {pdfFile ? (
                         <div className="mt-4 flex items-center gap-3 text-gray-900 text-base">
-                        <span>Archivo seleccionado: {pdfFile.name}</span>
+                        <span>{t("crear_articulo.archivo_seleccionado", { name: pdfFile.name })}</span>
                         <HiXCircle
-                            title="Quitar archivo"
+                            title={t("crear_articulo.quitar_archivo")}
                             onClick={() => setPdfFile(null)}
                             className="text-2xl text-gray-500 hover:text-red-600 cursor-pointer transition duration-200"
                         />
                         </div>
                     ) : (
-                        <p className="mt-4 text-gray-500">No hay ningún archivo seleccionado.</p>
+                        <p className="mt-4 text-gray-500">{t("crear_articulo.no_archivo")}</p>
                     )}
                 </div>
 
@@ -142,7 +144,7 @@ const CrearArticulo = () => {
                         type="submit"
                         className="bg-blue-600 text-white font-semibold px-10 py-3 rounded-lg shadow-md hover:bg-blue-700 transition cursor-pointer"
                     >
-                        Publicar
+                        {t("crear_articulo.publicar")}
                     </button>
                 </div>
             </form>

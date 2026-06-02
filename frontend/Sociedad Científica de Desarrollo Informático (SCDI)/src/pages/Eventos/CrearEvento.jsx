@@ -2,8 +2,10 @@ import API_BASE_URL from '../../config/backendConfig';
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { HiArrowLeft } from "react-icons/hi";
+import { useTranslation } from "react-i18next";
 
 const CrearEvento = () => {
+    const { t } = useTranslation();
     const [provincia, setProvincia] = useState("");
     const [calleInput, setCalleInput] = useState("");
     const [calles, setCalles] = useState([]);
@@ -136,37 +138,37 @@ const CrearEvento = () => {
                 className="ml-10 flex items-center text-blue-600 hover:text-blue-800 font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 rounded"
             >
                 <HiArrowLeft className="mr-2 text-xl" />
-                Volver
+                {t("crear_evento.volver")}
             </button>
 
             <div className="max-w-2xl mx-auto bg-white shadow-xl rounded-2xl p-8 mt-10 relative">
                 <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
-                    CREAR EVENTO CIENTÍFICO
+                    {t("crear_evento.titulo")}
                 </h1>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <Input
-                        label="Nombre del evento"
+                        label={t("crear_evento.nombre")}
                         type="text"
                         value={nombreEvento}
                         onChange={(e) => setNombreEvento(e.target.value)}
                         required
                     />
                     <Textarea
-                        label="Descripción"
+                        label={t("crear_evento.descripcion")}
                         value={descripcion}
                         onChange={(e) => setDescripcion(e.target.value)}
                         required
                     />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Input
-                            label="Fecha de inicio"
+                            label={t("crear_evento.fecha_inicio")}
                             type="datetime-local"
                             value={fechaInicio}
                             onChange={(e) => setFechaInicio(e.target.value)}
                             required
                         />
                         <Input
-                            label="Fecha de fin"
+                            label={t("crear_evento.fecha_fin")}
                             type="datetime-local"
                             value={fechaFin}
                             onChange={(e) => setFechaFin(e.target.value)}
@@ -174,24 +176,24 @@ const CrearEvento = () => {
                         />
                     </div>
                     <Input
-                        label="Provincia"
+                        label={t("crear_evento.provincia")}
                         type="text"
                         value={provincia}
                         onChange={(e) => setProvincia(e.target.value)}
-                        placeholder="Ej: Madrid"
+                        placeholder={t("crear_evento.provincia_placeholder")}
                         required
                     />
                     <Input
-                        label="Calle"
+                        label={t("crear_evento.calle")}
                         type="text"
                         value={calleInput}
                         onChange={handleCalleChange}
-                        placeholder="Escribe parte del nombre"
+                        placeholder={t("crear_evento.calle_placeholder")}
                         required
                     />
                     <div>
                         <label className="block text-gray-700 font-semibold mb-1">
-                            Selecciona calle:
+                            {t("crear_evento.selecciona_calle")}
                         </label>
                         <select
                             value={calleSeleccionada?.place_id || ""}
@@ -205,7 +207,7 @@ const CrearEvento = () => {
                             className="w-full border border-gray-300 rounded px-3 py-2"
                             required
                         >
-                            <option value="">-- Elige una calle --</option>
+                            <option value="">{t("crear_evento.elige_calle")}</option>
                             {calles.map((calle) => (
                                 <option key={calle.place_id} value={calle.place_id}>
                                     {calle.display_name}
@@ -214,24 +216,24 @@ const CrearEvento = () => {
                         </select>
                     </div>
                     <Input
-                        label="Detalles adicionales"
+                        label={t("crear_evento.detalles")}
                         type="text"
                         value={direccionExtra}
                         onChange={(e) => setDireccionExtra(e.target.value)}
-                        placeholder="Ej: Número, piso, letra..."
+                        placeholder={t("crear_evento.detalles_placeholder")}
                     />
                     <Input
-                        label="Precio de inscripción (€)"
+                        label={t("crear_evento.precio")}
                         type="number"
                         value={precio}
                         onChange={(e) => setPrecio(e.target.value)}
-                        placeholder="0 = gratuito"
+                        placeholder={t("crear_evento.precio_placeholder")}
                     />
                     <button
                         type="submit"
                         className="w-full bg-green-600 text-white font-semibold py-3 rounded-md hover:bg-green-700 transition duration-200 cursor-pointer"
                     >
-                        Crear evento
+                        {t("crear_evento.crear")}
                     </button>
                 </form>
             </div>

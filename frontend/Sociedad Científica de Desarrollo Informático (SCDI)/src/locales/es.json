@@ -239,6 +239,25 @@
     "exito_cancelar": "Inscripción cancelada con éxito",
     "error_cancelar": "Error al cancelar inscripción"
   },
+  "crear_evento": {
+    "volver": "Volver",
+    "titulo": "CREAR EVENTO CIENTÍFICO",
+    "nombre": "Nombre del evento",
+    "descripcion": "Descripción",
+    "fecha_inicio": "Fecha de inicio",
+    "fecha_fin": "Fecha de fin",
+    "provincia": "Provincia",
+    "provincia_placeholder": "Ej: Madrid",
+    "calle": "Calle",
+    "calle_placeholder": "Escribe parte del nombre",
+    "selecciona_calle": "Selecciona calle:",
+    "elige_calle": "-- Elige una calle --",
+    "detalles": "Detalles adicionales",
+    "detalles_placeholder": "Ej: Número, piso, letra...",
+    "precio": "Precio de inscripción (€)",
+    "precio_placeholder": "0 = gratuito",
+    "crear": "Crear evento"
+  },
   "detalle_articulo": {
     "cargando": "Cargando artículo...",
     "publicado_por": "Publicado por:",
@@ -251,6 +270,20 @@
     "escribe_comentario": "Escribe tu comentario...",
     "enviar_comentario": "Enviar comentario",
     "error_enviar": "No se pudo enviar el comentario."
+  },
+  "crear_articulo": {
+    "volver": "Volver",
+    "titulo_pagina": "PUBLICAR ARTÍCULO CIENTÍFICO",
+    "titulo": "Título",
+    "titulo_placeholder": "Título",
+    "contenido": "Contenido",
+    "contenido_placeholder": "Contenido",
+    "subir_pdf": "Subir PDF",
+    "archivo_seleccionado": "Archivo seleccionado: {{name}}",
+    "quitar_archivo": "Quitar archivo",
+    "no_archivo": "No hay ningún archivo seleccionado.",
+    "publicar": "Publicar",
+    "error_publicar": "Error al publicar: "
   },
   "detalle_proyecto": {
     "datos": "Datos del Proyecto",
@@ -283,6 +316,19 @@
     "error_eliminar_miembro": "Error eliminando miembro",
     "error_cambiar_rol": "Error cambiando rol",
     "selecciona_socio_rol": "Selecciona socio y rol"
+  },
+  "crear_proyecto": {
+    "titulo_pagina": "CREAR NUEVO PROYECTO",
+    "nombre": "Nombre del proyecto",
+    "nombre_placeholder": "Nombre del proyecto",
+    "descripcion": "Descripción",
+    "descripcion_placeholder": "Descripción del proyecto",
+    "fecha_inicio": "Fecha inicio",
+    "fecha_fin": "Fecha fin",
+    "creando": "Creando...",
+    "crear": "Crear proyecto",
+    "error_crear": "Error al crear proyecto",
+    "exito_crear": "Proyecto creado con éxito"
   },
   "perfil_page": {
     "panel": "PANEL DE USUARIO",

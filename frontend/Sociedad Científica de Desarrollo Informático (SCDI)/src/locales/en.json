@@ -239,6 +239,25 @@
     "exito_cancelar": "Registration successfully cancelled",
     "error_cancelar": "Error cancelling registration"
   },
+  "crear_evento": {
+    "volver": "Go back",
+    "titulo": "CREATE SCIENTIFIC EVENT",
+    "nombre": "Event name",
+    "descripcion": "Description",
+    "fecha_inicio": "Start date",
+    "fecha_fin": "End date",
+    "provincia": "Province",
+    "provincia_placeholder": "E.g.: Madrid",
+    "calle": "Street",
+    "calle_placeholder": "Type part of the name",
+    "selecciona_calle": "Select street:",
+    "elige_calle": "-- Choose a street --",
+    "detalles": "Additional details",
+    "detalles_placeholder": "E.g.: Number, floor, door...",
+    "precio": "Registration price (€)",
+    "precio_placeholder": "0 = free",
+    "crear": "Create event"
+  },
   "detalle_articulo": {
     "cargando": "Loading article...",
     "publicado_por": "Published by:",
@@ -251,6 +270,20 @@
     "escribe_comentario": "Write your comment...",
     "enviar_comentario": "Send comment",
     "error_enviar": "Could not send comment."
+  },
+  "crear_articulo": {
+    "volver": "Go back",
+    "titulo_pagina": "PUBLISH SCIENTIFIC ARTICLE",
+    "titulo": "Title",
+    "titulo_placeholder": "Title",
+    "contenido": "Content",
+    "contenido_placeholder": "Content",
+    "subir_pdf": "Upload PDF",
+    "archivo_seleccionado": "Selected file: {{name}}",
+    "quitar_archivo": "Remove file",
+    "no_archivo": "No file selected.",
+    "publicar": "Publish",
+    "error_publicar": "Error publishing: "
   },
   "detalle_proyecto": {
     "datos": "Project Data",
@@ -283,6 +316,19 @@
     "error_eliminar_miembro": "Error deleting member",
     "error_cambiar_rol": "Error changing role",
     "selecciona_socio_rol": "Select member and role"
+  },
+  "crear_proyecto": {
+    "titulo_pagina": "CREATE NEW PROJECT",
+    "nombre": "Project name",
+    "nombre_placeholder": "Project name",
+    "descripcion": "Description",
+    "descripcion_placeholder": "Project description",
+    "fecha_inicio": "Start date",
+    "fecha_fin": "End date",
+    "creando": "Creating...",
+    "crear": "Create project",
+    "error_crear": "Error creating project",
+    "exito_crear": "Project created successfully"
   },
   "perfil_page": {
     "panel": "USER PANEL",

@@ -1,8 +1,10 @@
 import API_BASE_URL from '../../config/backendConfig';
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom"; 
+import { useTranslation } from "react-i18next";
 
 const CrearProyecto = () => {
+    const { t } = useTranslation();
     const fondoCrearProyecto = {
         width: "100%",
         minHeight: "100%",
@@ -74,11 +76,11 @@ const CrearProyecto = () => {
 
             if (!res.ok) {
                 const data = await res.json();
-                throw new Error(data.message || 'Error al crear proyecto');
+                throw new Error(data.message || t('crear_proyecto.error_crear'));
             }
 
             const data = await res.json();
-            alert("Proyecto creado con éxito");
+            alert(t('crear_proyecto.exito_crear'));
 
             navigate(`/proyectos-investigacion/${data.proyecto.id_proyecto}`);
         }
@@ -94,26 +96,26 @@ const CrearProyecto = () => {
         <div style={fondoCrearProyecto}>
             <div style={contenidoCrearProyecto}>
                 <div style={{ marginTop: 0, marginBottom: 0, paddingTop: '1rem', paddingBottom: '1rem' }}>
-                    <h2 className="text-2xl font-semibold mb-6 text-center text-blue-700">CREAR NUEVO PROYECTO</h2>
+                    <h2 className="text-2xl font-semibold mb-6 text-center text-blue-700">{t("crear_proyecto.titulo_pagina")}</h2>
 
                     <form onSubmit={handleSubmit} noValidate>
-                        <label htmlFor="nombre_proyecto" className="block mb-1 font-medium">Nombre del proyecto</label>
+                        <label htmlFor="nombre_proyecto" className="block mb-1 font-medium">{t("crear_proyecto.nombre")}</label>
                         <input
                             type="text"
                             id="nombre_proyecto"
                             name="nombre_proyecto"
-                            placeholder="Nombre del proyecto"
+                            placeholder={t("crear_proyecto.nombre_placeholder")}
                             value={formData.nombre_proyecto}
                             onChange={handleChange}
                             required
                             className="w-full mb-4 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
 
-                        <label htmlFor="descripcion" className="block mb-1 font-medium">Descripción</label>
+                        <label htmlFor="descripcion" className="block mb-1 font-medium">{t("crear_proyecto.descripcion")}</label>
                         <textarea
                             id="descripcion"
                             name="descripcion"
-                            placeholder="Descripción del proyecto"
+                            placeholder={t("crear_proyecto.descripcion_placeholder")}
                             value={formData.descripcion}
                             onChange={handleChange}
                             required
@@ -121,7 +123,7 @@ const CrearProyecto = () => {
                             rows={4}
                         />
 
-                        <label htmlFor="fecha_inicio" className="block mb-1 font-medium">Fecha inicio</label>
+                        <label htmlFor="fecha_inicio" className="block mb-1 font-medium">{t("crear_proyecto.fecha_inicio")}</label>
                         <input
                             type="date"
                             id="fecha_inicio"
@@ -132,7 +134,7 @@ const CrearProyecto = () => {
                             className="w-full mb-4 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
 
-                        <label htmlFor="fecha_fin" className="block mb-1 font-medium">Fecha fin</label>
+                        <label htmlFor="fecha_fin" className="block mb-1 font-medium">{t("crear_proyecto.fecha_fin")}</label>
                         <input
                             type="date"
                             id="fecha_fin"
@@ -151,7 +153,7 @@ const CrearProyecto = () => {
                             className={`w-full py-3 text-white font-semibold rounded-md transition-colors
                                 ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
                         >
-                            {loading ? "Creando..." : "Crear proyecto"}
+                            {loading ? t("crear_proyecto.creando") : t("crear_proyecto.crear")}
                         </button>
                     </form>
                 </div>
