@@ -54,7 +54,10 @@
     "proximos_eventos": "Próximos Eventos",
     "cargando_eventos": "Cargando eventos...",
     "no_eventos": "No hay eventos próximos.",
-    "hasta": "hasta"
+    "hasta": "hasta",
+    "proyectos_destacados": "Proyectos Destacados",
+    "cargando_proyectos": "Cargando proyectos...",
+    "no_proyectos": "No hay proyectos disponibles."
   },
   "quienes_somos": {
     "titulo": "Quiénes somos",

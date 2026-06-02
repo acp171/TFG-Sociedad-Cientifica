@@ -54,7 +54,10 @@
     "proximos_eventos": "Upcoming Events",
     "cargando_eventos": "Loading events...",
     "no_eventos": "No upcoming events.",
-    "hasta": "to"
+    "hasta": "to",
+    "proyectos_destacados": "Featured Projects",
+    "cargando_proyectos": "Loading projects...",
+    "no_proyectos": "No projects available."
   },
   "quienes_somos": {
     "titulo": "Who we are",
