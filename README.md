@@ -4,9 +4,9 @@ Este repositorio contiene la plataforma oficial de la **Sociedad Científica de 
 
 ---
 
-## 🛠️ Tecnologías y Requisitos Mínimos
+## 🛠️ Tecnologías y Requisitos mínimos
 
-| Herramienta | Versión Recomendada | Notas |
+| Herramienta | Versión recomendada | Notas |
 | :--- | :--- | :--- |
 | **Node.js** | `>= 18.x` | Entorno de ejecución principal |
 | **PostgreSQL** | `>= 14.x` | Base de datos relacional para producción |
@@ -15,7 +15,7 @@ Este repositorio contiene la plataforma oficial de la **Sociedad Científica de 
 
 ---
 
-## 🚀 1. Clonar e Instalar el Repositorio
+## 🚀 1. Clonar e instalar repositorio
 
 Clona el repositorio e introduce las dependencias iniciales en ambos extremos del proyecto:
 
@@ -27,23 +27,23 @@ cd TFG-Sociedad-Cientifica
 
 ---
 
-## 🖥️ 2. Configuración del Backend (Express + PostgreSQL)
+## 🖥️ 2. Configuración del backend (Express + PostgreSQL)
 
 El backend de SCDI se comunica de forma segura mediante HTTPS/REST y tokens JWT, con lógica "self-healing" que gestiona la base de datos automáticamente al arrancar.
 
-### 2.1. Instalación de Dependencias
+### 2.1. Instalación de dependencias
 
 ```bash
 cd backend
 npm install
 ```
 
-### 2.2. Configuración de Variables de Entorno
+### 2.2. Configuración de variables de entorno
 
 > [!NOTE]
-> **Despliegue en Railway (Producción):** No es necesario (ni seguro) subir archivos `.env` al repositorio de producción. Railway lee y gestiona todas las credenciales de forma segura directamente a través de su panel web (**Variables** de entorno en el dashboard del servicio). 
+> **Despliegue en Railway (producción):** No es necesario (ni seguro) subir archivos `.env` al repositorio de producción. Railway lee y gestiona todas las credenciales de forma segura directamente a través de su panel web (**Variables** de entorno en el dashboard del servicio). 
 > 
-> **Desarrollo en Local:** Para poder arrancar, depurar y ejecutar las pruebas en tu máquina local, sí necesitas crear el archivo `.env` en la raíz de la carpeta `backend/`.
+> **Desarrollo en local:** Para poder arrancar, depurar y ejecutar las pruebas en tu máquina local, sí necesitas crear el archivo `.env` en la raíz de la carpeta `backend/`.
 
 Duplica o renombra tu archivo de configuración de desarrollo en local:
 
@@ -57,28 +57,28 @@ Asegúrate de configurar los valores necesarios en tu `.env` local (o configurar
 PORT=4000
 NODE_ENV=development
 
-# URL de Conexión de PostgreSQL (Neon o Local)
+# URL de conexión de PostgreSQL (Neon o Local)
 DATABASE_URL=postgresql://usuario:contraseña@host:puerto/sociedad-cientifica?sslmode=require
 
-# Claves Secretas
+# Claves secretas
 JWT_SECRET=tu_clave_secreta_jwt
 ENCRYPTION_KEY=clave_segura_de_cifrado_aes_256_gcm
 
-# Integración con Stripe (Pagos y Reembolsos)
+# Integración con Stripe (pagos y reembolsos)
 STRIPE_SECRET=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 
-# Almacenamiento de PDF y Fotos (Cloudinary)
+# Almacenamiento de pdf y fotos (Cloudinary)
 CLOUDINARY_CLOUD_NAME=tu_cloud_name
 CLOUDINARY_API_KEY=tu_api_key
 CLOUDINARY_API_SECRET=tu_api_secret
 
-# Envío de Emails (SendGrid)
+# Envío de emails (SendGrid)
 SENDGRID_API_KEY=SG.tu_key
 EMAIL_USER=tu_correo@dominio.com
 ```
 
-### 2.3. Base de Datos y Automigración
+### 2.3. Base de datos y automigración
 
 SCDI cuenta con un sistema de **autocuración (self-healing) de base de datos** al inicio del servidor. Al arrancar, el backend realiza automáticamente las siguientes acciones:
 1. Crea o verifica las tablas requeridas.
@@ -87,11 +87,11 @@ SCDI cuenta con un sistema de **autocuración (self-healing) de base de datos** 
 
 ---
 
-## 🎨 3. Configuración del Frontend (React + Vite + TailwindCSS)
+## 🎨 3. Configuración del frontend (React + Vite + TailwindCSS)
 
 La interfaz es moderna, interactiva y totalmente responsiva, aplicando principios de diseño de alta gama y transiciones suaves.
 
-### 3.1. Instalación de Dependencias
+### 3.1. Instalación de dependencias
 
 ```bash
 # Navega al directorio del frontend
@@ -99,7 +99,7 @@ cd ../frontend/Sociedad\ Científica\ de\ Desarrollo\ Informático\ \(SCDI\)
 npm install
 ```
 
-### 3.2. Lanzamiento del Frontend
+### 3.2. Lanzamiento del frontend
 
 ```bash
 npm run dev
@@ -109,7 +109,7 @@ El panel estará disponible en su puerto local de Vite: [http://localhost:5173](
 
 ---
 
-## 💳 4. Integración y Escucha de Pagos con Stripe
+## 💳 4. Integración y escucha de pagos con Stripe
 
 Para probar flujos de inscripción de pago, cancelaciones con devolución del 100% de la cuota e integraciones transaccionales en tiempo real, es necesario instalar y configurar el **Stripe CLI**.
 
@@ -123,7 +123,7 @@ Para probar flujos de inscripción de pago, cancelaciones con devolución del 10
   ```
 * **Windows**: Descarga el ejecutable y añádelo al Path del sistema.
 
-### 4.2. Escucha de Webhooks en Local
+### 4.2. Escucha de webhooks en local
 
 1. Autentica la herramienta con tu cuenta de Stripe:
    ```bash
@@ -137,13 +137,13 @@ Para probar flujos de inscripción de pago, cancelaciones con devolución del 10
 
 ---
 
-## 🧪 5. Pruebas Automatizadas y Cobertura (Testing Suite)
+## 🧪 5. Pruebas automatizadas y cobertura (testing suite)
 
 La plataforma cuenta con una arquitectura de pruebas automatizadas masivas de integración y unitarias que garantizan la máxima tolerancia a fallos del sistema.
 
 Se han desarrollado **más de 160 tests deterministas** empleando **Jest**, **Supertest** y simulación intensiva de pasarelas y APIs externas (Stripe, Cloudinary, base de datos).
 
-### 5.1. Ejecutar las Pruebas
+### 5.1. Ejecutar las pruebas
 
 ```bash
 # Entra al backend
@@ -156,26 +156,26 @@ npm run test
 npm run test:coverage
 ```
 
-### 5.2. Métricas de Cobertura de Código Alcanzadas 📊
+### 5.2. Métricas de cobertura de código alcanzadas 📊
 
 La suite de integración de SCDI ha superado con creces el objetivo del 75% requerido:
 
-| Módulo/Controlador | % Cobertura de Líneas | Funciones Cubiertas | Estado |
+| Módulo/controlador | % Cobertura de líneas | Funciones cubiertas | Estado |
 | :--- | :---: | :---: | :---: |
 | **All Files (Global)** | **79.71%** | **98.46%** | **Excelente** ✅ |
-| `authMiddleware.js` (Middleware de Seguridad) | **92.00%** | **100%** | **Excelente** ✅ |
-| `slugify.js` (Algoritmos de Slugs) | **100.00%** | **100%** | **Excelente** ✅ |
-| `comiteController.js` (Comités Científicos) | **84.21%** | **100%** | **Excelente** ✅ |
-| `socioController.js` (Perfiles y Pagos) | **83.01%** | **100%** | **Excelente** ✅ |
-| `adminController.js` (Gestión Administrativa) | **82.11%** | **100%** | **Excelente** ✅ |
-| `proyectoController.js` (Proyectos de Investigación) | **81.94%** | **100%** | **Excelente** ✅ |
-| `eventoController.js` (Eventos y Tickets de Pago) | **80.14%** | **100%** | **Excelente** ✅ |
-| `authController.js` (Seguridad y Acceso) | **76.62%** | **100%** | **Excelente** ✅ |
+| `authMiddleware.js` (Middleware de seguridad) | **92.00%** | **100%** | **Excelente** ✅ |
+| `slugify.js` (Algoritmos de slugs) | **100.00%** | **100%** | **Excelente** ✅ |
+| `comiteController.js` (Comités científicos) | **84.21%** | **100%** | **Excelente** ✅ |
+| `socioController.js` (Perfiles y pagos) | **83.01%** | **100%** | **Excelente** ✅ |
+| `adminController.js` (Gestión administrativa) | **82.11%** | **100%** | **Excelente** ✅ |
+| `proyectoController.js` (Proyectos de investigación) | **81.94%** | **100%** | **Excelente** ✅ |
+| `eventoController.js` (Eventos y tickets de pago) | **80.14%** | **100%** | **Excelente** ✅ |
+| `authController.js` (Seguridad y acceso) | **76.62%** | **100%** | **Excelente** ✅ |
 | `notificacionController.js` (Mensajería) | **76.00%** | **100%** | **Excelente** ✅ |
 
 ---
 
-## ⚡ 6. Panel de Lanzamiento Rápido en Local
+## ⚡ 6. Panel de lanzamiento rápido en local
 
 Asegúrate de contar con las siguientes tres terminales abiertas en desarrollo:
 
