@@ -1,4 +1,4 @@
-import API_BASE_URL from '../../config/backendConfig';
+import API_BASE_URL from '../config/backendConfig';
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
