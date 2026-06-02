@@ -66,12 +66,12 @@ const Proyectos = () => {
             <div className="flex flex-col flex-grow">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-12">
                     <h1 className="text-4xl font-extrabold text-gray-900 mb-6 md:mb-0">{t("proyectos.titulo")}</h1>
-                    {(userTipoSocio > 2  || userRole === 1) && (
+                    {(userTipoSocio > 2 || userRole === 1) && (
                         <Link
-                                to="/proyectos-investigacion/crear-proyecto"
-                                className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold"
-                            >
-                                {t("proyectos.nuevo")}
+                            to="/proyectos-investigacion/crear-proyecto"
+                            className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 font-semibold"
+                        >
+                            {t("proyectos.nuevo")}
                         </Link>
                     )}
                 </div>
@@ -89,8 +89,8 @@ const Proyectos = () => {
                         <option value="">{t("proyectos.todos_estados")}</option>
                         <option value="activo">Activo</option>
                         <option value="finalizado">Finalizado</option>
-                        <option value="pendiente">Pendiente</option>
-                        <option value="en curso">En curso</option>
+                        <option value="pausado">Pausado</option>
+                        <option value="cancelado">Cancelado</option>
                     </select>
 
                     <input
@@ -113,8 +113,8 @@ const Proyectos = () => {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                             {proyectosVisibles.map((proyecto) => (
-                                <Link 
-                                    key={proyecto.id_proyecto} 
+                                <Link
+                                    key={proyecto.id_proyecto}
                                     to={`/proyectos-investigacion/${proyecto.slug || proyecto.id_proyecto}`}
                                     className="p-6 bg-gray-50 rounded-xl shadow-md"
                                     aria-label={`Ver proyecto: ${proyecto.nombre_proyecto}`}
@@ -147,11 +147,10 @@ const Proyectos = () => {
                             <button
                                 key={index + 1}
                                 onClick={() => cambiarPagina(index + 1)}
-                                className={`px-3 py-2 md:px-4 md:py-2 text-sm md:text-base rounded-md font-medium transition ${
-                                    currentPage === index + 1
-                                        ? "bg-indigo-600 text-white shadow-lg"
-                                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                                }`}
+                                className={`px-3 py-2 md:px-4 md:py-2 text-sm md:text-base rounded-md font-medium transition ${currentPage === index + 1
+                                    ? "bg-indigo-600 text-white shadow-lg"
+                                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                    }`}
                             >
                                 {index + 1}
                             </button>
