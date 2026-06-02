@@ -9,7 +9,7 @@ import API_BASE_URL from "../../config/backendConfig";
 
 
 const Header = () => {
-    const { isLoggedIn, logout, userRole } = useAuth();
+    const { isLoggedIn, logout, userRole, userTipoSocio } = useAuth();
     const { t } = useTranslation();
 
     const [query, setQuery] = useState("");
@@ -346,7 +346,7 @@ const Header = () => {
                     </Link>
                 )}
 
-                <LanguageSwitcher />
+                {isLoggedIn && userTipoSocio === 5 && <LanguageSwitcher />}
 
                 <Link
                     to="/contacto"
@@ -376,9 +376,11 @@ const Header = () => {
                         </ul>
                     </nav>
 
-                    <div className="flex justify-center">
-                        <LanguageSwitcher />
-                    </div>
+                    {isLoggedIn && userTipoSocio === 5 && (
+                        <div className="flex justify-center">
+                            <LanguageSwitcher />
+                        </div>
+                    )}
 
                     <div className="border-t pt-8 space-y-4">
                         <div className="flex flex-col gap-4">

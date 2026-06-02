@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Footer = () => {
     const { t } = useTranslation();
+    const { isLoggedIn, userTipoSocio } = useAuth();
     return (
       <footer className="bg-gray-200 text-gray-700 py-6">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
@@ -22,7 +24,7 @@ const Footer = () => {
           </div>
 
           {/* Centro: Language switcher */}
-          <LanguageSwitcher />
+          {isLoggedIn && userTipoSocio === 5 && <LanguageSwitcher />}
 
           {/* Derecha: Copyright */}
           <div className="text-xs text-gray-500 max-w-md">
