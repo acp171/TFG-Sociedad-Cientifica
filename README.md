@@ -21,7 +21,7 @@ Clona el repositorio e introduce las dependencias iniciales en ambos extremos de
 
 ```bash
 # Clonar repositorio
-git clone https://github.com/artraxer/TFG-Sociedad-Cientifica.git
+git clone https://github.com/acp171/TFG-Sociedad-Cientifica.git
 cd TFG-Sociedad-Cientifica
 ```
 
