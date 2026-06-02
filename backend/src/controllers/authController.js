@@ -51,6 +51,7 @@ const login = async (req, res) => {
             socio: {
                 id: socio.id_socio,
                 nombre: socio.nombre,
+                apellidos: socio.apellidos,
                 email: socio.email,
                 rol: socio.socio_rol,
                 tipo: socio.tipo_socio,
