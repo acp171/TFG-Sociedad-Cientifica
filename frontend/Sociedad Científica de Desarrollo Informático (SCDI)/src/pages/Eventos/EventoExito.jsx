@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 
 const EventoExito = () => {
-    const { id } = useParams();
+    const { slug } = useParams();
     const navigate = useNavigate();
     const [evento, setEvento] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -12,16 +12,16 @@ const EventoExito = () => {
 
     useEffect(() => {
         // Fetch event details to show on the ticket
-        fetch(`${API_BASE_URL}/eventos-cientificos/${id}`)
+        fetch(`${API_BASE_URL}/eventos-cientificos/${slug}`)
             .then(res => res.json())
             .then(data => {
                 setEvento(data.evento);
                 setLoading(false);
             })
             .catch(() => setLoading(false));
-            
+
         // Trigger confetti or similar effect if possible (simulate with simple timeout)
-    }, [id]);
+    }, [slug]);
 
     const formatFecha = (fecha) => {
         if (!fecha) return "";
@@ -44,11 +44,11 @@ const EventoExito = () => {
     }
 
     // Generate a stable ticket ID (saved to localStorage so it persists)
-    const storageKey = `ticket_evento_${id}`;
+    const storageKey = `ticket_evento_${slug}`;
     let ticketId = localStorage.getItem(storageKey);
     if (!ticketId) {
         const rand = Math.floor(Math.random() * 90000) + 10000; // 5-digit, generated once
-        ticketId = `TKT-${evento?.id_evento || id}-${socio?.id || 'GUEST'}-${rand}`;
+        ticketId = `TKT-${evento?.id_evento || slug}-${socio?.id || 'GUEST'}-${rand}`;
         localStorage.setItem(storageKey, ticketId);
     }
 
@@ -57,7 +57,7 @@ const EventoExito = () => {
             {/* Background decorations */}
             <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-indigo-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-50 animate-blob"></div>
             <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-50 animate-blob animation-delay-2000"></div>
-            
+
             <div className="text-center mb-10 z-10 animate-fade-in-down">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/20 text-green-400 mb-4 ring-4 ring-green-500/30">
                     <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
@@ -68,7 +68,7 @@ const EventoExito = () => {
 
             {/* HIGH FIDELITY TICKET COMPONENT */}
             <div className="z-10 w-full max-w-4xl mx-auto flex flex-col md:flex-row shadow-2xl rounded-2xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500 animate-fade-in-up filter drop-shadow-[0_20px_50px_rgba(79,70,229,0.3)]">
-                
+
                 {/* Left Side (Main Body) */}
                 <div className="bg-white flex-1 p-8 md:p-10 relative flex flex-col">
                     <div className="absolute top-0 right-0 w-16 h-16 bg-gray-900 rounded-bl-full md:hidden"></div>
@@ -78,11 +78,11 @@ const EventoExito = () => {
                         <div>
                             <p className="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-1">Entrada VIP / Official Pass</p>
                             <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight">
-                                {evento?.nombre_evento || "Evento Científico"}
+                                {evento?.nombre_evento || "Evento científico"}
                             </h2>
                         </div>
                         <div className="hidden md:block w-16 h-16 opacity-20">
-                            <svg className="w-full h-full text-indigo-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 3.8l6.8 13.6H5.2L12 5.8z"/></svg>
+                            <svg className="w-full h-full text-indigo-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 3.8l6.8 13.6H5.2L12 5.8z" /></svg>
                         </div>
                     </div>
 
@@ -129,7 +129,7 @@ const EventoExito = () => {
                 {/* Right Side (QR Code & Scan Area) */}
                 <div className="bg-indigo-600 flex-none md:w-72 p-8 md:p-10 flex flex-col justify-center items-center text-white relative">
                     <div className="bg-white p-4 rounded-xl shadow-inner mb-6 transform rotate-[-2deg] hover:rotate-0 transition-transform">
-                        <QRCodeSVG 
+                        <QRCodeSVG
                             value={`${window.location.origin}/verificar/${ticketId}`}
                             size={160}
                             bgColor={"#ffffff"}
@@ -140,7 +140,7 @@ const EventoExito = () => {
                     </div>
                     <p className="text-sm font-medium tracking-wide uppercase mb-1">Muestra este código</p>
                     <p className="text-xs font-light opacity-75 text-center">en el control de acceso del evento.</p>
-                    
+
                     <div className="absolute bottom-4 right-4 opacity-10 font-bold text-6xl italic transform -rotate-12">
                         SCDI
                     </div>
@@ -153,18 +153,18 @@ const EventoExito = () => {
                     className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-full font-semibold transition backdrop-blur-sm flex items-center"
                 >
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                    Imprimir o Guardar PDF
+                    Imprimir o guardar PDF
                 </button>
 
                 <button
-                    onClick={() => navigate(`/eventos-cientificos/${id}`)}
+                    onClick={() => navigate(`/eventos-cientificos/${slug}`)}
                     className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg rounded-full font-semibold transition flex items-center"
                 >
-                    Volver a Detalles
+                    Volver a detalles
                     <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </button>
             </div>
-            
+
             <style jsx="true">{`
                 @keyframes fade-in-down {
                     0% { opacity: 0; transform: translateY(-20px); }
