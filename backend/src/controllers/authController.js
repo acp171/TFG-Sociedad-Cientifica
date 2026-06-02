@@ -132,11 +132,51 @@ const forgotPassword = async (req, res) => {
         await pool.query('INSERT INTO PasswordResetTokens (socio, token_hash, expires_at, usado) VALUES ($1, $2, $3, FALSE)', [user.id_socio, tokenHash, expiresAt]);
 
         const resetUrl = `https://scdi.vercel.app/restablecer-contrasena?token=${token}`;
+
+        const emailHtml = `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; padding: 40px 0; margin: 0;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden;">
+                <div style="background-color: #2563eb; padding: 35px; text-align: center;">
+                    <h1 style="color: #ffffff; margin: 0; font-size: 26px; font-weight: bold; letter-spacing: 0.5px;">SCDI</h1>
+                    <p style="color: #bfdbfe; margin: 8px 0 0 0; font-size: 15px;">Sociedad Científica de Desarrollo Informático</p>
+                </div>
+                
+                <div style="padding: 40px 35px; color: #374151;">
+                    <h2 style="margin-top: 0; color: #111827; font-size: 22px;">Restablecer contraseña</h2>
+                    <p style="font-size: 16px; line-height: 1.6; color: #4b5563;">Hola,</p>
+                    <p style="font-size: 16px; line-height: 1.6; color: #4b5563;">
+                        Hemos recibido una solicitud para restablecer la contraseña asociada a esta dirección de correo electrónico. Si no has sido tú, puedes ignorar este mensaje de forma segura.
+                    </p>
+                    
+                    <div style="text-align: center; margin: 40px 0;">
+                        <a href="${resetUrl}" style="background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block;">
+                            Establecer nueva contraseña
+                        </a>
+                    </div>
+                    
+                    <p style="font-size: 14px; line-height: 1.6; color: #6b7280; margin-bottom: 5px;">
+                        Por motivos de seguridad, este enlace expirará en <strong>1 hora</strong>.
+                    </p>
+                    <p style="font-size: 13px; color: #6b7280; margin-top: 0;">
+                        Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:<br>
+                        <a href="${resetUrl}" style="color: #2563eb; word-break: break-all;">${resetUrl}</a>
+                    </p>
+                </div>
+                
+                <div style="background-color: #f8fafc; padding: 25px; text-align: center; border-top: 1px solid #e2e8f0;">
+                    <p style="margin: 0; color: #94a3b8; font-size: 13px;">
+                        © ${new Date().getFullYear()} Sociedad Científica de Desarrollo Informático (SCDI).
+                    </p>
+                </div>
+            </div>
+        </div>
+        `;
+
         const msg = {
             to: user.email,
             from: `"Sociedad Científica" <${process.env.EMAIL_USER}>`,
-            subject: 'Restablecer contraseña',
-            html: `<p>Hola,</p><p>Solicitaste restablecer tu contraseña. Haz clic aquí: <a href="${resetUrl}">Restablecer</a></p>`
+            subject: '🔒 Restablecer contraseña - SCDI',
+            html: emailHtml
         };
         await sgMail.send(msg);
         return res.status(200).json({ message: 'Si existe una cuenta con ese correo, recibirás instrucciones.' });
