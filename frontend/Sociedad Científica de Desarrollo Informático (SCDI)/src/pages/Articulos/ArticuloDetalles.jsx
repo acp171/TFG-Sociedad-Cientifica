@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { HiArrowLeft, HiDownload, HiTrash } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
-import API_BASE_URL from "../../backendConfig";
+import API_BASE_URL from "../../config/backendConfig";
 
 const ArticuloDetalles = () => {
     const { slug } = useParams();

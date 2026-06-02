@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import API_BASE_URL from "../../backendConfig";
+import API_BASE_URL from "../../config/backendConfig";
 
 const Articulos = () => {
     const { t } = useTranslation();

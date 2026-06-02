@@ -5,7 +5,7 @@ import { HiArrowLeft } from 'react-icons/hi';
 import DatosProyecto from "../../components/Proyectos/DatosProyecto";
 import MiembrosProyecto from "../../components/Proyectos/MiembrosProyecto";
 import { useTranslation } from "react-i18next";
-import API_BASE_URL from "../../backendConfig";
+import API_BASE_URL from "../../config/backendConfig";
 
 const ProyectoDetalles = () => {
     const { slug } = useParams();

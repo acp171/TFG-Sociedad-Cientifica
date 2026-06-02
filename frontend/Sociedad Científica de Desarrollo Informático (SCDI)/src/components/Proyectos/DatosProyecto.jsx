@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import API_BASE_URL from "../../backendConfig";
+import API_BASE_URL from "../../config/backendConfig";
 
 const DatosProyecto = ({ proyecto, setProyecto, navigate, proyectoId, esPresidente, token }) => {
     const { t } = useTranslation();

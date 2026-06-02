@@ -1,4 +1,4 @@
-import API_BASE_URL from '../../config/backendConfig';
+import API_BASE_URL from '../config/backendConfig';
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";

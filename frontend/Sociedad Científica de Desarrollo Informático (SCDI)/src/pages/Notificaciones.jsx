@@ -1,4 +1,4 @@
-import API_BASE_URL from '../../config/backendConfig';
+import API_BASE_URL from '../config/backendConfig';
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MailOpen, Mail, X } from "lucide-react";

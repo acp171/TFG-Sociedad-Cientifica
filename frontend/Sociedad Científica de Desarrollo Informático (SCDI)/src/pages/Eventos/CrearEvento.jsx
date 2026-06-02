@@ -98,7 +98,7 @@ const CrearEvento = () => {
                 `${API_BASE_URL}/eventos-cientificos/crear-evento-cientifico`,
                 {
                     method: "POST",
-                    headers: { 
+                    headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`
                     },
@@ -118,7 +118,7 @@ const CrearEvento = () => {
                 setCalleSeleccionada(null);
                 setDireccionExtra("");
                 setPrecio("0");
-            } 
+            }
             else {
                 const errorData = await res.json();
                 alert("Error creando evento: " + errorData.message);
@@ -234,7 +234,7 @@ const CrearEvento = () => {
                         Crear evento
                     </button>
                 </form>
-                </div>
+            </div>
         </div>
     );
 };
