@@ -84,7 +84,7 @@ export default function ComiteWall({ comiteId }) {
                 ) : (
                     <div className="space-y-4">
                         {mensajes.map((msg, i) => {
-                            const esMio = Number(msg.id_socio) === Number(usuario?.id);
+                            const esMio = Number(msg.socio_id ?? msg.id_socio) === Number(usuario?.id);
                             const fechaObj = new Date(msg.fecha_envio || new Date());
                             const hora = isNaN(fechaObj.getTime()) ? "" : fechaObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                             const fechaStr = isNaN(fechaObj.getTime()) ? "" : fechaObj.toLocaleDateString();
