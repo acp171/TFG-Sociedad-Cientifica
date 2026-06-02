@@ -28,8 +28,8 @@
     "notificaciones": "Notificaciones ({{count}})",
     "no_notificaciones": "No hay notificaciones",
     "ver_todas": "Mostrar todas las notificaciones",
-    "mi_perfil": "Mi Perfil",
-    "cerrar_sesion": "Cerrar Sesión",
+    "mi_perfil": "Mi perfil",
+    "cerrar_sesion": "Cerrar sesión",
     "iniciar_sesion": "INICIAR SESIÓN",
     "panel_admin": "Panel Administrador"
   },
@@ -44,18 +44,18 @@
     "unete": "ÚNETE",
     "sobre_titulo": "¿Quiénes Somos?",
     "sobre_desc": "Somos una comunidad científica universitaria que impulsa la investigación, el desarrollo informático y la colaboración académica. A través de nuestra plataforma, conectamos talento joven con oportunidades de crecimiento científico y tecnológico.",
-    "areas_titulo": "Áreas de Enfoque",
+    "areas_titulo": "Áreas de enfoque",
     "area_web": "Desarrollo Web",
     "area_ia": "IA & Machine Learning",
     "area_ciberseguridad": "Ciberseguridad",
     "area_eventos": "Eventos y Hackatones",
     "cta_titulo": "¿Listo para unirte a la SCDI?",
     "cta_desc": "Conéctate con una red vibrante de mentes científicas y tecnológicas.",
-    "proximos_eventos": "Próximos Eventos",
+    "proximos_eventos": "Próximos eventos",
     "cargando_eventos": "Cargando eventos...",
     "no_eventos": "No hay eventos próximos.",
     "hasta": "hasta",
-    "proyectos_destacados": "Proyectos Destacados",
+    "proyectos_destacados": "Proyectos destacados",
     "cargando_proyectos": "Cargando proyectos...",
     "no_proyectos": "No hay proyectos disponibles."
   },
@@ -67,7 +67,7 @@
     "p4": "Nuestra misión es <strong>conectar a las mentes inquietas y proactivas de la comunidad universitaria</strong>, promoviendo el trabajo colaborativo, la formación continua y la producción científica como pilares de nuestra identidad. Al unirnos, no solo compartimos conocimientos, sino que construimos una red sólida de apoyo y crecimiento profesional dentro de un marco ético, inclusivo y tecnológicamente avanzado."
   },
   "aviso_legal": {
-    "titulo": "Aviso Legal",
+    "titulo": "AVISO LEGAL",
     "p1": "Este sitio web pertenece a la <strong>Sociedad Científica de Desarrollo Informático (SCDI)</strong>. El acceso, navegación y uso del presente sitio web implica la aceptación expresa y sin reservas de todos los términos del presente aviso legal.",
     "seccion1_titulo": "1. Identificación del Responsable",
     "seccion1_p": "Responsable: Sociedad Científica de Desarrollo Informático (SCDI) <br /> Email de contacto: contacto@scdi.org",
@@ -176,7 +176,7 @@
     "marcar_leida": "Marcar como leída"
   },
   "perfil": {
-    "titulo": "Mi Perfil",
+    "titulo": "MI PERFIL",
     "editar": "Editar perfil",
     "guardar": "Guardar cambios",
     "cancelar": "Cancelar",

@@ -44,18 +44,18 @@
     "unete": "JOIN US",
     "sobre_titulo": "Who Are We?",
     "sobre_desc": "We are a university scientific community that promotes research, informatics development and academic collaboration. Through our platform, we connect young talent with scientific and technological growth opportunities.",
-    "areas_titulo": "Focus Areas",
+    "areas_titulo": "Focus areas",
     "area_web": "Web Development",
     "area_ia": "AI & Machine Learning",
     "area_ciberseguridad": "Cybersecurity",
     "area_eventos": "Events & Hackathons",
     "cta_titulo": "Ready to join SCDI?",
     "cta_desc": "Connect with a vibrant network of scientific and technological minds.",
-    "proximos_eventos": "Upcoming Events",
+    "proximos_eventos": "Upcoming events",
     "cargando_eventos": "Loading events...",
     "no_eventos": "No upcoming events.",
     "hasta": "to",
-    "proyectos_destacados": "Featured Projects",
+    "proyectos_destacados": "Featured projects",
     "cargando_proyectos": "Loading projects...",
     "no_proyectos": "No projects available."
   },
@@ -67,7 +67,7 @@
     "p4": "Our mission is to <strong>connect the restless and proactive minds of the university community</strong>, promoting collaborative work, continuous training and scientific production as pillars of our identity. By joining us, we not only share knowledge, but build a solid network of support and professional growth within an ethical, inclusive and technologically advanced framework."
   },
   "aviso_legal": {
-    "titulo": "Legal Notice",
+    "titulo": "LEGAL NOTICE",
     "p1": "This website belongs to the <strong>Scientific Society of Informatics Development (SCDI)</strong>. Access, browsing and use of this website implies the express and unreserved acceptance of all the terms of this legal notice.",
     "seccion1_titulo": "1. Identification of the Responsible Party",
     "seccion1_p": "Responsible: Scientific Society of Informatics Development (SCDI) <br /> Contact email: contacto@scdi.org",
@@ -176,7 +176,7 @@
     "marcar_leida": "Mark as read"
   },
   "perfil": {
-    "titulo": "My Profile",
+    "titulo": "MY PROFILE",
     "editar": "Edit profile",
     "guardar": "Save changes",
     "cancelar": "Cancel",
