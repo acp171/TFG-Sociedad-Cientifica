@@ -103,9 +103,9 @@ const PerfilUsuario = () => {
 
     return (
         <div className="min-h-[80vh] bg-gradient-to-b from-blue-200 to-white py-16 px-4">
-            
+
             <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-3xl p-8 mt-10">
-                
+
                 <h1 className="text-4xl font-bold text-indigo-700 mb-6 text-center">
                     {t("perfil_page.mi_perfil")}
                 </h1>
