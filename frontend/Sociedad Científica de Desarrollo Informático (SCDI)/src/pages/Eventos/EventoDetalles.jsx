@@ -168,7 +168,7 @@ const EventoDetalles = () => {
 
     return (
         <section className="min-h-screen bg-gradient-to-b from-blue-200 to-white py-16 px-6 lg:px-20 flex flex-col items-center">
-            <div className="flex justify-between items-center w-full mb-8">
+            <div className="flex flex-wrap justify-between items-center w-full mb-8 gap-3">
                 <button
                     onClick={() => navigate("/eventos-cientificos")}
                     className="flex items-center text-blue-600 hover:text-blue-800 font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 rounded"
@@ -177,18 +177,18 @@ const EventoDetalles = () => {
                 </button>
 
                 {(esPresidente || esAdministrador) && (
-                    <div className="flex gap-4">
+                    <div className="flex flex-wrap gap-3">
                         {modoEdicion ? (
                             <button
                                 onClick={guardarCambios}
-                                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md shadow-md transition focus:outline-none focus:ring-2 focus:ring-green-600"
+                                className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-md shadow-md transition focus:outline-none focus:ring-2 focus:ring-green-600"
                             >
                                 Guardar cambios
                             </button>
                         ) : (
                             <button
                                 onClick={() => setModoEdicion(true)}
-                                className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
                             >
                                 {t("detalle_comun.editar_evento")}
                             </button>
@@ -196,7 +196,7 @@ const EventoDetalles = () => {
 
                         <button
                             onClick={eliminar}
-                            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
+                            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-md transition shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
                         >
                             <HiTrash className="text-xl" /> {t("detalle_comun.eliminar_evento")}
                         </button>
