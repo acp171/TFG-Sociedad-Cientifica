@@ -152,6 +152,7 @@
     "cargando": "Loading projects...",
     "no_proyectos": "No projects available.",
     "todos_estados": "All statuses",
+    "fecha_fin_desde": "End date (from)",
     "inicio": "Start:",
     "fin": "End:",
     "estado": "Status:"

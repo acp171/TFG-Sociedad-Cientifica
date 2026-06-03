@@ -152,6 +152,7 @@
     "cargando": "Cargando proyectos...",
     "no_proyectos": "No hay proyectos disponibles.",
     "todos_estados": "Todos los estados",
+    "fecha_fin_desde": "Fecha fin (a partir de)",
     "inicio": "Inicio:",
     "fin": "Fin:",
     "estado": "Estado:"

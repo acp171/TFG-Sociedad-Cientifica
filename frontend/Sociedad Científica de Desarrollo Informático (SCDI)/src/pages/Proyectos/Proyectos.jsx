@@ -42,9 +42,11 @@ const Proyectos = () => {
         }
 
         if (filtroFechaFin) {
-            const fechaFinFiltro = new Date(filtroFechaFin);
-            const fechaFinProyecto = new Date(proyecto.fecha_fin);
-            cumpleFecha = fechaFinProyecto <= fechaFinFiltro;
+            // Comparar solo la parte de fecha (YYYY-MM-DD) para evitar problemas de zona horaria
+            const fechaFinProyecto = proyecto.fecha_fin
+                ? proyecto.fecha_fin.slice(0, 10)
+                : "";
+            cumpleFecha = fechaFinProyecto >= filtroFechaFin;
         }
 
         return cumpleEstado && cumpleFecha;
@@ -93,15 +95,20 @@ const Proyectos = () => {
                         <option value="cancelado">Cancelado</option>
                     </select>
 
-                    <input
-                        type="date"
-                        value={filtroFechaFin}
-                        onChange={(e) => {
-                            setFiltroFechaFin(e.target.value);
-                            setSearchParams({ page: 1 });
-                        }}
-                        className="border rounded p-2"
-                    />
+                    <div className="flex flex-col gap-1">
+                        <label className="text-xs text-gray-500 font-semibold uppercase tracking-wide">
+                            {t("proyectos.fecha_fin_desde") || "Fecha fin (a partir de)"}
+                        </label>
+                        <input
+                            type="date"
+                            value={filtroFechaFin}
+                            onChange={(e) => {
+                                setFiltroFechaFin(e.target.value);
+                                setSearchParams({ page: 1 });
+                            }}
+                            className="border rounded p-2"
+                        />
+                    </div>
                 </div>
 
                 {/* Contenido principal */}

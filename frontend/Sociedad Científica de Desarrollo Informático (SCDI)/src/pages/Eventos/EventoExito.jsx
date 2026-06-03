@@ -147,7 +147,7 @@ const EventoExito = () => {
                 </div>
             </div>
 
-            <div className="mt-12 z-10 flex gap-4 animate-fade-in-up transition-all delay-500">
+            <div className="mt-12 z-10 flex flex-col sm:flex-row gap-4 animate-fade-in-up transition-all delay-500 w-full sm:w-auto items-stretch sm:items-center">
                 <button
                     onClick={() => window.print()}
                     className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-full font-semibold transition backdrop-blur-sm flex items-center"

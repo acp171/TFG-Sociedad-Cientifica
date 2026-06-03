@@ -95,65 +95,69 @@ const PerfilUsuario = () => {
             <div style={{
                 background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
                 borderRadius: "20px",
-                padding: "36px 40px",
+                padding: "28px 24px",
                 marginBottom: "24px",
-                display: "flex",
-                alignItems: "center",
-                gap: "28px",
                 boxShadow: "0 8px 32px rgba(15,23,42,0.2)",
             }}>
-                <div style={{
-                    width: "88px", height: "88px", borderRadius: "50%",
-                    background: "linear-gradient(135deg, #3b82f6, #6366f1)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: "32px", fontWeight: 700, color: "white", flexShrink: 0,
-                    boxShadow: "0 4px 20px rgba(99,102,241,0.5)",
-                }}>
-                    {initials}
-                </div>
-                <div style={{ flex: 1 }}>
-                    <h1 style={{ margin: "0 0 4px", color: "white", fontSize: "24px", fontWeight: 700 }}>
-                        {usuario.nombre} {usuario.apellidos}
-                    </h1>
-                    <p style={{ margin: "0 0 12px", color: "#94a3b8", fontSize: "14px" }}>{usuario.email}</p>
-                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                        <span style={{
-                            background: "rgba(59,130,246,0.2)", color: "#60a5fa",
-                            padding: "4px 14px", borderRadius: "100px", fontSize: "12px", fontWeight: 600,
-                            border: "1px solid rgba(59,130,246,0.3)"
-                        }}>
-                            {usuario.tipo_socio}
-                        </span>
-                        <span style={{
-                            background: "rgba(168,85,247,0.2)", color: "#c084fc",
-                            padding: "4px 14px", borderRadius: "100px", fontSize: "12px", fontWeight: 600,
-                            border: "1px solid rgba(168,85,247,0.3)"
-                        }}>
-                            {usuario.socio_rol}
-                        </span>
+                {/* Avatar + info row */}
+                <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap" }}>
+                    <div style={{
+                        width: "80px", height: "80px", borderRadius: "50%",
+                        background: "linear-gradient(135deg, #3b82f6, #6366f1)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        fontSize: "28px", fontWeight: 700, color: "white", flexShrink: 0,
+                        boxShadow: "0 4px 20px rgba(99,102,241,0.5)",
+                    }}>
+                        {initials}
+                    </div>
+                    <div style={{ flex: 1, minWidth: "150px" }}>
+                        <h1 style={{ margin: "0 0 4px", color: "white", fontSize: "22px", fontWeight: 700, wordBreak: "break-word" }}>
+                            {usuario.nombre} {usuario.apellidos}
+                        </h1>
+                        <p style={{ margin: "0 0 10px", color: "#94a3b8", fontSize: "13px", wordBreak: "break-all" }}>{usuario.email}</p>
+                        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                            <span style={{
+                                background: "rgba(59,130,246,0.2)", color: "#60a5fa",
+                                padding: "4px 14px", borderRadius: "100px", fontSize: "12px", fontWeight: 600,
+                                border: "1px solid rgba(59,130,246,0.3)"
+                            }}>
+                                {usuario.tipo_socio}
+                            </span>
+                            <span style={{
+                                background: "rgba(168,85,247,0.2)", color: "#c084fc",
+                                padding: "4px 14px", borderRadius: "100px", fontSize: "12px", fontWeight: 600,
+                                border: "1px solid rgba(168,85,247,0.3)"
+                            }}>
+                                {usuario.socio_rol}
+                            </span>
+                        </div>
                     </div>
                 </div>
+                {/* Edit button below on all sizes */}
                 {!editando && (
-                    <button
-                        onClick={() => setEditando(true)}
-                        style={{
-                            padding: "10px 20px", background: "rgba(59,130,246,0.15)",
-                            color: "#60a5fa", border: "1px solid rgba(59,130,246,0.3)",
-                            borderRadius: "10px", cursor: "pointer", fontSize: "13px", fontWeight: 600,
-                            display: "flex", alignItems: "center", gap: "6px", flexShrink: 0,
-                        }}
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" style={{ width: "16px" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                        {t("perfil_page.editar_perfil")}
-                    </button>
+                    <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
+                        <button
+                            onClick={() => setEditando(true)}
+                            style={{
+                                padding: "10px 20px", background: "rgba(59,130,246,0.15)",
+                                color: "#60a5fa", border: "1px solid rgba(59,130,246,0.3)",
+                                borderRadius: "10px", cursor: "pointer", fontSize: "13px", fontWeight: 600,
+                                display: "flex", alignItems: "center", gap: "6px",
+                            }}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" style={{ width: "16px" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            {t("perfil_page.editar_perfil")}
+                        </button>
+                    </div>
                 )}
             </div>
 
-            {/* Info grid */}
+            {/* Info grid — 1 col on mobile, 2 cols on sm+ */}
             {!editando && (
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "24px" }}>
+                <div style={{ display: "grid", gap: "16px", marginBottom: "24px" }}
+                    className="grid-cols-1 sm:grid-cols-2">
                     <InfoCard
                         label={t("perfil_page.nombre_completo")}
                         value={`${usuario.nombre} ${usuario.apellidos}`}
@@ -186,13 +190,13 @@ const PerfilUsuario = () => {
                     <h2 style={{ margin: "0 0 24px", fontSize: "18px", fontWeight: 700, color: "#1e293b" }}>
                         {t("perfil_page.editar_perfil")}
                     </h2>
-                    <form onSubmit={handleGuardar} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+                    <form onSubmit={handleGuardar} style={{ display: "grid", gap: "20px" }} className="grid-cols-1 sm:grid-cols-2">
                         {[
                             { label: t("perfil_page.nombre"), value: nombre, setter: setNombre },
                             { label: t("perfil_page.apellidos"), value: apellidos, setter: setApellidos },
                             { label: t("perfil_page.telefono"), value: telefono, setter: setTelefono, full: true },
                         ].map(({ label, value, setter, full }) => (
-                            <div key={label} style={{ gridColumn: full ? "span 2" : "span 1" }}>
+                            <div key={label} className={full ? "col-span-1 sm:col-span-2" : ""}>
                                 <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#64748b", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                                     {label}
                                 </label>
@@ -208,7 +212,7 @@ const PerfilUsuario = () => {
                                 />
                             </div>
                         ))}
-                        <div style={{ gridColumn: "span 2", display: "flex", gap: "12px", justifyContent: "flex-end", marginTop: "8px" }}>
+                        <div className="col-span-1 sm:col-span-2" style={{ display: "flex", gap: "12px", justifyContent: "flex-end", marginTop: "8px", flexWrap: "wrap" }}>
                             <button
                                 type="button"
                                 onClick={() => setEditando(false)}
@@ -235,9 +239,9 @@ const PerfilUsuario = () => {
             {/* Danger zone */}
             <div style={{
                 background: "#fff5f5", border: "1px solid #fecaca", borderRadius: "16px",
-                padding: "24px 28px", display: "flex", alignItems: "center", justifyContent: "space-between",
+                padding: "20px 24px",
             }}>
-                <div>
+                <div style={{ marginBottom: "12px" }}>
                     <p style={{ margin: 0, fontWeight: 700, color: "#991b1b", fontSize: "15px" }}>Zona de peligro</p>
                     <p style={{ margin: "4px 0 0", color: "#b91c1c", fontSize: "13px" }}>
                         {t("perfil_page.confirmar_baja")}
@@ -248,7 +252,7 @@ const PerfilUsuario = () => {
                     style={{
                         padding: "10px 20px", background: "#dc2626", color: "white",
                         border: "none", borderRadius: "10px", cursor: "pointer", fontSize: "13px", fontWeight: 600,
-                        display: "flex", alignItems: "center", gap: "6px", flexShrink: 0,
+                        display: "flex", alignItems: "center", gap: "6px",
                     }}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" style={{ width: "16px" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

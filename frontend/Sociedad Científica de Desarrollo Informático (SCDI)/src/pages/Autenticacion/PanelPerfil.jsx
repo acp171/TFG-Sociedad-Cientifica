@@ -33,6 +33,7 @@ const icons = {
 const PanelPerfil = () => {
     const { t } = useTranslation();
     const [selectedTab, setSelectedTab] = useState("perfil");
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const { userTipoSocio } = useAuth();
 
     // Leer datos básicos del token JWT
@@ -67,9 +68,25 @@ const PanelPerfil = () => {
     const email = tokenPayload?.email || "";
     const initials = `${(nombre[0] || "?").toUpperCase()}${(apellidos[0] || "?").toUpperCase()}`;
 
+    const handleTabChange = (tabId) => {
+        setSelectedTab(tabId);
+        setSidebarOpen(false); // close on mobile after selecting
+    };
 
     return (
-        <div style={{ minHeight: "100vh", display: "flex", background: "linear-gradient(135deg, #f0f4ff 0%, #fafafa 100%)" }}>
+        <div style={{ minHeight: "100vh", display: "flex", background: "linear-gradient(135deg, #f0f4ff 0%, #fafafa 100%)", position: "relative" }}>
+
+            {/* Mobile overlay backdrop */}
+            {sidebarOpen && (
+                <div
+                    onClick={() => setSidebarOpen(false)}
+                    style={{
+                        position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)",
+                        zIndex: 40, backdropFilter: "blur(2px)",
+                    }}
+                />
+            )}
+
             {/* Sidebar */}
             <aside style={{
                 width: "280px",
@@ -80,7 +97,29 @@ const PanelPerfil = () => {
                 padding: "0",
                 boxShadow: "4px 0 20px rgba(0,0,0,0.15)",
                 flexShrink: 0,
-            }}>
+                // Mobile: fixed overlay; Desktop: static in flow
+                position: "fixed",
+                top: 0,
+                left: 0,
+                height: "100%",
+                zIndex: 50,
+                transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
+                transition: "transform 0.3s ease",
+            }}
+            // On desktop (≥768px), always show
+            className="md:static md:translate-x-0 md:transform-none md:z-auto md:h-auto"
+            >
+                {/* Close button (mobile only) */}
+                <button
+                    onClick={() => setSidebarOpen(false)}
+                    className="md:hidden absolute top-4 right-4 text-white opacity-60 hover:opacity-100 transition"
+                    aria-label="Cerrar menú"
+                >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
                 {/* Logo area */}
                 <div style={{
                     padding: "28px 24px 20px",
@@ -105,11 +144,10 @@ const PanelPerfil = () => {
                     {nombre && (
                         <>
                             <p style={{ color: "white", fontWeight: 600, fontSize: "15px", margin: 0 }}>{nombre} {apellidos}</p>
-                            <p style={{ color: "#94a3b8", fontSize: "12px", margin: "4px 0 0" }}>{email}</p>
+                            <p style={{ color: "#94a3b8", fontSize: "12px", margin: "4px 0 0", wordBreak: "break-all" }}>{email}</p>
                         </>
                     )}
                 </div>
-
 
                 {/* Nav */}
                 <nav style={{ padding: "16px 12px", flex: 1 }}>
@@ -118,7 +156,7 @@ const PanelPerfil = () => {
                         return (
                             <button
                                 key={tab.id}
-                                onClick={() => setSelectedTab(tab.id)}
+                                onClick={() => handleTabChange(tab.id)}
                                 style={{
                                     width: "100%", display: "flex", alignItems: "center", gap: "12px",
                                     padding: "12px 16px", borderRadius: "10px", border: "none", cursor: "pointer",
@@ -142,11 +180,38 @@ const PanelPerfil = () => {
             </aside>
 
             {/* Main content */}
-            <main style={{ flex: 1, padding: "32px", overflowY: "auto" }}>
-                <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+            <main style={{ flex: 1, overflowY: "auto", width: "100%" }} className="md:ml-0">
+                {/* Mobile top bar */}
+                <div className="md:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-200 shadow-sm sticky top-0 z-30">
+                    <button
+                        onClick={() => setSidebarOpen(true)}
+                        aria-label="Abrir menú"
+                        style={{
+                            background: "#1e293b", color: "white", border: "none",
+                            borderRadius: "8px", padding: "8px", cursor: "pointer",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                        }}
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    <span style={{ fontWeight: 700, fontSize: "16px", color: "#1e293b" }}>
+                        {tabs.find(t => t.id === selectedTab)?.label || "Panel"}
+                    </span>
+                </div>
+
+                <div style={{ padding: "24px 16px", maxWidth: "900px", margin: "0 auto" }} className="sm:px-6 lg:px-8">
                     {renderContent()}
                 </div>
             </main>
+
+            {/* Sidebar spacer for desktop so main content doesn't go under fixed sidebar */}
+            <style>{`
+                @media (min-width: 768px) {
+                    aside { position: static !important; transform: none !important; height: auto !important; z-index: auto !important; }
+                }
+            `}</style>
         </div>
     );
 };
