@@ -57,7 +57,20 @@
     "hasta": "hasta",
     "proyectos_destacados": "Proyectos destacados",
     "cargando_proyectos": "Cargando proyectos...",
-    "no_proyectos": "No hay proyectos disponibles."
+    "no_proyectos": "No hay proyectos disponibles.",
+    "categoria_investigacion": "Investigación",
+    "subtitulo_proyectos": "Descubre los proyectos de investigación más recientes de nuestra sociedad científica.",
+    "ver_todos_proyectos": "Ver todos los proyectos",
+    "categoria_agenda": "Agenda",
+    "subtitulo_eventos": "Participa en los próximos eventos científicos de nuestra comunidad.",
+    "ver_todos_eventos": "Ver todos los eventos",
+    "estado_activo": "Activo",
+    "estado_finalizado": "Finalizado",
+    "estado_pausado": "Pausado",
+    "estado_cancelado": "Cancelado",
+    "badge_hoy": "¡Hoy!",
+    "badge_en_dias": "En {{dias}}d",
+    "fecha_fin_label": "Fin:"
   },
   "quienes_somos": {
     "titulo": "Quiénes somos",

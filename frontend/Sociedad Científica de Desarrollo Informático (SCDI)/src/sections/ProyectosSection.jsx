@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-const statusConfig = {
-    activo: { label: 'Activo', bg: 'rgba(34,197,94,0.15)', color: '#16a34a', dot: '#22c55e' },
-    finalizado: { label: 'Finalizado', bg: 'rgba(148,163,184,0.15)', color: '#64748b', dot: '#94a3b8' },
-    pausado: { label: 'Pausado', bg: 'rgba(251,191,36,0.15)', color: '#b45309', dot: '#f59e0b' },
-    cancelado: { label: 'Cancelado', bg: 'rgba(239,68,68,0.15)', color: '#dc2626', dot: '#ef4444' },
-};
+const statusConfig = (t) => ({
+    activo: { label: t('home.estado_activo'), bg: 'rgba(34,197,94,0.15)', color: '#16a34a', dot: '#22c55e' },
+    finalizado: { label: t('home.estado_finalizado'), bg: 'rgba(148,163,184,0.15)', color: '#64748b', dot: '#94a3b8' },
+    pausado: { label: t('home.estado_pausado'), bg: 'rgba(251,191,36,0.15)', color: '#b45309', dot: '#f59e0b' },
+    cancelado: { label: t('home.estado_cancelado'), bg: 'rgba(239,68,68,0.15)', color: '#dc2626', dot: '#ef4444' },
+});
 
 const cardGradients = [
     'linear-gradient(135deg, #1e40af 0%, #3730a3 100%)',
@@ -42,13 +42,13 @@ const ProyectosSection = () => {
                         padding: '6px 18px', borderRadius: '100px', fontSize: '13px', fontWeight: 700,
                         letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '16px',
                     }}>
-                        Investigación
+                        {t('home.categoria_investigacion')}
                     </span>
                     <h2 style={{ fontSize: 'clamp(24px, 4vw, 40px)', fontWeight: 800, color: '#0f172a', margin: '0 0 12px', lineHeight: 1.2 }}>
                         {t('home.proyectos_destacados')}
                     </h2>
                     <p style={{ color: '#64748b', fontSize: '16px', maxWidth: '520px', margin: '0 auto' }}>
-                        Descubre los proyectos de investigación más recientes de nuestra sociedad científica.
+                        {t('home.subtitulo_proyectos')}
                     </p>
                 </div>
 
@@ -66,7 +66,7 @@ const ProyectosSection = () => {
                 ) : (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '24px' }}>
                         {proyectos.slice(0, 4).map((proyecto, i) => {
-                            const status = statusConfig[proyecto.estado?.toLowerCase()] || statusConfig.activo;
+                            const status = (statusConfig(t))[proyecto.estado?.toLowerCase()] || statusConfig(t).activo;
                             const gradient = cardGradients[i % cardGradients.length];
                             return (
                                 <Link
@@ -145,7 +145,7 @@ const ProyectosSection = () => {
                                         {/* Footer */}
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px' }}>
                                             <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '11px' }}>
-                                                {proyecto.fecha_fin ? `Fin: ${new Date(proyecto.fecha_fin).toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}` : ''}
+                                                {proyecto.fecha_fin ? `${t('home.fecha_fin_label')} ${new Date(proyecto.fecha_fin).toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}` : ''}
                                             </span>
                                             <span style={{
                                                 color: 'white', fontSize: '20px', fontWeight: 300,
@@ -173,7 +173,7 @@ const ProyectosSection = () => {
                             onMouseEnter={e => e.currentTarget.style.background = '#0f172a'}
                             onMouseLeave={e => e.currentTarget.style.background = '#1e293b'}
                         >
-                            Ver todos los proyectos <span>→</span>
+                            {t('home.ver_todos_proyectos')} <span>→</span>
                         </Link>
                     </div>
                 )}

@@ -69,13 +69,13 @@ const EventosSection = () => {
                         padding: '6px 18px', borderRadius: '100px', fontSize: '13px', fontWeight: 700,
                         letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '16px',
                     }}>
-                        Agenda
+                        {t('home.categoria_agenda')}
                     </span>
                     <h2 style={{ fontSize: 'clamp(24px, 4vw, 40px)', fontWeight: 800, color: 'white', margin: '0 0 12px', lineHeight: 1.2 }}>
                         {t('home.proximos_eventos')}
                     </h2>
                     <p style={{ color: '#94a3b8', fontSize: '16px', maxWidth: '520px', margin: '0 auto' }}>
-                        Participa en los próximos eventos científicos de nuestra comunidad.
+                        {t('home.subtitulo_eventos')}
                     </p>
                 </div>
 
@@ -99,10 +99,10 @@ const EventosSection = () => {
                             const isSoon = daysUntil > 0 && daysUntil <= 7;
 
                             let badge = null;
-                            if (isPast) badge = { label: 'Finalizado', color: '#64748b', bg: 'rgba(100,116,139,0.15)' };
-                            else if (isToday) badge = { label: '¡Hoy!', color: '#f59e0b', bg: 'rgba(245,158,11,0.2)' };
-                            else if (isSoon) badge = { label: `En ${daysUntil}d`, color: '#10b981', bg: 'rgba(16,185,129,0.15)' };
-                            else badge = { label: `En ${daysUntil}d`, color: '#60a5fa', bg: 'rgba(96,165,250,0.1)' };
+                            if (isPast) badge = { label: t('home.estado_finalizado'), color: '#64748b', bg: 'rgba(100,116,139,0.15)' };
+                            else if (isToday) badge = { label: t('home.badge_hoy'), color: '#f59e0b', bg: 'rgba(245,158,11,0.2)' };
+                            else if (isSoon) badge = { label: t('home.badge_en_dias', { dias: daysUntil }), color: '#10b981', bg: 'rgba(16,185,129,0.15)' };
+                            else badge = { label: t('home.badge_en_dias', { dias: daysUntil }), color: '#60a5fa', bg: 'rgba(96,165,250,0.1)' };
 
                             return (
                                 <Link
@@ -191,7 +191,7 @@ const EventosSection = () => {
                             onMouseEnter={e => e.currentTarget.style.background = '#4f46e5'}
                             onMouseLeave={e => e.currentTarget.style.background = '#6366f1'}
                         >
-                            Ver todos los eventos <span>→</span>
+                            {t('home.ver_todos_eventos')} <span>→</span>
                         </Link>
                     </div>
                 )}

@@ -57,7 +57,20 @@
     "hasta": "to",
     "proyectos_destacados": "Featured projects",
     "cargando_proyectos": "Loading projects...",
-    "no_proyectos": "No projects available."
+    "no_proyectos": "No projects available.",
+    "categoria_investigacion": "Research",
+    "subtitulo_proyectos": "Discover the latest research projects from our scientific society.",
+    "ver_todos_proyectos": "View all projects",
+    "categoria_agenda": "Agenda",
+    "subtitulo_eventos": "Participate in the upcoming scientific events of our community.",
+    "ver_todos_eventos": "View all events",
+    "estado_activo": "Active",
+    "estado_finalizado": "Finished",
+    "estado_pausado": "Paused",
+    "estado_cancelado": "Cancelled",
+    "badge_hoy": "Today!",
+    "badge_en_dias": "In {{dias}}d",
+    "fecha_fin_label": "End:"
   },
   "quienes_somos": {
     "titulo": "Who we are",
