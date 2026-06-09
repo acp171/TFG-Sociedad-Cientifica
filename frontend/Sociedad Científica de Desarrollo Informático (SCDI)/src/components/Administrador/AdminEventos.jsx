@@ -57,19 +57,19 @@ const AdminEventos = () => {
         }
         try {
             const url = `${API_BASE_URL}/buscar-calles?provincia=${encodeURIComponent(
-                    formData.provincia
-                )}&query=${encodeURIComponent(valor)}`;
+                formData.provincia
+            )}&query=${encodeURIComponent(valor)}`;
             const res = await fetch(url);
             if (!res.ok) throw new Error("Error al buscar calles");
             const data = await res.json();
             const callesFiltradas = data.filter(
                 (item) =>
-                item.type === "residential" ||
-                item.type === "street" ||
-                item.class === "highway"
+                    item.type === "residential" ||
+                    item.type === "street" ||
+                    item.class === "highway"
             );
             setCalles(callesFiltradas);
-        } 
+        }
         catch (error) {
             console.error("Error buscando calles:", error);
             setCalles([]);
@@ -269,7 +269,7 @@ const AdminEventos = () => {
     return (
         <div>
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold">Gestión de Eventos</h2>
+                <h2 className="text-2xl font-bold">Gestión de eventos</h2>
                 <button
                     onClick={openNewForm}
                     className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 cursor-pointer"
@@ -302,31 +302,31 @@ const AdminEventos = () => {
                                     <td className="border border-gray-300 px-3 py-2 text-center whitespace-nowrap">
                                         <span>
                                             {(() => {
-                                            const fechaInicio = new Date(evento.fecha_evento_inicio);
-                                            const fechaFin = new Date(evento.fecha_evento_fin);
+                                                const fechaInicio = new Date(evento.fecha_evento_inicio);
+                                                const fechaFin = new Date(evento.fecha_evento_fin);
 
-                                            const fecha = fechaInicio.toLocaleDateString("es-ES", {
-                                                day: "numeric",
-                                                month: "long",
-                                                year: "numeric",
-                                                timeZone: "UTC",
-                                            });
+                                                const fecha = fechaInicio.toLocaleDateString("es-ES", {
+                                                    day: "numeric",
+                                                    month: "long",
+                                                    year: "numeric",
+                                                    timeZone: "UTC",
+                                                });
 
-                                            const horaInicio = fechaInicio.toLocaleTimeString("es-ES", {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                                hour12: false,
-                                                timeZone: "UTC",
-                                            });
+                                                const horaInicio = fechaInicio.toLocaleTimeString("es-ES", {
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                    hour12: false,
+                                                    timeZone: "UTC",
+                                                });
 
-                                            const horaFin = fechaFin.toLocaleTimeString("es-ES", {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                                hour12: false,
-                                                timeZone: "UTC",
-                                            });
+                                                const horaFin = fechaFin.toLocaleTimeString("es-ES", {
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                    hour12: false,
+                                                    timeZone: "UTC",
+                                                });
 
-                                            return `${fecha}, ${horaInicio} - ${horaFin}`;
+                                                return `${fecha}, ${horaInicio} - ${horaFin}`;
                                             })()}
                                         </span>
                                     </td>
@@ -417,7 +417,7 @@ const AdminEventos = () => {
                             </label>
                         </div>
 
-                    
+
                         {!editingEvento && (
                             <>
                                 <div className="grid grid-cols-2 gap-4 mb-3">
@@ -499,20 +499,20 @@ const AdminEventos = () => {
                                         {calles.length > 0 && (
                                             <ul className="border rounded max-h-40 overflow-auto mt-1 bg-white z-10 relative">
                                                 {calles.map((calle) => (
-                                                <li
-                                                    key={calle.place_id}
-                                                    onClick={() => {
-                                                    setCalleSeleccionada(calle);
-                                                    setFormData((prev) => ({
-                                                        ...prev,
-                                                        calleInput: calle.display_name,
-                                                    }));
-                                                    setCalles([]);
-                                                    }}
-                                                    className="cursor-pointer hover:bg-indigo-100 px-2 py-1"
-                                                >
-                                                    {calle.display_name}
-                                                </li>
+                                                    <li
+                                                        key={calle.place_id}
+                                                        onClick={() => {
+                                                            setCalleSeleccionada(calle);
+                                                            setFormData((prev) => ({
+                                                                ...prev,
+                                                                calleInput: calle.display_name,
+                                                            }));
+                                                            setCalles([]);
+                                                        }}
+                                                        className="cursor-pointer hover:bg-indigo-100 px-2 py-1"
+                                                    >
+                                                        {calle.display_name}
+                                                    </li>
                                                 ))}
                                             </ul>
                                         )}

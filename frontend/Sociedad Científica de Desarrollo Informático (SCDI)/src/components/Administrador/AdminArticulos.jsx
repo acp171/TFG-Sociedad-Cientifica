@@ -66,17 +66,17 @@ const AdminArticulos = () => {
             setError("El título es obligatorio");
             return;
         }
-    
+
         try {
             const token = localStorage.getItem("token");
             const body = new FormData();
             body.append("titulo", formData.titulo.trim());
             body.append("contenido", formData.contenido.trim());
-    
+
             if (pdfFile) {
                 body.append("pdf", pdfFile);
             }
-    
+
             const res = await fetch(
                 `${API_BASE_URL}/articulos-cientificos/publicar-articulo-cientifico`,
                 {
@@ -87,10 +87,10 @@ const AdminArticulos = () => {
                     body,
                 }
             );
-    
+
             const text = await res.text();
             console.log("Respuesta:", text);
-    
+
             if (!res.ok) {
                 try {
                     const data = JSON.parse(text);
@@ -100,7 +100,7 @@ const AdminArticulos = () => {
                 }
                 return;
             }
-    
+
             setSuccess("Artículo creado correctamente.");
             fetchArticulos();
             closeForm();
@@ -136,7 +136,7 @@ const AdminArticulos = () => {
     return (
         <div>
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold">Gestión de Artículos</h2>
+                <h2 className="text-2xl font-bold">Gestión de artículos</h2>
                 <button
                     onClick={openNewForm}
                     className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
@@ -245,12 +245,12 @@ const AdminArticulos = () => {
                             />
                             {pdfFile ? (
                                 <div className="mt-4 flex items-center gap-3 text-gray-900 text-base">
-                                <span>Archivo seleccionado: {pdfFile.name}</span>
-                                <HiXCircle
-                                    title="Quitar archivo"
-                                    onClick={() => setPdfFile(null)}
-                                    className="text-2xl text-gray-500 hover:text-red-600 cursor-pointer transition duration-200"
-                                />
+                                    <span>Archivo seleccionado: {pdfFile.name}</span>
+                                    <HiXCircle
+                                        title="Quitar archivo"
+                                        onClick={() => setPdfFile(null)}
+                                        className="text-2xl text-gray-500 hover:text-red-600 cursor-pointer transition duration-200"
+                                    />
                                 </div>
                             ) : (
                                 <p className="mt-4 text-gray-500">No hay ningún archivo seleccionado.</p>

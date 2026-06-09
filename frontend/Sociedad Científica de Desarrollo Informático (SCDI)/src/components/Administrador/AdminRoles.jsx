@@ -132,7 +132,7 @@ const AdminRoles = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Gestión de Roles</h2>
+        <h2 className="text-2xl font-bold">Gestión de roles</h2>
         <button
           onClick={openNewForm}
           className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"

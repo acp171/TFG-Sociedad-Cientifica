@@ -41,7 +41,7 @@ const AdminComites = () => {
         setError("");
         try {
             const token = localStorage.getItem("token");
-            
+
             // 1. Obtener comités
             const resComites = await fetch(`${API_BASE_URL}/listado-comites-cientificos`, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -213,7 +213,7 @@ const AdminComites = () => {
     return (
         <div>
             <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Gestión de Comités Científicos</h2>
+                <h2 className="text-2xl font-bold text-gray-800">Gestión de comités científicos</h2>
                 <button
                     onClick={() => {
                         setShowComiteForm(true);
@@ -243,7 +243,6 @@ const AdminComites = () => {
                                 <div>
                                     <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                                         {comite.nombre_comite}
-                                        <span className="text-xs font-normal text-gray-400 bg-gray-200 px-2 py-0.5 rounded">ID: {comite.id_comite}</span>
                                     </h3>
                                     <p className="text-sm text-gray-600 mt-1">{comite.descripcion}</p>
                                 </div>
@@ -286,13 +285,12 @@ const AdminComites = () => {
                                                     <tr key={miembro.id_socio} className="border-b border-gray-50 hover:bg-slate-50 transition">
                                                         <td className="py-3 font-medium text-gray-800">{miembro.nombre_socio}</td>
                                                         <td className="py-3">
-                                                            <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                                                                miembro.rol === "Presidente" ? "bg-red-100 text-red-800" :
+                                                            <span className={`px-2 py-1 rounded text-xs font-semibold ${miembro.rol === "Presidente" ? "bg-red-100 text-red-800" :
                                                                 miembro.rol === "Secretario" ? "bg-amber-100 text-amber-800" :
-                                                                miembro.rol === "Tesorero" ? "bg-blue-100 text-blue-800" :
-                                                                miembro.rol === "Vocal" ? "bg-purple-100 text-purple-800" :
-                                                                "bg-gray-100 text-gray-800"
-                                                            }`}>
+                                                                    miembro.rol === "Tesorero" ? "bg-blue-100 text-blue-800" :
+                                                                        miembro.rol === "Vocal" ? "bg-purple-100 text-purple-800" :
+                                                                            "bg-gray-100 text-gray-800"
+                                                                }`}>
                                                                 {miembro.rol}
                                                             </span>
                                                         </td>

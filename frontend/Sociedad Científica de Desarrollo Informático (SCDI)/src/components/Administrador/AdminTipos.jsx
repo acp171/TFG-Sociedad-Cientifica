@@ -23,7 +23,7 @@ const AdminTipos = () => {
             const token = localStorage.getItem("token");
             const res = await fetch(`${API_BASE_URL}/tipos`, {
                 headers: {
-                Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                 },
             });
             const data = await res.json();
@@ -46,8 +46,8 @@ const AdminTipos = () => {
         const token = localStorage.getItem("token");
 
         const url = editandoId
-        ? `${API_BASE_URL}/tipos/${editandoId}`
-        : `${API_BASE_URL}/tipos`;
+            ? `${API_BASE_URL}/tipos/${editandoId}`
+            : `${API_BASE_URL}/tipos`;
 
         const method = editandoId ? "PUT" : "POST";
 
@@ -55,8 +55,8 @@ const AdminTipos = () => {
             const res = await fetch(url, {
                 method,
                 headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(formData),
             });
@@ -94,7 +94,7 @@ const AdminTipos = () => {
             const res = await fetch(`${API_BASE_URL}/tipos/${id}`, {
                 method: "DELETE",
                 headers: {
-                Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                 },
             });
 
@@ -111,7 +111,7 @@ const AdminTipos = () => {
     return (
         <div>
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold mb-4">Gestión de Tipos de Socio</h2>
+                <h2 className="text-xl font-bold mb-4">Gestión de tipos de socio</h2>
 
                 <button
                     onClick={() => {

@@ -112,7 +112,7 @@ const AdminSocios = () => {
     return (
         <div>
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold mb-4">Gestión de Socios</h2>
+                <h2 className="text-xl font-bold mb-4">Gestión de socios</h2>
                 <button
                     className="mb-4 bg-indigo-600 text-white px-4 py-2 rounded cursor-pointer"
                     onClick={() => setShowForm(true)}
@@ -128,11 +128,11 @@ const AdminSocios = () => {
                     <table className="w-full border min-w-[600px]">
                         <thead>
                             <tr className="bg-indigo-100">
-                            <th className="border px-2 py-1 text-left">ID</th>
-                            <th className="border px-2 py-1 text-left">Nombre</th>
-                            <th className="border px-2 py-1 text-left">Email</th>
-                            <th className="border px-2 py-1 text-left">Rol</th>
-                            <th className="border px-2 py-1 text-left">Plan</th>
+                                <th className="border px-2 py-1 text-left">ID</th>
+                                <th className="border px-2 py-1 text-left">Nombre</th>
+                                <th className="border px-2 py-1 text-left">Email</th>
+                                <th className="border px-2 py-1 text-left">Rol</th>
+                                <th className="border px-2 py-1 text-left">Plan</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -238,7 +238,7 @@ const AdminSocios = () => {
                             className="border px-2 py-1 w-full"
                             required
                         >
-                        <option value="">Selecciona un plan</option>
+                            <option value="">Selecciona un plan</option>
                             {planes.map((plan) => (
                                 <option key={plan.id} value={plan.id}>
                                     {plan.nombre}
@@ -260,13 +260,13 @@ const AdminSocios = () => {
                             onClick={() => {
                                 setShowForm(false);
                                 setFormData({
-                                nombre: "",
-                                apellidos: "",
-                                email: "",
-                                password: "",
-                                telefono: "",
-                                fecha_nacimiento: "",
-                                id_plan: "",
+                                    nombre: "",
+                                    apellidos: "",
+                                    email: "",
+                                    password: "",
+                                    telefono: "",
+                                    fecha_nacimiento: "",
+                                    id_plan: "",
                                 });
                             }}
                         >
