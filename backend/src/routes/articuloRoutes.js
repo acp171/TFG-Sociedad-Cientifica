@@ -13,5 +13,7 @@ router.delete('/articulos-cientificos/:id', verificarToken, articuloController.d
 
 router.post('/articulos-cientificos/:id/comentarios', verificarToken, articuloController.addComentario);
 router.patch('/articulos-cientificos/:id/comentarios/:id_comentario/moderar', verificarToken, articuloController.moderarComentario);
+router.get('/admin/comentarios', verificarToken, articuloController.getComentarios);
+router.delete('/admin/comentarios/:id_comentario', verificarToken, articuloController.deleteComentario);
 
 module.exports = router;

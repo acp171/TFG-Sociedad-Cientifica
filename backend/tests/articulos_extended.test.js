@@ -227,3 +227,93 @@ describe('POST /register — registro de nuevos socios', () => {
     expect(res.status).toBe(400);
   });
 });
+
+// ── Admin: Gestión de comentarios ─────────────────────────────────────────────
+describe('GET /admin/comentarios — listado de comentarios para admin', () => {
+  test('401 — sin token', async () => {
+    const res = await request(app).get('/admin/comentarios');
+    expect(res.status).toBe(401);
+  });
+
+  test('403 — socio normal no puede listar comentarios', async () => {
+    obtenernRol.mockResolvedValueOnce({ nombre: 'Socio' });
+
+    const res = await request(app)
+      .get('/admin/comentarios')
+      .set('Authorization', `Bearer ${tokenSocio()}`);
+
+    expect(res.status).toBe(403);
+  });
+
+  test('200 — admin obtiene listado de comentarios', async () => {
+    obtenernRol.mockResolvedValueOnce({ nombre: 'Administrador' });
+    pool.query.mockResolvedValueOnce({
+      rows: [
+        {
+          id_comentario: 1,
+          comentario: 'Muy buen artículo',
+          visibilidad: true,
+          nombre: 'Juan',
+          apellidos: 'García',
+          titulo_articulo: 'Artículo de prueba',
+          slug: 'articulo-de-prueba',
+          fecha_comentario: new Date().toISOString(),
+        },
+      ],
+      rowCount: 1,
+    });
+
+    const res = await request(app)
+      .get('/admin/comentarios')
+      .set('Authorization', `Bearer ${tokenAdmin()}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.comentarios).toHaveLength(1);
+    expect(res.body.comentarios[0].comentario).toBe('Muy buen artículo');
+  });
+});
+
+describe('DELETE /admin/comentarios/:id_comentario — eliminar comentario', () => {
+  test('401 — sin token', async () => {
+    const res = await request(app).delete('/admin/comentarios/1');
+    expect(res.status).toBe(401);
+  });
+
+  test('403 — socio normal no puede eliminar comentarios', async () => {
+    obtenernRol.mockResolvedValueOnce({ nombre: 'Socio' });
+
+    const res = await request(app)
+      .delete('/admin/comentarios/1')
+      .set('Authorization', `Bearer ${tokenSocio()}`);
+
+    expect(res.status).toBe(403);
+  });
+
+  test('404 — comentario no encontrado', async () => {
+    obtenernRol.mockResolvedValueOnce({ nombre: 'Administrador' });
+    pool.query.mockResolvedValueOnce({ rows: [], rowCount: 0 });
+
+    const res = await request(app)
+      .delete('/admin/comentarios/999')
+      .set('Authorization', `Bearer ${tokenAdmin()}`);
+
+    expect(res.status).toBe(404);
+    expect(res.body.message).toMatch(/no encontrado/i);
+  });
+
+  test('200 — admin elimina comentario existente', async () => {
+    obtenernRol.mockResolvedValueOnce({ nombre: 'Administrador' });
+    pool.query.mockResolvedValueOnce({
+      rows: [{ id_comentario: 1, comentario: 'Muy buen artículo' }],
+      rowCount: 1,
+    });
+
+    const res = await request(app)
+      .delete('/admin/comentarios/1')
+      .set('Authorization', `Bearer ${tokenAdmin()}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.message).toMatch(/eliminado/i);
+  });
+});
+

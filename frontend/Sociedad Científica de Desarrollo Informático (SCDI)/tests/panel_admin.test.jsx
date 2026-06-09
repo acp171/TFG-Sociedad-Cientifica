@@ -26,6 +26,9 @@ vi.mock('../src/components/Administrador/AdminEventos', () => ({
 vi.mock('../src/components/Administrador/AdminComites', () => ({
   default: () => <div data-testid="panel-comites">Panel Comités</div>,
 }));
+vi.mock('../src/components/Administrador/AdminComentarios', () => ({
+  default: () => <div data-testid="panel-comentarios">Panel Comentarios</div>,
+}));
 
 describe('Prueba de Integración: Panel de Administración', () => {
   test('Muestra el panel de Socios por defecto al cargar', () => {
@@ -112,6 +115,17 @@ describe('Prueba de Integración: Panel de Administración', () => {
     expect(screen.getByTestId('panel-comites')).toBeInTheDocument();
   });
 
+  test('Navegar a la pestaña "Comentarios" muestra el panel correcto', () => {
+    render(
+      <MemoryRouter>
+        <PanelAdmin />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /comentarios/i }));
+    expect(screen.getByTestId('panel-comentarios')).toBeInTheDocument();
+  });
+
   test('Contiene todas las pestañas de navegación en la barra lateral', () => {
     render(
       <MemoryRouter>
@@ -119,7 +133,7 @@ describe('Prueba de Integración: Panel de Administración', () => {
       </MemoryRouter>
     );
 
-    const expectedTabs = ['Socios', 'Tipos de socio', 'Roles', 'Comités', 'Proyectos', 'Artículos', 'Eventos'];
+    const expectedTabs = ['Socios', 'Tipos de socio', 'Roles', 'Comités', 'Proyectos', 'Artículos', 'Eventos', 'Comentarios'];
     expectedTabs.forEach((tab) => {
       // Buscar los botones del sidebar (excluye el h1 principal)
       expect(screen.getAllByText(new RegExp(tab, 'i')).length).toBeGreaterThan(0);

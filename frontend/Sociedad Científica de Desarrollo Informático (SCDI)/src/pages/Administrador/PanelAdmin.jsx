@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaUsers, FaUserTag, FaUserShield, FaProjectDiagram, FaNewspaper, FaCalendarAlt, FaBars, FaTimes, FaBriefcase } from "react-icons/fa";
+import { FaUsers, FaUserTag, FaUserShield, FaProjectDiagram, FaNewspaper, FaCalendarAlt, FaBars, FaTimes, FaBriefcase, FaComments } from "react-icons/fa";
 
 import AdminSocios from "../../components/Administrador/AdminSocios";
 import AdminTipos from "../../components/Administrador/AdminTipos";
@@ -8,6 +8,7 @@ import AdminProyectos from "../../components/Administrador/AdminProyectos";
 import AdminArticulos from "../../components/Administrador/AdminArticulos";
 import AdminEventos from "../../components/Administrador/AdminEventos";
 import AdminComites from "../../components/Administrador/AdminComites";
+import AdminComentarios from "../../components/Administrador/AdminComentarios";
 
 const tabs = [
     { id: "socios", label: "Socios", icon: <FaUsers /> },
@@ -17,6 +18,7 @@ const tabs = [
     { id: "proyectos", label: "Proyectos", icon: <FaProjectDiagram /> },
     { id: "articulos", label: "Artículos", icon: <FaNewspaper /> },
     { id: "eventos", label: "Eventos", icon: <FaCalendarAlt /> },
+    { id: "comentarios", label: "Comentarios", icon: <FaComments /> },
 ];
 
 const PanelAdmin = () => {
@@ -25,22 +27,24 @@ const PanelAdmin = () => {
 
     const renderContent = () => {
         switch (selectedTab) {
-        case "socios":
-            return <AdminSocios />;
-        case "tipos":
-            return <AdminTipos />;
-        case "roles":
-            return <AdminRoles />;
-        case "comites":
-            return <AdminComites />;
-        case "proyectos":
-            return <AdminProyectos />;
-        case "articulos":
-            return <AdminArticulos />;
-        case "eventos":
-            return <AdminEventos />;
-        default:
-            return null;
+            case "socios":
+                return <AdminSocios />;
+            case "tipos":
+                return <AdminTipos />;
+            case "roles":
+                return <AdminRoles />;
+            case "comites":
+                return <AdminComites />;
+            case "proyectos":
+                return <AdminProyectos />;
+            case "articulos":
+                return <AdminArticulos />;
+            case "comentarios":
+                return <AdminComentarios />;
+            case "eventos":
+                return <AdminEventos />;
+            default:
+                return null;
         }
     };
 
@@ -48,7 +52,7 @@ const PanelAdmin = () => {
         <div className="min-h-screen flex bg-gradient-to-b from-blue-200 to-white relative transition-all duration-300">
             {/* Overlay for mobile when sidebar is open */}
             {isSidebarOpen && (
-                <div 
+                <div
                     className="fixed inset-0 bg-black bg-opacity-30 z-40 lg:hidden"
                     onClick={() => setIsSidebarOpen(false)}
                 />
@@ -62,14 +66,14 @@ const PanelAdmin = () => {
             `}>
                 <div className="flex items-center justify-between mb-8">
                     <h2 className="text-xl font-bold text-indigo-700">PANEL ADMINISTRADOR</h2>
-                    <button 
+                    <button
                         className="lg:hidden p-2 text-gray-500"
                         onClick={() => setIsSidebarOpen(false)}
                     >
                         <FaTimes size={20} />
                     </button>
                 </div>
-                
+
                 <div className="space-y-1">
                     {tabs.map((tab) => (
                         <button
@@ -78,11 +82,10 @@ const PanelAdmin = () => {
                                 setSelectedTab(tab.id);
                                 if (window.innerWidth < 1024) setIsSidebarOpen(false);
                             }}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg w-full text-left transition ${
-                                selectedTab === tab.id 
-                                ? "bg-indigo-600 text-white shadow-lg font-semibold" 
-                                : "text-gray-600 hover:bg-indigo-50 hover:text-indigo-600"
-                            }`}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-lg w-full text-left transition ${selectedTab === tab.id
+                                    ? "bg-indigo-600 text-white shadow-lg font-semibold"
+                                    : "text-gray-600 hover:bg-indigo-50 hover:text-indigo-600"
+                                }`}
                         >
                             <span className="text-lg">{tab.icon}</span>
                             <span>{tab.label}</span>
@@ -94,7 +97,7 @@ const PanelAdmin = () => {
             {/* Main Content Area */}
             <main className="flex-1 p-4 md:p-8 w-full overflow-hidden">
                 <div className="flex items-center gap-4 mb-6">
-                    <button 
+                    <button
                         className="lg:hidden p-3 bg-white shadow-md rounded-lg text-indigo-600 hover:bg-indigo-50 transition"
                         onClick={() => setIsSidebarOpen(true)}
                     >

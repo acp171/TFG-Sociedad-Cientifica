@@ -171,6 +171,40 @@ const moderarComentario = async (req, res) => {
     }
 };
 
+const getComentarios = async (req, res) => {
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') return res.status(403).json({ message: 'No autorizado.' });
+
+    try {
+        const result = await pool.query(
+            `SELECT c.*, s.nombre, s.apellidos, p.titulo AS titulo_articulo, p.slug
+             FROM Comentario_Publicacion c
+             JOIN Socio s ON c.socio = s.id_socio
+             JOIN Publicaciones p ON c.publicacion = p.id_publicacion
+             ORDER BY c.fecha_comentario DESC;`
+        );
+        res.status(200).json({ message: 'Listado de comentarios.', comentarios: result.rows });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+};
+
+const deleteComentario = async (req, res) => {
+    const id_comentario = req.params.id_comentario;
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') return res.status(403).json({ message: 'No autorizado.' });
+
+    try {
+        const result = await pool.query('DELETE FROM Comentario_Publicacion WHERE id_comentario = $1 RETURNING *;', [id_comentario]);
+        if (result.rows.length === 0) return res.status(404).json({ message: 'Comentario no encontrado.' });
+        res.status(200).json({ message: 'Comentario eliminado.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+};
+
 module.exports = {
     createArticulo,
     deleteArticulo,
@@ -178,5 +212,7 @@ module.exports = {
     getArticuloById,
     downloadPDF,
     addComentario,
-    moderarComentario
+    moderarComentario,
+    getComentarios,
+    deleteComentario
 };
