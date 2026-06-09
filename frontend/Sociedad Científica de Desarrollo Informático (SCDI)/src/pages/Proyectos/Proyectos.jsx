@@ -95,7 +95,7 @@ const Proyectos = () => {
                         <option value="cancelado">Cancelado</option>
                     </select>
 
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 mb-10">
                         <input
                             type="date"
                             value={filtroFechaFin}
