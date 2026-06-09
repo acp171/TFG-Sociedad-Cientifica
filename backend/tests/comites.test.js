@@ -156,6 +156,7 @@ describe('POST /add-miembro-comite-cientifico', () => {
 
 describe('DELETE /eliminar-miembro-comite', () => {
   test('200 — presidente de comité puede expulsar a un miembro', async () => {
+    obtenernRol.mockResolvedValueOnce({ nombre: 'Socio' });
     obtenerPresidenteComite.mockResolvedValueOnce({ socio: 2 }); // id=2 es tokenSocio
     pool.query.mockResolvedValueOnce({ rows: [], rowCount: 1 }); // DELETE
 
@@ -166,6 +167,48 @@ describe('DELETE /eliminar-miembro-comite', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.message).toMatch(/expulsado/i);
+  });
+
+  test('200 — administrador puede expulsar a un miembro', async () => {
+    obtenernRol.mockResolvedValueOnce({ nombre: 'Administrador' });
+    pool.query.mockResolvedValueOnce({ rows: [], rowCount: 1 }); // DELETE
+
+    const res = await request(app)
+      .delete('/eliminar-miembro-comite')
+      .set('Authorization', `Bearer ${tokenAdmin()}`)
+      .send({ socio: 3, comite: 1 });
+
+    expect(res.status).toBe(200);
+    expect(res.body.message).toMatch(/expulsado/i);
+  });
+});
+
+describe('DELETE /comites/:id', () => {
+  test('401 — sin token', async () => {
+    const res = await request(app).delete('/comites/1').send();
+    expect(res.status).toBe(401);
+  });
+
+  test('403 — socio normal no puede eliminar un comité', async () => {
+    obtenernRol.mockResolvedValueOnce({ nombre: 'Socio' });
+    const res = await request(app)
+      .delete('/comites/1')
+      .set('Authorization', `Bearer ${tokenSocio()}`)
+      .send();
+    expect(res.status).toBe(403);
+  });
+
+  test('200 — admin puede eliminar un comité', async () => {
+    obtenernRol.mockResolvedValueOnce({ nombre: 'Administrador' });
+    pool.query.mockResolvedValueOnce({ rows: [], rowCount: 1 }); // DELETE
+
+    const res = await request(app)
+      .delete('/comites/1')
+      .set('Authorization', `Bearer ${tokenAdmin()}`)
+      .send();
+
+    expect(res.status).toBe(200);
+    expect(res.body.message).toMatch(/eliminado/i);
   });
 });
 

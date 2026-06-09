@@ -47,14 +47,37 @@ const addMiembro = async (req, res) => {
 
 const removeMiembro = async (req, res) => {
     const { socio, comite } = req.body;
-    const presidenteComite = await obtenerPresidenteComite(comite);
-    if (!presidenteComite || presidenteComite.socio !== req.usuario.id) return res.status(403).json({ message: 'No autorizado.' });
+    if (!socio || !comite) return res.status(400).json({ message: 'Faltan datos.' });
+
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        const presidenteComite = await obtenerPresidenteComite(comite);
+        if (!presidenteComite || presidenteComite.socio !== req.usuario.id) {
+            return res.status(403).json({ message: 'No autorizado.' });
+        }
+    }
 
     try {
         await pool.query('DELETE FROM Miembros_Comite WHERE socio = $1 AND comite = $2;', [socio, comite]);
         const nombreComite = await obtenerNombreComite(comite);
         await crearNotificacion(socio, 'Has sido expulsado de un comité científico', `Fuiste expulsado del comité "${nombreComite}".`);
         res.status(200).json({ message: 'Miembro expulsado.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+};
+
+const deleteComite = async (req, res) => {
+    const id_comite = req.params.id;
+    const adminRol = await obtenernRol(req.usuario);
+    if (!adminRol || adminRol.nombre !== 'Administrador') {
+        return res.status(403).json({ message: 'No autorizado.' });
+    }
+
+    try {
+        await pool.query('DELETE FROM Comite WHERE id_comite = $1;', [id_comite]);
+        res.status(200).json({ message: 'Comité científico eliminado.' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error interno del servidor.' });
@@ -126,6 +149,7 @@ module.exports = {
     createComite,
     addMiembro,
     removeMiembro,
+    deleteComite,
     getComites,
     getMensajes,
     sendMensaje

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaUsers, FaUserTag, FaUserShield, FaProjectDiagram, FaNewspaper, FaCalendarAlt, FaBars, FaTimes } from "react-icons/fa";
+import { FaUsers, FaUserTag, FaUserShield, FaProjectDiagram, FaNewspaper, FaCalendarAlt, FaBars, FaTimes, FaBriefcase } from "react-icons/fa";
 
 import AdminSocios from "../../components/Administrador/AdminSocios";
 import AdminTipos from "../../components/Administrador/AdminTipos";
@@ -7,11 +7,13 @@ import AdminRoles from "../../components/Administrador/AdminRoles";
 import AdminProyectos from "../../components/Administrador/AdminProyectos";
 import AdminArticulos from "../../components/Administrador/AdminArticulos";
 import AdminEventos from "../../components/Administrador/AdminEventos";
+import AdminComites from "../../components/Administrador/AdminComites";
 
 const tabs = [
     { id: "socios", label: "Socios", icon: <FaUsers /> },
     { id: "tipos", label: "Tipos de socio", icon: <FaUserTag /> },
     { id: "roles", label: "Roles", icon: <FaUserShield /> },
+    { id: "comites", label: "Comités", icon: <FaBriefcase /> },
     { id: "proyectos", label: "Proyectos", icon: <FaProjectDiagram /> },
     { id: "articulos", label: "Artículos", icon: <FaNewspaper /> },
     { id: "eventos", label: "Eventos", icon: <FaCalendarAlt /> },
@@ -29,6 +31,8 @@ const PanelAdmin = () => {
             return <AdminTipos />;
         case "roles":
             return <AdminRoles />;
+        case "comites":
+            return <AdminComites />;
         case "proyectos":
             return <AdminProyectos />;
         case "articulos":
