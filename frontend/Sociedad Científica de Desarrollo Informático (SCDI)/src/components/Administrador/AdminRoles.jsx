@@ -154,7 +154,6 @@ const AdminRoles = () => {
                             <div className="bg-gray-50 px-6 py-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                                 <div className="flex-1 min-w-0">
                                     <h3 className="text-lg font-bold text-gray-900">{role.nombre}</h3>
-                                    <span className="text-xs text-gray-400 font-medium">ID: {role.id}</span>
                                 </div>
                                 <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
                                     {role.nombre === "Administrador" ? (
