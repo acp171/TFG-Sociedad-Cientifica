@@ -212,9 +212,20 @@ const resetPassword = async (req, res) => {
     }
 };
 
+const getPublicTipos = async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM Tipo_Socio;');
+        return res.status(200).json({ tipos: result.rows });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+};
+
 module.exports = {
     login,
     register,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    getPublicTipos
 };

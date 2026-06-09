@@ -175,3 +175,29 @@ describe('POST /auth/reset-password', () => {
     expect(res.body.message).toMatch(/actualizada/i);
   });
 });
+
+describe('GET /tipos-publico', () => {
+  test('200 — retorna la lista de tipos de socios', async () => {
+    const mockTipos = [
+      { id_tipo_socio: 1, nombre_tipo: 'Socio', cuota: 20 },
+      { id_tipo_socio: 2, nombre_tipo: 'Estudiante', cuota: 10 }
+    ];
+    pool.query.mockResolvedValueOnce({ rows: mockTipos, rowCount: mockTipos.length });
+
+    const res = await request(app).get('/tipos-publico');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('tipos');
+    expect(res.body.tipos).toHaveLength(2);
+    expect(res.body.tipos[0].nombre_tipo).toBe('Socio');
+  });
+
+  test('500 — error en base de datos', async () => {
+    pool.query.mockRejectedValueOnce(new Error('DB Error'));
+
+    const res = await request(app).get('/tipos-publico');
+
+    expect(res.status).toBe(500);
+    expect(res.body.message).toMatch(/error interno/i);
+  });
+});
