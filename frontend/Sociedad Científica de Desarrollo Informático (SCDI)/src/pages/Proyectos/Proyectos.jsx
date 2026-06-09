@@ -80,6 +80,9 @@ const Proyectos = () => {
 
                 {/* Filtros */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-4 mb-10">
+                    <label className="text-xs text-gray-500 font-semibold uppercase tracking-wide">
+                        {t("proyectos.elegir_estado") || "Elegir estado"}
+                    </label>
                     <select
                         value={filtroEstado}
                         onChange={(e) => {

@@ -165,6 +165,7 @@
     "cargando": "Loading projects...",
     "no_proyectos": "No projects available.",
     "todos_estados": "All statuses",
+    "elegir_estado": "Choose a status",
     "fecha_fin_desde": "End date (from)",
     "inicio": "Start:",
     "fin": "End:",

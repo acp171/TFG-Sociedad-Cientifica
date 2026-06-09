@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaGraduationCap, FaUserTie, FaGlobe, FaUsers, FaUser } from "react-icons/fa";
+import API_BASE_URL from "../../config/backendConfig";
 
 const baseDescripcion = (userTipoSocio) => (
     <>
@@ -52,75 +53,131 @@ const baseDescripcion = (userTipoSocio) => (
     </>
 );
 
-const planes = [
-    {
-        id_tipo_socio: 2,
-        nombre_tipo: "Estudiante / Junior",
-        cuota: 10,
+const PLAN_STYLES = {
+    2: {
         icon: <FaGraduationCap className="text-4xl text-black-600" />,
         bg: "from-blue-300 to-blue-400",
-        price_stripe: "price_1RaHU2PbMwKwBYLWo0AaCRmB",
-        descripcion: (
-            <>
-                <p className="mb-2">
-                    Menores de 18 años o emprendedores.
-                </p>
-                {baseDescripcion(2)}
-            </>
-          ),
+        defaultNombre: "Estudiante / Junior",
+        defaultDesc: "Menores de 18 años o emprendedores."
     },
-    {
-        id_tipo_socio: 1,
-        nombre_tipo: "Socio / Titular",
-        cuota: 20,
+    1: {
         icon: <FaUser className="text-4xl text-indigo-800" />,
         bg: "from-indigo-200 to-indigo-300",
-        price_stripe: "price_1RaGzAPbMwKwBYLWadUDiRZT",
-        descripcion: baseDescripcion(1),
+        defaultNombre: "Socio / Titular",
+        defaultDesc: ""
     },
-    {
-        id_tipo_socio: 3,
-        nombre_tipo: "Profesional",
-        cuota: 50,
+    3: {
         icon: <FaUserTie className="text-4xl text-purple-600" />,
         bg: "from-purple-100 to-purple-200",
-        price_stripe: "price_1RaaIcPbMwKwBYLW145DYXpp",
-        descripcion: baseDescripcion(3),
+        defaultNombre: "Profesional",
+        defaultDesc: ""
     },
-    {
-        id_tipo_socio: 5,
-        nombre_tipo: "Internacional",
-        cuota: 100,
+    4: {
+        icon: <FaUser className="text-4xl text-emerald-800" />,
+        bg: "from-emerald-100 to-emerald-200",
+        defaultNombre: "Honorario",
+        defaultDesc: "Miembro de honor."
+    },
+    5: {
         icon: <FaGlobe className="text-4xl text-green-600" />,
         bg: "from-green-100 to-green-200",
-        price_stripe: "price_1RaHVqPbMwKwBYLWK7Uqmj3J",
-        descripcion: baseDescripcion(5),
+        defaultNombre: "Internacional",
+        defaultDesc: ""
     },
-    {
-        id_tipo_socio: 6,
-        nombre_tipo: "Corporación",
-        cuota: 500,
+    6: {
         icon: <FaUsers className="text-4xl text-yellow-600" />,
         bg: "from-yellow-100 to-yellow-200",
-        price_stripe: "price_1RaHVDPbMwKwBYLWrXVYmm7F",
-        descripcion: (
-            <>
-                <p className="mb-2">
-                    Permite registrar y gestionar múltiples usuarios bajo una sola membresía.
-                </p>
-                {baseDescripcion(6)}
-            </>
-        ),
-    },
-];
+        defaultNombre: "Corporación",
+        defaultDesc: "Permite registrar y gestionar múltiples usuarios bajo una sola membresía."
+    }
+};
+
+const DEFAULT_STYLE = {
+    icon: <FaUser className="text-4xl text-gray-600" />,
+    bg: "from-slate-200 to-slate-300",
+    defaultNombre: "Socio Especial",
+    defaultDesc: ""
+};
 
 const SeleccionarPlan = () => {
     const navigate = useNavigate();
+    const [planes, setPlanes] = useState([]);
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        const fetchPlanes = async () => {
+            try {
+                const res = await fetch(`${API_BASE_URL}/tipos-publico`);
+                if (!res.ok) throw new Error("Error al cargar los planes");
+                const data = await res.json();
+                
+                const listadoPlanes = (data.tipos || []).map(tipo => {
+                    const styleInfo = PLAN_STYLES[tipo.id_tipo_socio] || DEFAULT_STYLE;
+                    
+                    return {
+                        id_tipo_socio: tipo.id_tipo_socio,
+                        nombre_tipo: tipo.nombre_tipo || styleInfo.defaultNombre,
+                        cuota: tipo.cuota,
+                        price_stripe: tipo.price_stripe,
+                        icon: styleInfo.icon,
+                        bg: styleInfo.bg,
+                        descripcion: (
+                            <>
+                                {(tipo.descripcion || styleInfo.defaultDesc) && (
+                                    <p className="mb-3 italic text-gray-600">
+                                        {tipo.descripcion || styleInfo.defaultDesc}
+                                    </p>
+                                )}
+                                {baseDescripcion(tipo.id_tipo_socio)}
+                            </>
+                        )
+                    };
+                });
+                
+                // Ordenar por cuota ascendente para que se vean organizados
+                listadoPlanes.sort((a, b) => a.cuota - b.cuota);
+                setPlanes(listadoPlanes);
+            } catch (err) {
+                console.error("Error al obtener planes:", err);
+                setError("No se pudieron cargar los planes de membresía. Por favor, inténtelo de nuevo más tarde.");
+            } finally {
+                setCargando(false);
+            }
+        };
+        
+        fetchPlanes();
+    }, []);
 
     const seleccionarPlan = (plan) => {
         localStorage.setItem("planSeleccionado", JSON.stringify(plan));
         navigate("/register");
     };
+
+    if (cargando) {
+        return (
+            <div className="min-h-[80vh] bg-gradient-to-b from-slate-50 to-blue-100 flex flex-col items-center justify-center py-16 px-4">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-900 mb-4"></div>
+                <p className="text-xl font-semibold text-blue-900 animate-pulse">Cargando planes de membresía...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-[80vh] bg-gradient-to-b from-slate-50 to-blue-100 flex flex-col items-center justify-center py-16 px-4">
+                <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-2xl shadow-md max-w-lg text-center">
+                    <p className="text-lg text-red-700 font-bold mb-4">{error}</p>
+                    <button 
+                        onClick={() => window.location.reload()}
+                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md"
+                    >
+                        Reintentar
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-[80vh] bg-gradient-to-b from-slate-50 to-blue-100 py-16 px-4">
@@ -129,19 +186,9 @@ const SeleccionarPlan = () => {
                 <p className="text-lg text-blue-700 max-w-2xl mx-auto">Selecciona la modalidad que mejor se adapte a tu perfil y empieza a disfrutar de las ventajas de nuestra sociedad científica.</p>
             </div>
 
-            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                {planes.slice(0, 3).map((plan) => (
-                    <CardPlan
-                        key={plan.id_tipo_socio}
-                        plan={plan}
-                        onSelect={seleccionarPlan}
-                    />
-                ))}
-            </div>
-
-            <div className="max-w-7xl mx-auto mt-12 flex flex-col md:flex-row justify-center gap-10">
-                {planes.slice(3, 5).map((plan) => (
-                    <div className="w-full md:w-1/2 lg:w-1/3" key={plan.id_tipo_socio}>
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 justify-items-center">
+                {planes.map((plan) => (
+                    <div className="w-full max-w-sm" key={plan.id_tipo_socio}>
                         <CardPlan
                             plan={plan}
                             onSelect={seleccionarPlan}
