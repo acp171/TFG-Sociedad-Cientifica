@@ -79,23 +79,31 @@ const Proyectos = () => {
                 </div>
 
                 {/* Filtros */}
-                <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-4 mb-10">
-                    <select
-                        value={filtroEstado}
-                        onChange={(e) => {
-                            setFiltroEstado(e.target.value);
-                            setSearchParams({ page: 1 });
-                        }}
-                        className="border rounded p-2"
-                    >
-                        <option value="">{t("proyectos.todos_estados")}</option>
-                        <option value="activo">Activo</option>
-                        <option value="finalizado">Finalizado</option>
-                        <option value="pausado">Pausado</option>
-                        <option value="cancelado">Cancelado</option>
-                    </select>
+                <div className="flex flex-col md:flex-row md:items-end md:justify-center gap-4 mb-10">
+                    <div className="flex flex-col gap-1">
+                        <label className="text-xs text-gray-500 font-semibold uppercase tracking-wide">
+                            {t("proyectos.elegir_estado") || "Elegir estado"}
+                        </label>
+                        <select
+                            value={filtroEstado}
+                            onChange={(e) => {
+                                setFiltroEstado(e.target.value);
+                                setSearchParams({ page: 1 });
+                            }}
+                            className="border rounded p-2 h-[42px]"
+                        >
+                            <option value="">{t("proyectos.todos_estados")}</option>
+                            <option value="activo">Activo</option>
+                            <option value="finalizado">Finalizado</option>
+                            <option value="pausado">Pausado</option>
+                            <option value="cancelado">Cancelado</option>
+                        </select>
+                    </div>
 
                     <div className="flex flex-col gap-1">
+                        <label className="text-xs text-gray-500 font-semibold uppercase tracking-wide">
+                            {t("proyectos.fecha_fin_desde") || "Fecha fin (a partir de)"}
+                        </label>
                         <input
                             type="date"
                             value={filtroFechaFin}
@@ -103,7 +111,7 @@ const Proyectos = () => {
                                 setFiltroFechaFin(e.target.value);
                                 setSearchParams({ page: 1 });
                             }}
-                            className="border rounded p-2"
+                            className="border rounded p-2 h-[42px]"
                         />
                     </div>
                 </div>
