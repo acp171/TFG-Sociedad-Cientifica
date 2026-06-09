@@ -7,7 +7,7 @@ const AdminProyectos = () => {
     const [socios, setSocios] = useState([]);
     const [roles, setRoles] = useState([]);
     const [loading, setLoading] = useState(true);
-    
+
     const [showForm, setShowForm] = useState(false);
     const [showMemberForm, setShowMemberForm] = useState(false);
     const [selectedProyectoId, setSelectedProyectoId] = useState(null);
@@ -241,13 +241,13 @@ const AdminProyectos = () => {
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">Gestión de proyectos</h2>
                 <button
                     onClick={openNewForm}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition font-semibold flex items-center gap-2"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition font-semibold flex items-center justify-center gap-2 w-full sm:w-auto"
                 >
-                    <FaPlus size={14} /> NUEVO PROYECTO
+                    NUEVO PROYECTO
                 </button>
             </div>
 
@@ -264,24 +264,23 @@ const AdminProyectos = () => {
                     {proyectos.map((proyecto) => (
                         <div key={proyecto.id_proyecto} className="border border-gray-200 rounded-xl overflow-hidden shadow-sm bg-white hover:border-indigo-100 transition duration-300">
                             {/* Cabecera del Proyecto */}
-                            <div className="bg-gray-50 px-6 py-4 flex flex-col md:flex-row md:justify-between md:items-center border-b border-gray-100 gap-4">
-                                <div>
+                            <div className="bg-gray-50 px-6 py-4 flex flex-col md:flex-row md:justify-between md:items-start md:items-center border-b border-gray-100 gap-4">
+                                <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-3 flex-wrap">
-                                        <h3 className="text-lg font-bold text-gray-900">{proyecto.nombre_proyecto}</h3>
-                                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase ${
-                                            proyecto.estado === "En curso" ? "bg-green-100 text-green-800" :
-                                            proyecto.estado === "Pendiente" ? "bg-amber-100 text-amber-800" :
-                                            "bg-gray-100 text-gray-800"
-                                        }`}>
+                                        <h3 className="text-lg font-bold text-gray-900 truncate">{proyecto.nombre_proyecto}</h3>
+                                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase shrink-0 ${proyecto.estado === "En curso" ? "bg-green-100 text-green-800" :
+                                                proyecto.estado === "Pendiente" ? "bg-amber-100 text-amber-800" :
+                                                    "bg-gray-100 text-gray-800"
+                                            }`}>
                                             {proyecto.estado}
                                         </span>
                                     </div>
-                                    <p className="text-sm text-gray-600 mt-1">{proyecto.descripcion}</p>
+                                    <p className="text-sm text-gray-600 mt-1 break-words">{proyecto.descripcion}</p>
                                     <div className="text-xs text-gray-400 mt-1 font-medium">
                                         Duración: {proyecto.fecha_inicio ? new Date(proyecto.fecha_inicio).toLocaleDateString() : 'N/A'} - {proyecto.fecha_fin ? new Date(proyecto.fecha_fin).toLocaleDateString() : 'N/A'}
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2 self-end md:self-center">
+                                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-start md:justify-end md:self-center">
                                     <button
                                         onClick={() => {
                                             setSelectedProyectoId(proyecto.id_proyecto);
@@ -289,19 +288,19 @@ const AdminProyectos = () => {
                                             setError("");
                                             setSuccess("");
                                         }}
-                                        className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-md transition font-semibold flex items-center gap-1.5"
+                                        className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-md transition font-semibold flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
                                     >
                                         <FaPlus size={10} /> MIEMBRO
                                     </button>
                                     <button
                                         onClick={() => openEditForm(proyecto)}
-                                        className="bg-amber-500 hover:bg-amber-600 text-white text-xs px-3 py-1.5 rounded-md transition font-semibold flex items-center gap-1.5"
+                                        className="bg-amber-500 hover:bg-amber-600 text-white text-xs px-3 py-1.5 rounded-md transition font-semibold flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
                                     >
                                         <FaEdit size={10} /> EDITAR
                                     </button>
                                     <button
                                         onClick={() => handleDelete(proyecto)}
-                                        className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-md transition font-semibold flex items-center gap-1.5"
+                                        className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-md transition font-semibold flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
                                     >
                                         <FaTrash size={10} /> ELIMINAR
                                     </button>
@@ -312,34 +311,38 @@ const AdminProyectos = () => {
                             <div className="p-6">
                                 <h4 className="text-sm font-bold text-gray-700 mb-3">Miembros del Proyecto</h4>
                                 {proyecto.miembros && proyecto.miembros.length > 0 ? (
-                                    <div className="overflow-x-auto">
-                                        <table className="w-full text-left text-sm">
-                                            <thead>
+                                    <div className="overflow-x-auto w-full">
+                                        <table className="w-full text-left text-sm block sm:table">
+                                            <thead className="hidden sm:table-header-group">
                                                 <tr className="border-b border-gray-100 text-gray-400 font-semibold text-xs uppercase">
                                                     <th className="py-2">Nombre</th>
                                                     <th className="py-2">Rol en Proyecto</th>
                                                     <th className="py-2 text-right">Acción</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody className="block sm:table-row-group space-y-3 sm:space-y-0">
                                                 {proyecto.miembros.map((miembro) => (
-                                                    <tr key={miembro.id_socio} className="border-b border-gray-50 hover:bg-slate-50 transition">
-                                                        <td className="py-3 font-medium text-gray-800">{miembro.nombre_socio}</td>
-                                                        <td className="py-3">
-                                                            <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                                                                miembro.rol === "Presidente" || miembro.rol === "Administrador" ? "bg-red-100 text-red-800" :
-                                                                miembro.rol === "Secretario" ? "bg-amber-100 text-amber-800" :
-                                                                miembro.rol === "Tesorero" ? "bg-blue-100 text-blue-800" :
-                                                                miembro.rol === "Vocal" ? "bg-purple-100 text-purple-800" :
-                                                                "bg-gray-100 text-gray-800"
-                                                            }`}>
+                                                    <tr key={miembro.id_socio} className="flex flex-col sm:table-row border border-gray-200 sm:border-0 border-b sm:border-b-0 border-gray-50 hover:bg-slate-50 transition rounded-lg sm:rounded-none p-4 sm:p-0 bg-gray-50 sm:bg-transparent mb-2 sm:mb-0">
+                                                        <td className="block sm:table-cell py-1 sm:py-3 font-medium text-gray-800">
+                                                            <span className="inline-block sm:hidden text-xs font-bold text-gray-400 uppercase mr-2 w-24">Nombre:</span>
+                                                            {miembro.nombre_socio}
+                                                        </td>
+                                                        <td className="block sm:table-cell py-1 sm:py-3">
+                                                            <span className="inline-block sm:hidden text-xs font-bold text-gray-400 uppercase mr-2 w-24">Rol:</span>
+                                                            <span className={`px-2 py-1 rounded text-xs font-semibold ${miembro.rol === "Presidente" || miembro.rol === "Administrador" ? "bg-red-100 text-red-800" :
+                                                                    miembro.rol === "Secretario" ? "bg-amber-100 text-amber-800" :
+                                                                        miembro.rol === "Tesorero" ? "bg-blue-100 text-blue-800" :
+                                                                            miembro.rol === "Vocal" ? "bg-purple-100 text-purple-800" :
+                                                                                "bg-gray-100 text-gray-800"
+                                                                }`}>
                                                                 {miembro.rol}
                                                             </span>
                                                         </td>
-                                                        <td className="py-3 text-right">
+                                                        <td className="flex sm:table-cell py-2 sm:py-3 text-right justify-between sm:justify-end items-center border-t sm:border-t-0 border-gray-200 mt-2 sm:mt-0 pt-2 sm:pt-0">
+                                                            <span className="inline-block sm:hidden text-xs font-bold text-gray-400 uppercase">Acción:</span>
                                                             <button
                                                                 onClick={() => handleRemoveMember(proyecto.id_proyecto, miembro.id_socio, miembro.nombre_socio)}
-                                                                className="text-red-500 hover:text-red-700 transition"
+                                                                className="text-red-500 hover:text-red-700 transition p-1.5 hover:bg-red-50 rounded-lg"
                                                                 title="Expulsar miembro"
                                                             >
                                                                 <FaUserMinus size={16} />

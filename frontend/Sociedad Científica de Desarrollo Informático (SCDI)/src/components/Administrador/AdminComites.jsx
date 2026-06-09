@@ -212,7 +212,7 @@ const AdminComites = () => {
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">Gestión de comités científicos</h2>
                 <button
                     onClick={() => {
@@ -220,9 +220,9 @@ const AdminComites = () => {
                         setError("");
                         setSuccess("");
                     }}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition font-semibold flex items-center gap-2"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition font-semibold flex items-center justify-center gap-2 w-full sm:w-auto"
                 >
-                    <FaPlus size={14} /> NUEVO COMITÉ
+                    NUEVO COMITÉ
                 </button>
             </div>
 
@@ -239,14 +239,14 @@ const AdminComites = () => {
                     {comites.map((comite) => (
                         <div key={comite.id_comite} className="border border-gray-200 rounded-xl overflow-hidden shadow-sm bg-white hover:border-indigo-100 transition duration-300">
                             {/* Cabecera del Comité */}
-                            <div className="bg-gray-50 px-6 py-4 flex flex-col md:flex-row md:justify-between md:items-center border-b border-gray-100 gap-4">
-                                <div>
-                                    <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                            <div className="bg-gray-50 px-6 py-4 flex flex-col md:flex-row md:justify-between md:items-start md:items-center border-b border-gray-100 gap-4">
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-lg font-bold text-gray-900 truncate">
                                         {comite.nombre_comite}
                                     </h3>
-                                    <p className="text-sm text-gray-600 mt-1">{comite.descripcion}</p>
+                                    <p className="text-sm text-gray-600 mt-1 break-words">{comite.descripcion}</p>
                                 </div>
-                                <div className="flex items-center gap-2 self-end md:self-center">
+                                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-start md:justify-end md:self-center">
                                     <button
                                         onClick={() => {
                                             setSelectedComiteId(comite.id_comite);
@@ -254,13 +254,13 @@ const AdminComites = () => {
                                             setError("");
                                             setSuccess("");
                                         }}
-                                        className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-md transition font-semibold flex items-center gap-1.5"
+                                        className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-md transition font-semibold flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
                                     >
                                         <FaPlus size={10} /> AÑADIR MIEMBRO
                                     </button>
                                     <button
                                         onClick={() => handleDeleteComite(comite.id_comite, comite.nombre_comite)}
-                                        className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-md transition font-semibold flex items-center gap-1.5"
+                                        className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-md transition font-semibold flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
                                     >
                                         <FaTrash size={10} /> ELIMINAR
                                     </button>
@@ -271,20 +271,24 @@ const AdminComites = () => {
                             <div className="p-6">
                                 <h4 className="text-sm font-bold text-gray-700 mb-3">Miembros del Comité</h4>
                                 {comite.miembros && comite.miembros.length > 0 ? (
-                                    <div className="overflow-x-auto">
-                                        <table className="w-full text-left text-sm">
-                                            <thead>
+                                    <div className="overflow-x-auto w-full">
+                                        <table className="w-full text-left text-sm block sm:table">
+                                            <thead className="hidden sm:table-header-group">
                                                 <tr className="border-b border-gray-100 text-gray-400 font-semibold text-xs uppercase">
                                                     <th className="py-2">Nombre</th>
                                                     <th className="py-2">Rol en Comité</th>
                                                     <th className="py-2 text-right">Acción</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody className="block sm:table-row-group space-y-3 sm:space-y-0">
                                                 {comite.miembros.map((miembro) => (
-                                                    <tr key={miembro.id_socio} className="border-b border-gray-50 hover:bg-slate-50 transition">
-                                                        <td className="py-3 font-medium text-gray-800">{miembro.nombre_socio}</td>
-                                                        <td className="py-3">
+                                                    <tr key={miembro.id_socio} className="flex flex-col sm:table-row border border-gray-200 sm:border-0 border-b sm:border-b-0 border-gray-50 hover:bg-slate-50 transition rounded-lg sm:rounded-none p-4 sm:p-0 bg-gray-50 sm:bg-transparent mb-2 sm:mb-0">
+                                                        <td className="block sm:table-cell py-1 sm:py-3 font-medium text-gray-800">
+                                                            <span className="inline-block sm:hidden text-xs font-bold text-gray-400 uppercase mr-2 w-24">Nombre:</span>
+                                                            {miembro.nombre_socio}
+                                                        </td>
+                                                        <td className="block sm:table-cell py-1 sm:py-3">
+                                                            <span className="inline-block sm:hidden text-xs font-bold text-gray-400 uppercase mr-2 w-24">Rol:</span>
                                                             <span className={`px-2 py-1 rounded text-xs font-semibold ${miembro.rol === "Presidente" ? "bg-red-100 text-red-800" :
                                                                 miembro.rol === "Secretario" ? "bg-amber-100 text-amber-800" :
                                                                     miembro.rol === "Tesorero" ? "bg-blue-100 text-blue-800" :
@@ -294,10 +298,11 @@ const AdminComites = () => {
                                                                 {miembro.rol}
                                                             </span>
                                                         </td>
-                                                        <td className="py-3 text-right">
+                                                        <td className="flex sm:table-cell py-2 sm:py-3 text-right justify-between sm:justify-end items-center border-t sm:border-t-0 border-gray-200 mt-2 sm:mt-0 pt-2 sm:pt-0">
+                                                            <span className="inline-block sm:hidden text-xs font-bold text-gray-400 uppercase">Acción:</span>
                                                             <button
                                                                 onClick={() => handleRemoveMember(comite.id_comite, miembro.id_socio, miembro.nombre_socio)}
-                                                                className="text-red-500 hover:text-red-700 transition"
+                                                                className="text-red-500 hover:text-red-700 transition p-1.5 hover:bg-red-50 rounded-lg"
                                                                 title="Expulsar miembro"
                                                             >
                                                                 <FaUserMinus size={16} />
