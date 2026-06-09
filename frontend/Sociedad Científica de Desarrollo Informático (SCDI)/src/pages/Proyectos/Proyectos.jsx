@@ -86,7 +86,7 @@ const Proyectos = () => {
                             setFiltroEstado(e.target.value);
                             setSearchParams({ page: 1 });
                         }}
-                        className="border rounded p-2"
+                        className="border rounded p-3"
                     >
                         <option value="">{t("proyectos.todos_estados")}</option>
                         <option value="activo">Activo</option>
