@@ -111,10 +111,10 @@ const SeleccionarPlan = () => {
                 const res = await fetch(`${API_BASE_URL}/tipos-publico`);
                 if (!res.ok) throw new Error("Error al cargar los planes");
                 const data = await res.json();
-                
+
                 const listadoPlanes = (data.tipos || []).map(tipo => {
                     const styleInfo = PLAN_STYLES[tipo.id_tipo_socio] || DEFAULT_STYLE;
-                    
+
                     return {
                         id_tipo_socio: tipo.id_tipo_socio,
                         nombre_tipo: tipo.nombre_tipo || styleInfo.defaultNombre,
@@ -134,7 +134,7 @@ const SeleccionarPlan = () => {
                         )
                     };
                 });
-                
+
                 // Ordenar por cuota ascendente para que se vean organizados
                 listadoPlanes.sort((a, b) => a.cuota - b.cuota);
                 setPlanes(listadoPlanes);
@@ -145,7 +145,7 @@ const SeleccionarPlan = () => {
                 setCargando(false);
             }
         };
-        
+
         fetchPlanes();
     }, []);
 
@@ -156,7 +156,7 @@ const SeleccionarPlan = () => {
 
     if (cargando) {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-100 flex flex-col items-center justify-center py-16 px-4">
+            <div className="min-h-[80vh] bg-gradient-to-b from-slate-50 to-blue-100 flex flex-col items-center justify-center py-16 px-4">
                 <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-900 mb-4"></div>
                 <p className="text-xl font-semibold text-blue-900 animate-pulse">Cargando planes de membresía...</p>
             </div>
@@ -165,10 +165,10 @@ const SeleccionarPlan = () => {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-100 flex flex-col items-center justify-center py-16 px-4">
+            <div className="min-h-[80vh] bg-gradient-to-b from-slate-50 to-blue-100 flex flex-col items-center justify-center py-16 px-4">
                 <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-2xl shadow-md max-w-lg text-center">
                     <p className="text-lg text-red-700 font-bold mb-4">{error}</p>
-                    <button 
+                    <button
                         onClick={() => window.location.reload()}
                         className="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md"
                     >
@@ -180,7 +180,7 @@ const SeleccionarPlan = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-100 py-16 px-4">
+        <div className="min-h-[80vh] bg-gradient-to-b from-slate-50 to-blue-100 py-16 px-4">
             <div className="max-w-7xl mx-auto text-center mb-16">
                 <h1 className="text-5xl font-extrabold text-blue-900 mb-4 tracking-tight">Elige tu plan de membresía</h1>
                 <p className="text-lg text-blue-700 max-w-2xl mx-auto">Selecciona la modalidad que mejor se adapte a tu perfil y empieza a disfrutar de las ventajas de nuestra sociedad científica.</p>
@@ -199,7 +199,7 @@ const SeleccionarPlan = () => {
         </div>
     );
 };
-  
+
 const CardPlan = ({ plan, onSelect }) => {
     const [isRevealed, setIsRevealed] = useState(false);
 
@@ -222,7 +222,7 @@ const CardPlan = ({ plan, onSelect }) => {
                         {plan.cuota !== 0 && <span className="text-lg font-medium text-gray-700 mb-1">/mes</span>}
                     </p>
                 </div>
-                
+
                 <div className="absolute bottom-8 text-blue-900 font-bold text-xs sm:text-sm tracking-widest flex flex-col items-center gap-2 opacity-70 animate-pulse text-center">
                     <span>TOCA PARA VER VENTAJAS</span>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -234,13 +234,13 @@ const CardPlan = ({ plan, onSelect }) => {
                 <h3 className="text-xl font-bold text-indigo-900 mb-3 text-center border-b-2 border-indigo-50 pb-2 flex-shrink-0">
                     Ventajas: {plan.nombre_tipo}
                 </h3>
-                
+
                 {/* Scrollable content container */}
                 <div className="flex-grow overflow-y-auto text-sm text-gray-700 pr-2 custom-scrollbar space-y-2 mb-4">
                     {plan.descripcion}
                 </div>
-                
-                <button 
+
+                <button
                     onClick={(e) => {
                         e.stopPropagation(); // Evitar que el clic cierre el plan accidentalmente
                         onSelect(plan);
