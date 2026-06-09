@@ -132,8 +132,42 @@ const deleteProyecto = async (req, res) => {
 
 const getProyectos = async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM Proyectos_Investigacion;');
-        res.status(200).json({ message: 'Lista de proyectos.', proyectos: { listaProyectos: result.rows } });
+        const query = `
+            SELECT p.id_proyecto, p.nombre_proyecto, p.descripcion, p.fecha_inicio, p.fecha_fin, p.estado, p.slug,
+                   s.id_socio, s.nombre AS nombre_socio, s.apellidos AS apellidos_socio, r.nombre AS rol, r.id_socio_rol
+            FROM Proyectos_Investigacion p
+            LEFT JOIN Socio_Proyecto sp ON p.id_proyecto = sp.proyecto
+            LEFT JOIN Socio s ON sp.socio = s.id_socio
+            LEFT JOIN Socio_Rol r ON sp.rol_proyecto = r.id_socio_rol;
+        `;
+        const result = await pool.query(query);
+
+        const proyectosMap = {};
+        result.rows.forEach(row => {
+            if (!proyectosMap[row.id_proyecto]) {
+                proyectosMap[row.id_proyecto] = {
+                    id_proyecto: row.id_proyecto,
+                    nombre_proyecto: row.nombre_proyecto,
+                    descripcion: row.descripcion,
+                    fecha_inicio: row.fecha_inicio,
+                    fecha_fin: row.fecha_fin,
+                    estado: row.estado,
+                    slug: row.slug,
+                    miembros: []
+                };
+            }
+            if (row.id_socio) {
+                proyectosMap[row.id_proyecto].miembros.push({
+                    id_socio: row.id_socio,
+                    nombre_socio: `${row.nombre_socio} ${row.apellidos_socio || ''}`.trim(),
+                    rol: row.rol,
+                    id_socio_rol: row.id_socio_rol
+                });
+            }
+        });
+
+        const listaProyectos = Object.values(proyectosMap);
+        res.status(200).json({ message: 'Lista de proyectos.', proyectos: { listaProyectos } });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error interno del servidor.' });
