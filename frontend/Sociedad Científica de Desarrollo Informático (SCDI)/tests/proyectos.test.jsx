@@ -19,7 +19,7 @@ describe('Prueba de Integración: Listado de Proyectos de Investigación', () =>
       id_proyecto: 1,
       nombre_proyecto: 'Proyecto Alpha IA',
       descripcion: 'Investigación sobre modelos de lenguaje',
-      estado: 'En curso',
+      estado: 'Activo',
       fecha_inicio: '2025-01-01',
       fecha_fin: '2026-12-31',
       slug: 'proyecto-alpha-ia',
@@ -28,7 +28,7 @@ describe('Prueba de Integración: Listado de Proyectos de Investigación', () =>
       id_proyecto: 2,
       nombre_proyecto: 'Proyecto Beta Seguridad',
       descripcion: 'Ciberseguridad en infraestructuras críticas',
-      estado: 'Pendiente',
+      estado: 'Pausado',
       fecha_inicio: '2025-06-01',
       fecha_fin: '2027-06-01',
       slug: 'proyecto-beta-seguridad',
@@ -100,7 +100,7 @@ describe('Prueba de Integración: Listado de Proyectos de Investigación', () =>
     });
   });
 
-  test('Filtro por estado: al seleccionar "En curso" solo muestra proyectos con ese estado', async () => {
+  test('Filtro por estado: al seleccionar "Activo" solo muestra proyectos con ese estado', async () => {
     render(
       <MemoryRouter>
         <Proyectos />
@@ -111,9 +111,9 @@ describe('Prueba de Integración: Listado de Proyectos de Investigación', () =>
       expect(screen.getByText('Proyecto Alpha IA')).toBeInTheDocument();
     });
 
-    // Seleccionar filtro "En curso"
+    // Seleccionar filtro "Activo"
     const filtroEstado = screen.getByDisplayValue('proyectos.todos_estados');
-    fireEvent.change(filtroEstado, { target: { value: 'En curso' } });
+    fireEvent.change(filtroEstado, { target: { value: 'activo' } });
 
     await waitFor(() => {
       expect(screen.getByText('Proyecto Alpha IA')).toBeInTheDocument();
@@ -134,9 +134,9 @@ describe('Prueba de Integración: Listado de Proyectos de Investigación', () =>
       expect(screen.getByText('Proyecto Alpha IA')).toBeInTheDocument();
     });
 
-    // Filtrar por fecha muy antigua (sin resultados)
+    // Filtrar por fecha muy futura (sin resultados, ya que la lógica es fecha_fin >= filtro)
     const filtroFecha = screen.getByDisplayValue('');
-    fireEvent.change(filtroFecha, { target: { value: '2000-01-01' } });
+    fireEvent.change(filtroFecha, { target: { value: '2099-01-01' } });
 
     await waitFor(() => {
       expect(screen.getByText('proyectos.no_proyectos')).toBeInTheDocument();

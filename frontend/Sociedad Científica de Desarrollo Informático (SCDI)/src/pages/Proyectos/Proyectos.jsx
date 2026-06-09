@@ -86,7 +86,7 @@ const Proyectos = () => {
                             setFiltroEstado(e.target.value);
                             setSearchParams({ page: 1 });
                         }}
-                        className="border rounded p-3"
+                        className="border rounded p-2"
                     >
                         <option value="">{t("proyectos.todos_estados")}</option>
                         <option value="activo">Activo</option>
@@ -95,7 +95,7 @@ const Proyectos = () => {
                         <option value="cancelado">Cancelado</option>
                     </select>
 
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-1">
                         <input
                             type="date"
                             value={filtroFechaFin}
