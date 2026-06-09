@@ -156,7 +156,7 @@ const SeleccionarPlan = () => {
 
     if (cargando) {
         return (
-            <div className="flex-grow bg-gradient-to-b from-slate-50 to-blue-100 flex flex-col items-center justify-center py-16 px-4">
+            <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-100 flex flex-col items-center justify-center py-16 px-4">
                 <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-900 mb-4"></div>
                 <p className="text-xl font-semibold text-blue-900 animate-pulse">Cargando planes de membresía...</p>
             </div>
@@ -165,7 +165,7 @@ const SeleccionarPlan = () => {
 
     if (error) {
         return (
-            <div className="flex-grow bg-gradient-to-b from-slate-50 to-blue-100 flex flex-col items-center justify-center py-16 px-4">
+            <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-100 flex flex-col items-center justify-center py-16 px-4">
                 <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-2xl shadow-md max-w-lg text-center">
                     <p className="text-lg text-red-700 font-bold mb-4">{error}</p>
                     <button 
@@ -180,7 +180,7 @@ const SeleccionarPlan = () => {
     }
 
     return (
-        <div className="flex-grow bg-gradient-to-b from-slate-50 to-blue-100 py-16 px-4">
+        <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-100 py-16 px-4">
             <div className="max-w-7xl mx-auto text-center mb-16">
                 <h1 className="text-5xl font-extrabold text-blue-900 mb-4 tracking-tight">Elige tu plan de membresía</h1>
                 <p className="text-lg text-blue-700 max-w-2xl mx-auto">Selecciona la modalidad que mejor se adapte a tu perfil y empieza a disfrutar de las ventajas de nuestra sociedad científica.</p>
