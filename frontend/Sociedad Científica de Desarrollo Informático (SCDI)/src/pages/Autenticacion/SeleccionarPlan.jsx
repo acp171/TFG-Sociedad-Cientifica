@@ -112,7 +112,11 @@ const SeleccionarPlan = () => {
                 if (!res.ok) throw new Error("Error al cargar los planes");
                 const data = await res.json();
 
-                const listadoPlanes = (data.tipos || []).map(tipo => {
+                // Excluir planes que solo puede asignar el administrador (ej: Honorario id=4)
+                const TIPOS_SOLO_ADMIN = [4];
+                const listadoPlanes = (data.tipos || [])
+                    .filter(tipo => !TIPOS_SOLO_ADMIN.includes(tipo.id_tipo_socio))
+                    .map(tipo => {
                     const styleInfo = PLAN_STYLES[tipo.id_tipo_socio] || DEFAULT_STYLE;
 
                     return {
