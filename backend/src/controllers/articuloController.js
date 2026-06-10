@@ -4,7 +4,7 @@ const { slugify } = require('../utils/slugify');
 
 const createArticulo = async (req, res) => {
     const { titulo, contenido } = req.body;
-    let rutaPDF = req.file ? req.file.path : null;
+    let rutaPDF = req.file ? req.file.secure_url : null;
 
     if (!titulo || (!req.file && !contenido)) {
         return res.status(400).json({ message: 'Faltan datos.' });
