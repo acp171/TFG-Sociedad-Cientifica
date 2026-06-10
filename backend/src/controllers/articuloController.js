@@ -1,5 +1,4 @@
 const pool = require('../database');
-const path = require('path');
 const { obtenernRol } = require('../utils/socioUtils');
 const { slugify } = require('../utils/slugify');
 
@@ -111,12 +110,8 @@ const downloadPDF = async (req, res) => {
         const result = await pool.query('SELECT contenidopdf FROM Publicaciones WHERE id_publicacion = $1', [id_publicacion]);
         if (result.rows.length === 0 || !result.rows[0].contenidopdf) return res.status(404).json({ message: "PDF no encontrado" });
 
-        let pdfPath = result.rows[0].contenidopdf;
-        if (pdfPath.startsWith('/')) pdfPath = pdfPath.slice(1);
-        const absolutePath = path.resolve(__dirname, '..', 'public', pdfPath);
-
-        res.setHeader('Content-Type', 'application/pdf');
-        res.sendFile(absolutePath);
+        const pdfUrl = result.rows[0].contenidopdf;
+        res.redirect(pdfUrl);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error interno del servidor" });
