@@ -1,6 +1,7 @@
 require('dotenv').config({ path: '.env.development' });
 const { Pool } = require('pg');
 const { faker } = require('@faker-js/faker');
+const { slugify } = require('./src/utils/slugify');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL
@@ -38,7 +39,7 @@ async function main() {
         INSERT INTO Socio(nombre, apellidos, email, password, telefono, fecha_nacimiento, fecha_alta, fecha_expiracion, socio_rol, tipo_socio) 
         VALUES($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '30 days', $7, $8) RETURNING id_socio;
       `, [
-        faker.person.firstName(),
+        faker.person.firstName().substring(0, 16), // Asegurar longitud max de 16 caracteres
         faker.person.lastName(),
         email,
         '$2a$12$jb4zKaou5JP7lBA5F1.JC.TDDi1.mGxC164/HETc5WNtWnmozxM3y', // 'admin'
@@ -58,14 +59,24 @@ async function main() {
         INSERT INTO Comite(nombre_comite, descripcion, fecha_creacion) 
         VALUES($1, $2, CURRENT_TIMESTAMP) RETURNING id_comite;
       `, [
-        faker.company.catchPhrase(),
+        faker.company.catchPhrase().substring(0, 50), // Asegurar longitud max de 50 caracteres
         faker.lorem.paragraph()
       ]);
       comitesIds.push(result.rows[0].id_comite);
     }
 
-    // 4. Asignar Miembros a Comités
-    console.log("Asignando Miembros a Comités...");
+    // 4. Asignar Miembros a Comités (con Presidentes)
+    console.log("Asignando Miembros a Comités (con Presidentes)...");
+    for (const comiteId of comitesIds) {
+      const presidenteId = faker.helpers.arrayElement(sociosIds);
+      await pool.query(`
+        INSERT INTO Miembros_Comite(fecha_registro, socio, comite, rol_comite) 
+        VALUES(CURRENT_TIMESTAMP, $1, $2, 2)
+        ON CONFLICT DO NOTHING;
+      `, [presidenteId, comiteId]);
+    }
+
+    // Asignar otros miembros normales
     for (let i = 0; i < 60; i++) {
         await pool.query(`
           INSERT INTO Miembros_Comite(fecha_registro, socio, comite, rol_comite) 
@@ -81,15 +92,17 @@ async function main() {
     console.log("Generando 30 Proyectos de Investigación...");
     const proyectosIds = [];
     for (let i = 0; i < 30; i++) {
+      const nombre = (faker.commerce.productName() + ' Research').substring(0, 100); // Max 100
       const result = await pool.query(`
-        INSERT INTO Proyectos_Investigacion(nombre_proyecto, descripcion, fecha_inicio, fecha_fin, estado) 
-        VALUES($1, $2, $3, $4, $5) RETURNING id_proyecto;
+        INSERT INTO Proyectos_Investigacion(nombre_proyecto, descripcion, fecha_inicio, fecha_fin, estado, slug) 
+        VALUES($1, $2, $3, $4, $5, $6) RETURNING id_proyecto;
       `, [
-        faker.commerce.productName() + ' Research',
-        faker.lorem.paragraphs(2),
+        nombre,
+        faker.lorem.paragraphs(2).substring(0, 1000), // Max 1000
         faker.date.past(),
         faker.date.future(),
-        faker.helpers.arrayElement(['activo', 'finalizado', 'pausado'])
+        faker.helpers.arrayElement(['activo', 'finalizado', 'pausado']),
+        slugify(nombre + '-' + i)
       ]);
       proyectosIds.push(result.rows[0].id_proyecto);
     }
@@ -111,13 +124,15 @@ async function main() {
     console.log("Generando 30 Publicaciones...");
     const pubIds = [];
     for (let i = 0; i < 30; i++) {
+      const titulo = faker.company.catchPhrase().substring(0, 1000); // Max 1000
       const result = await pool.query(`
-        INSERT INTO Publicaciones(titulo, contenido, fecha_publicacion, socio) 
-        VALUES($1, $2, CURRENT_TIMESTAMP, $3) RETURNING id_publicacion;
+        INSERT INTO Publicaciones(titulo, contenido, fecha_publicacion, socio, slug) 
+        VALUES($1, $2, CURRENT_TIMESTAMP, $3, $4) RETURNING id_publicacion;
       `, [
-        faker.company.catchPhrase(),
+        titulo,
         faker.lorem.text(),
-        faker.helpers.arrayElement(sociosIds)
+        faker.helpers.arrayElement(sociosIds),
+        slugify(titulo + '-' + i)
       ]);
       pubIds.push(result.rows[0].id_publicacion);
     }
@@ -139,16 +154,18 @@ async function main() {
     console.log("Generando 30 Eventos...");
     const eventosIds = [];
     for (let i = 0; i < 30; i++) {
+      const nombre = (faker.company.name() + ' Conference').substring(0, 256); // Max 256
       const result = await pool.query(`
-        INSERT INTO Evento(nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion, comite) 
-        VALUES($1, $2, $3, $4, $5, $6) RETURNING id_evento;
+        INSERT INTO Evento(nombre_evento, fecha_evento_inicio, fecha_evento_fin, descripcion_evento, direccion, comite, slug) 
+        VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id_evento;
       `, [
-        faker.company.name() + ' Conference',
+        nombre,
         faker.date.recent(),
         faker.date.soon(),
         faker.lorem.paragraph(),
         faker.helpers.arrayElement(direccionesIds),
-        faker.helpers.arrayElement(comitesIds)
+        faker.helpers.arrayElement(comitesIds),
+        slugify(nombre + '-' + i)
       ]);
       eventosIds.push(result.rows[0].id_evento);
     }

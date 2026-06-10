@@ -31,7 +31,7 @@ const addMiembro = async (req, res) => {
     const adminRol = await obtenernRol(req.usuario);
     if (!adminRol || adminRol.nombre !== 'Administrador') {
         const presidenteComite = await obtenerPresidenteComite(comite);
-        if (presidenteComite.socio !== req.usuario.id) return res.status(403).json({ message: 'No autorizado.' });
+        if (!presidenteComite || presidenteComite.socio !== req.usuario.id) return res.status(403).json({ message: 'No autorizado.' });
     }
 
     try {
@@ -89,9 +89,9 @@ const getComites = async (req, res) => {
         const query = `
             SELECT C.*, S.id_socio, S.nombre AS nombre_socio, S.apellidos, SR.nombre AS rol
             FROM Comite C
-            JOIN Miembros_Comite MC ON C.id_comite = MC.comite
-            JOIN Socio S ON MC.socio = S.id_socio
-            JOIN Socio_Rol SR ON MC.rol_comite = SR.id_socio_rol
+            LEFT JOIN Miembros_Comite MC ON C.id_comite = MC.comite
+            LEFT JOIN Socio S ON MC.socio = S.id_socio
+            LEFT JOIN Socio_Rol SR ON MC.rol_comite = SR.id_socio_rol
             ORDER BY C.id_comite;
         `;
         const result = await pool.query(query);
@@ -100,7 +100,9 @@ const getComites = async (req, res) => {
             if (!comites[row.id_comite]) {
                 comites[row.id_comite] = { id_comite: row.id_comite, nombre_comite: row.nombre_comite, descripcion: row.descripcion, miembros: [] };
             }
-            comites[row.id_comite].miembros.push({ id_socio: row.id_socio, nombre_socio: row.nombre_socio + ' ' + row.apellidos, rol: row.rol });
+            if (row.id_socio) {
+                comites[row.id_comite].miembros.push({ id_socio: row.id_socio, nombre_socio: row.nombre_socio + ' ' + row.apellidos, rol: row.rol });
+            }
         });
         res.status(200).json({ message: 'Listado de comités.', listadoComites: Object.values(comites) });
     } catch (error) {
